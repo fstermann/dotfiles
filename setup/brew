@@ -1,0 +1,32 @@
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+echo >> ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+brew install --cask google-chrome
+brew install --cask visual-studio-code
+brew install --cask 1password
+brew install --cask whatsapp
+
+brew install --cask rekordbox
+brew install --cask ableton-live-suite
+brew install --cask splice
+
+brew install --cask coteditor
+# To set CotEditor as the default for all kinds of files
+# https://alexpeattie.com/blog/associate-source-code-files-with-editor-in-macos-using-duti/
+brew install duti python-yq
+curl "https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml" \
+  | yq -r "to_entries | (map(.value.extensions) | flatten) - [null] | unique | .[]" \
+  | xargs -L 1 -I "{}" duti -s com.coteditor.CotEditor {} all
+
+
+brew install zsh
+brew install pure
+# Add to .zshrc
+# autoload -U promptinit; promptinit
+# prompt pure
+echo -e "autoload -U promptinit; promptinit\nprompt pure" >> ~/.zshrc
+
+brew install ffmpeg
