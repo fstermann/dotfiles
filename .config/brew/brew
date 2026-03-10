@@ -9,10 +9,6 @@ brew install --cask visual-studio-code
 brew install --cask 1password
 brew install --cask whatsapp
 
-brew install --cask rekordbox
-brew install --cask ableton-live-suite
-brew install --cask splice
-
 brew install --cask coteditor
 # To set CotEditor as the default for all kinds of files
 # https://alexpeattie.com/blog/associate-source-code-files-with-editor-in-macos-using-duti/
@@ -28,5 +24,5 @@ brew install pure
 # autoload -U promptinit; promptinit
 # prompt pure
 echo -e "autoload -U promptinit; promptinit\nprompt pure" >> ~/.zshrc
-
-brew install ffmpeg
+brew install zsh-syntax-highlighting
+brew install zsh-autocomplete
