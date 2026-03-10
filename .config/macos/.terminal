@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+THEME="$(dirname "$0")/Monokai Pro (Filter Octagon).terminal"
+
+open "$THEME"
+sleep 2
+osascript -e 'tell application "Terminal"
+    set default settings to settings set "Monokai Pro (Filter Octagon)"
+    set startup settings to settings set "Monokai Pro (Filter Octagon)"
+end tell'
