@@ -1,0 +1,6 @@
+brew install --cask rekordbox
+brew install --cask ableton-live-suite
+brew install --cask splice
+brew install ffmpeg
+
+brew install --cask whatsapp
