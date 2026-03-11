@@ -20,7 +20,7 @@ fi
 echo "==> Backing up pre-existing dotfiles to $BACKUP_DIR..."
 mkdir -p "$BACKUP_DIR"
 
-conflicting=$(dotfiles checkout 2>&1 | grep -E "^\s+\." | awk '{print $1}')
+conflicting=$(dotfiles checkout 2>&1 | sed -n 's/^[[:space:]]*\(\..*\)$/\1/p')
 
 while IFS= read -r file; do
   dest="$BACKUP_DIR/$file"
