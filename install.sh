@@ -22,14 +22,12 @@ mkdir -p "$BACKUP_DIR"
 
 conflicting=$(dotfiles checkout 2>&1 | grep -E "^\s+\." | awk '{print $1}')
 
-if [ -n "$conflicting" ]; then
-  echo "$conflicting" | while IFS= read -r file; do
-    dest="$BACKUP_DIR/$file"
-    mkdir -p "$(dirname "$dest")"
-    mv "$HOME/$file" "$dest"
-    echo "    backed up: $file"
-  done
-fi
+while IFS= read -r file; do
+  dest="$BACKUP_DIR/$file"
+  mkdir -p "$(dirname "$dest")"
+  mv "$HOME/$file" "$dest"
+  echo "    backed up: $file"
+done <<< "$conflicting"
 
 echo "==> Checking out dotfiles..."
 dotfiles checkout
