@@ -1,5 +1,5 @@
 #!/bin/bash
-# git config --global alias.remerge '!sh ~/dotfiles/git/.git-remerge.sh'
+# git config --global alias.remerge '!sh ~/.config/git/.git-remerge.sh'
 set -e
 
 # Function to display help message

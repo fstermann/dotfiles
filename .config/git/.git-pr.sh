@@ -1,5 +1,5 @@
 #!/bin/bash
-# git config --global alias.pr '!sh ~/dotfiles/git/.git-pr.sh'
+# git config --global alias.pr '!sh ~/.config/git/.git-pr.sh'
 set -e
 
 

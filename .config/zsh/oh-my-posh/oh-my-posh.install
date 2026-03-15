@@ -1,0 +1,7 @@
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install jandedobbeleer/oh-my-posh/oh-my-posh
+else
+    curl -s https://ohmyposh.dev/install.sh | bash -s
+fi
+
+oh-my-posh font install meslo

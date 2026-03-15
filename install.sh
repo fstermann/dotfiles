@@ -36,5 +36,16 @@ echo "==> Hiding untracked files from dotfiles status..."
 dotfiles config --local status.showUntrackedFiles no
 
 echo ""
+# Install scripts in .config
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "==> Installing Macos specific packages..."
+    source ~/.config/brew/brew.install
+    source ~/.config/macos/macos.install
+fi
+
+echo "==> Installing zsh and plugins..."
+source ~/.config/zsh/zsh.install
+source ~/.config/fzf/fzf.install
+
 echo "Done! Dotfiles installed."
 echo "You can now use the 'dotfiles' alias to manage your dotfiles."

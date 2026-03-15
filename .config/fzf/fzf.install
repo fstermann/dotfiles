@@ -1,0 +1,7 @@
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install fzf
+    brew install bat
+else
+    sudo apt install fzf
+    sudo apt install bat
+fi
