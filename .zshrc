@@ -40,3 +40,7 @@ setopt hist_find_no_dups
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
+
+# Up arrow to trigger the fzf history widget
+bindkey '^[[A' fzf-history-widget   # Up arrow
+bindkey '^[OA' fzf-history-widget   # Up arrow (alternate escape sequence)
