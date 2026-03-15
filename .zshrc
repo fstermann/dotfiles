@@ -7,7 +7,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
     ZSH_PLUGIN_PREFIX="~/.config/zsh/plugins"
 fi
-source $ZSH_PLUGIN_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
+
+# Load completions
+FPATH=$ZSH_PLUGIN_PREFIX/share/zsh-completions:$FPATH
+autoload -Uz compinit && compinit
+
+source $ZSH_PLUGIN_PREFIX/share/fzf-tab/fzf-tab.zsh
+#source $ZSH_PLUGIN_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $ZSH_PLUGIN_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH_PLUGIN_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -15,15 +22,21 @@ source $ZSH_PLUGIN_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.
 source ~/.config/zsh/oh-my-posh/oh-my-posh.zsh
 source ~/.config/fzf/fzf.zsh
 
-_smart_tab() {
-  if [[ -n $POSTDISPLAY ]]; then
-    # There's an autosuggestion — accept it
-    zle autosuggest-accept
-  else
-    # No suggestion — open completion menu
-    zle menu-select
-  fi
-}
-zle -N _smart_tab
-bindkey '^I' _smart_tab
 
+# History
+HISTSIZE=5000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no

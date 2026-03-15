@@ -1,6 +1,20 @@
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
-export FZF_DEFAULT_OPTS="--style full --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+
+# Show hidden files in tab completions (cat, ls, etc.)
+setopt globdots
+
+export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+
+export FZF_DEFAULT_OPTS="\
+--layout=reverse \
+--height=80%"
+
+export FZF_CTRL_T_OPTS="\
+--preview '~/.config/fzf/preview.zsh {}'"
+
 
 # Scheme name: Monokai
 # Scheme system: base16
@@ -37,4 +51,10 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     alias bat="batcat"
 fi
 
-
+zstyle ':fzf-tab:*' fzf-preview '~/.config/fzf/preview.zsh ${realpath:-$word}'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview '~/.config/fzf/preview.zsh ${realpath:-$word}'
+zstyle ':fzf-tab:complete:ls:*' fzf-preview '~/.config/fzf/preview.zsh ${realpath:-$word}'
+zstyle ':fzf-tab:complete:cat:*' fzf-preview '~/.config/fzf/preview.zsh ${realpath:-$word}'
+zstyle ':fzf-tab:*' fzf-flags '--preview-window=right:40%' '--min-height=20'
+zstyle ':fzf-tab:complete:cd:*' continuous-trigger '/'
+zstyle ':fzf-tab:*' use-fzf-default-opts yes

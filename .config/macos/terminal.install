@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-THEME="$(dirname "$0")/Monokai Pro (Filter Octagon).terminal"
+THEME="$(dirname "${BASH_SOURCE[0]}")/Monokai Pro (Filter Octagon).terminal"
 
 open "$THEME"
 sleep 2

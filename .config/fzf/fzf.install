@@ -1,7 +1,9 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install fzf
     brew install bat
+    brew install ripgrep
 else
     sudo apt install fzf
     sudo apt install bat
+    sudo apt-get install ripgrep
 fi
