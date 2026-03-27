@@ -55,6 +55,16 @@ type = "prompt"
 
 [[blocks]]
 alignment = "left"
+type = "prompt"
+
+  [[blocks.segments]]
+  foreground = "#D08770"
+  style = "plain"
+  template = "󰯉 {{ .Model.DisplayName }} {{ .TokenUsagePercent.GaugeUsed }} {{ .FormattedCost }} "
+  type = "claude"
+
+[[blocks]]
+alignment = "left"
 newline = true
 type = "prompt"
 
