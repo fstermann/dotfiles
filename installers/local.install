@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# Create machine-local config stubs if they don't already exist.
+# These files are intentionally NOT tracked in the repo — they hold
+# per-machine overrides (credentials, paths, private aliases, etc.).
+
+create_gitconfig_local() {
+    local file="$HOME/.gitconfig.local"
+    [ -e "$file" ] && return 0
+    cat >> "$file" <<'EOF'
+[user]
+    name =
+    email =
+    # signingkey =
+
+[commit]
+    # Sign commits using GPG.
+    # https://help.github.com/articles/signing-commits-using-gpg/
+    # gpgsign = true
+EOF
+}
+
+create_zshrc_local() {
+    local file="$HOME/.zshrc.local"
+    [ -e "$file" ] && return 0
+    cat >> "$file" <<'EOF'
+# ~/.zshrc.local — machine-specific zsh config (not tracked in the repo)
+#
+# Good candidates for this file:
+#   - Extra PATH entries
+#   - Work-specific aliases or environment variables
+#   - Private API keys / tokens (prefer a secrets manager instead)
+EOF
+}
+
+create_gitconfig_local
+create_zshrc_local

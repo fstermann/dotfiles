@@ -1,12 +1,26 @@
 # dotfiles
 
-These are my personal dotfiles managed with a **bare Git repository**; no symlinks, no extra tooling.
+Personal dotfiles managed with **[GNU Stow](https://www.gnu.org/software/stow/)** — each tool's config lives in its own package directory and gets symlinked into `$HOME`.
 
 ## How it works
 
-The home directory (`$HOME`) itself acts as the working tree of a bare Git repo stored at `~/.dotfiles/`. A `dotfiles` alias scopes all Git commands to that repo, so you can track, commit, and push config files directly without cluttering `$HOME` with a `.git` directory.
+The repo lives at `~/.dotfiles/`. Each top-level directory is a *stow package* whose internal structure mirrors `$HOME`. Running `stow <package>` creates symlinks from `$HOME` into the repo:
 
-See the [Arch Linux wiki](https://wiki.archlinux.org/title/Dotfiles#Tracking_dotfiles_directly_with_Git) for a thorough explanation of this approach.
+```
+~/.dotfiles/
+├── zsh/
+│   ├── .zshrc          → symlinked as ~/.zshrc
+│   └── .zprofile       → symlinked as ~/.zprofile
+├── git/
+│   └── .config/git/    → symlinked as ~/.config/git/
+├── fzf/
+│   └── .config/fzf/    → symlinked as ~/.config/fzf/
+├── oh-my-posh/
+│   └── .config/zsh/oh-my-posh/
+├── macos/
+│   └── .config/macos/
+└── installers/         (not stowed — installer scripts only)
+```
 
 ---
 
@@ -19,46 +33,62 @@ curl -fsSL https://raw.githubusercontent.com/fstermann/dotfiles/main/install.sh 
 ```
 
 The script will:
-1. Clone this repo as a bare repository into `~/.dotfiles/`
-2. Back up any existing files that would conflict into `~/.config-backup/`
-3. Check out all tracked dotfiles into `$HOME`
-4. Configure Git to hide untracked files from `dotfiles status`
+1. Clone this repo to `~/.dotfiles/`
+2. Install GNU Stow if not already present
+3. Back up any existing files that would conflict into `~/.dotfiles-backup/`
+4. Stow all packages to create symlinks in `$HOME`
+5. Install platform packages (Homebrew, zsh plugins, fzf, oh-my-posh, macOS defaults)
+
+---
+
+## Packages
+
+| Package | Contents |
+|---|---|
+| `zsh` | `.zshrc`, `.zprofile` |
+| `git` | `.config/git/` (helper scripts) |
+| `fzf` | `.config/fzf/` (fzf config + preview script) |
+| `oh-my-posh` | `.config/zsh/oh-my-posh/` (prompt theme) |
+| `macos` | `.config/macos/` (Terminal theme) |
 
 ---
 
 ## Usage
 
-Add the alias to your shell config (the install script handles this reminder):
-
 ```sh
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+# Stow all packages (idempotent — safe to re-run)
+stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos
+
+# Stow a single package
+stow --no-folding -d ~/.dotfiles -t $HOME zsh
+
+# Unstow (remove symlinks for) a package
+stow -d ~/.dotfiles -t $HOME -D zsh
+
+# Simulate without making changes
+stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos
 ```
 
-Then use `dotfiles` exactly like `git`:
+Edit files directly in `~/.dotfiles/` and commit with plain `git`:
 
 ```sh
-# Check status
-dotfiles status
-
-# Track a new file
-dotfiles add ~/.zshrc
-
-# Commit and push
-dotfiles commit -m "update zshrc"
-dotfiles push
+cd ~/.dotfiles
+git add zsh/.zshrc
+git commit -m "chore: update zshrc"
+git push
 ```
 
 ---
 
-## Manual setup (on a new machine from scratch)
+## Migrating from the old bare-repo setup
+
+If you previously used the bare git repo approach, run the migration script once:
 
 ```sh
-git clone --bare https://github.com/fstermann/dotfiles.git ~/.dotfiles
-
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-
-mkdir -p ~/.config-backup
-dotfiles checkout 2>&1 | grep -E "^\s+\." | awk '{print $1}' | xargs -I{} mv {} ~/.config-backup/{}
-dotfiles checkout
-dotfiles config --local status.showUntrackedFiles no
+bash ~/.dotfiles/migrate.sh
+# or, if you still have the old setup:
+curl -fsSL https://raw.githubusercontent.com/fstermann/dotfiles/main/migrate.sh | bash
 ```
+
+This will back up the old bare repo, clone the restructured repo, and use `stow --adopt` to replace existing dotfiles with symlinks without losing any local changes.
+
