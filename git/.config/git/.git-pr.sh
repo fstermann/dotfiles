@@ -18,6 +18,9 @@ Requirements:
   A valid commit message must be provided. The format should follow conventional commits:
     (feat|fix|refactor|build|chore|docs|style|test|ci|perf)([scope]): [title]
 
+  Requires 'gh' (GitHub CLI) for GitHub remotes or 'glab' (GitLab CLI) for GitLab remotes.
+  Requires 'jq' for JSON parsing.
+
 Examples:
   git pr "feat(scope): add new feature"
   git pr fix: correct typo in documentation
@@ -85,7 +88,21 @@ else
     add_info="This will create a new branch '$branch'."
 fi
 
-read -p "Are you sure you want to create a new PR with title '$title'?"$'\n'"$add_info $current_added_info"$'\n'"Create the PR? [y/N] " -n 1 -r
+# Detect remote type (GitHub vs GitLab)
+remote_url=$(git remote get-url origin 2>/dev/null || echo "")
+if [[ "$remote_url" == *"github.com"* ]]; then
+    remote_type="github"
+else
+    remote_type="gitlab"
+fi
+
+# Derive issue title from commit message: "feat(scope): add config files" -> "Feat: Add config files"
+prefix_cap="$(echo "${prefix:0:1}" | tr '[:lower:]' '[:upper:]')${prefix:1}"
+issue_subject=$(echo "$title" | sed 's/^[^:]*:[[:space:]]*//')
+issue_subject_cap="$(echo "${issue_subject:0:1}" | tr '[:lower:]' '[:upper:]')${issue_subject:1}"
+issue_title="$prefix_cap: $issue_subject_cap"
+
+read -p "Are you sure you want to create a new PR with title '$title'?"$'\n'"$add_info $current_added_info"$'\n'"An issue '$issue_title' will be found or created."$'\n'"Create the PR? [y/N] " -n 1 -r
 echo # move to a new line
 
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -93,8 +110,38 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-# Ask user for issue number
-read -p "Closes issue (if any): " issue_number
+# Find or create the issue
+if [ "$remote_type" = "github" ]; then
+    # Ensure the label exists (--force creates it if missing, updates if present)
+    gh label create "$prefix" --color "#0075ca" --force 2>/dev/null || true
+
+    existing_issue=$(gh issue list --search "$issue_title in:title" --state open --json number,title --limit 20 \
+        | jq -r --arg t "$issue_title" '.[] | select(.title == $t) | .number' | head -1)
+    if [ -n "$existing_issue" ]; then
+        issue_number="$existing_issue"
+        echo "Using existing issue #$issue_number: $issue_title"
+    else
+        echo "Creating issue: $issue_title"
+        issue_url=$(gh issue create --title "$issue_title" --body "" --label "$prefix")
+        issue_number=$(echo "$issue_url" | grep -o '[0-9]*$')
+        echo "Created issue #$issue_number"
+    fi
+else
+    # Ensure the label exists
+    glab label create --name "$prefix" --color "#0075ca" 2>/dev/null || true
+
+    existing_issue=$(glab issue list --search "$issue_title" -F json 2>/dev/null \
+        | jq -r --arg t "$issue_title" '.[] | select(.title == $t) | .iid' | head -1)
+    if [ -n "$existing_issue" ]; then
+        issue_number="$existing_issue"
+        echo "Using existing issue #$issue_number: $issue_title"
+    else
+        echo "Creating issue: $issue_title"
+        issue_url=$(glab issue create --title "$issue_title" --description "" --label "$prefix" 2>&1 | grep "https://")
+        issue_number=$(echo "$issue_url" | grep -o '/issues/[0-9]*' | grep -o '[0-9]*')
+        echo "Created issue #$issue_number"
+    fi
+fi
 
 if [ "$current_branch" != "$branch" ]; then
     git checkout -b "$branch"
@@ -108,17 +155,17 @@ else
     push_option="-u origin $branch"
 fi
 
-if [ -z "$issue_number" ]; then
-    description=""
-else
-    description='-o merge_request.description="Closes #$issue_number"'
-fi
-
 if [ "$only_added" = false ]; then
     git add .
 fi
 
 git diff-index --quiet HEAD || git commit -m "$title"
-git push $push_option -o merge_request.create -o merge_request.title="$title" $description -o merge_request.label="$prefix"
+
+if [ "$remote_type" = "github" ]; then
+    git push $push_option
+    gh pr create --title "$title" --body "Closes #$issue_number" --label "$prefix"
+else
+    git push $push_option -o merge_request.create -o merge_request.title="$title" -o merge_request.description="Closes #$issue_number" -o merge_request.label="$prefix"
+fi
 
 echo "Branch '$branch' created and pushed to origin."
