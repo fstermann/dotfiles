@@ -45,5 +45,17 @@ zstyle ':completion:*' menu no
 bindkey '^[[A' fzf-history-widget   # Up arrow
 bindkey '^[OA' fzf-history-widget   # Up arrow (alternate escape sequence)
 
+
+_git_remerge ()
+{
+	__git_complete_strategy && return
+	case "$cur" in
+	--*)
+		__gitcomp_builtin merge
+		return
+	esac
+	__git_complete_refs
+}
+
 # Machine-local overrides (not tracked in the repo)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
