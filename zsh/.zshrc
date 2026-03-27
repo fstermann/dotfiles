@@ -2,7 +2,8 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     ZSH_PLUGIN_PREFIX=$(brew --prefix)/share
 else
-    ZSH_PLUGIN_PREFIX="~/.config/zsh/plugins"
+    eval "$(~/homebrew/bin/brew shellenv zsh)"
+    ZSH_PLUGIN_PREFIX="$HOME/.config/zsh/plugins"
 fi
 
 

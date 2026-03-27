@@ -1,5 +1,2 @@
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-else
-    eval "$(~/homebrew/bin/brew shellenv zsh)"
-fi
+# This is only executed on login, and macos only
+eval "$(/opt/homebrew/bin/brew shellenv zsh)"
