@@ -3,7 +3,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install bat
     brew install ripgrep
 else
-    sudo apt install fzf
-    sudo apt install bat
-    sudo apt-get install ripgrep
+    # git clone gives a consistent fzf version on any Debian/Ubuntu release;
+    # --bin installs only the binary (shell integration is handled by fzf.zsh).
+    if [[ ! -d "$HOME/.fzf" ]]; then
+        git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    fi
+    "$HOME/.fzf/install" --bin
+    sudo apt-get install -y bat ripgrep
 fi

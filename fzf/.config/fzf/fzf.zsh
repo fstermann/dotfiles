@@ -1,5 +1,12 @@
+# On Linux fzf is installed via git clone to ~/.fzf; ensure the binary is on PATH.
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    export PATH="$HOME/.fzf/bin:$PATH"
+fi
+
 # Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+if command -v fzf &>/dev/null; then
+    source <(fzf --zsh)
+fi
 
 # Show hidden files in tab completions (cat, ls, etc.)
 setopt globdots

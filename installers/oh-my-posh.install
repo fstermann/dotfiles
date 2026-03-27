@@ -1,7 +1,11 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install jandedobbeleer/oh-my-posh/oh-my-posh
+    oh-my-posh font install meslo
 else
-    curl -s https://ohmyposh.dev/install.sh | bash -s
+    # If the curl install fails the shell will fall back to fallback-prompt.zsh.
+    if curl -s https://ohmyposh.dev/install.sh | bash -s; then
+        oh-my-posh font install meslo
+    else
+        echo "Warning: oh-my-posh install failed — the fallback prompt will be used instead"
+    fi
 fi
-
-oh-my-posh font install meslo
