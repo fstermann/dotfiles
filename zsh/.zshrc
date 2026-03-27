@@ -1,19 +1,19 @@
 # Source zsh plugins
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    ZSH_PLUGIN_PREFIX=$(brew --prefix)
+    ZSH_PLUGIN_PREFIX=$(brew --prefix)/share
 else
     ZSH_PLUGIN_PREFIX="~/.config/zsh/plugins"
 fi
 
 
 # Load completions
-FPATH=$ZSH_PLUGIN_PREFIX/share/zsh-completions:$FPATH
+FPATH=$ZSH_PLUGIN_PREFIX/zsh-completions:$FPATH
 autoload -Uz compinit && compinit
 
-source $ZSH_PLUGIN_PREFIX/share/fzf-tab/fzf-tab.zsh
-#source $ZSH_PLUGIN_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-source $ZSH_PLUGIN_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH_PLUGIN_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $ZSH_PLUGIN_PREFIX/fzf-tab/fzf-tab.zsh
+#source $ZSH_PLUGIN_PREFIX/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+source $ZSH_PLUGIN_PREFIX/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_PLUGIN_PREFIX/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Source .config files
 source ~/.config/zsh/oh-my-posh/oh-my-posh.zsh
