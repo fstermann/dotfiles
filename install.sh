@@ -7,7 +7,7 @@ DOTFILES_DIR="$HOME/.dotfiles"
 BACKUP_DIR="$HOME/.dotfiles-backup"
 
 # Stow packages (one per tool — each mirrors $HOME structure)
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos)
+STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
 
 # ── Load UI library ──────────────────────────────────────────────────────────
 # On a fresh install the repo hasn't been cloned yet, so fetch ui.sh directly
