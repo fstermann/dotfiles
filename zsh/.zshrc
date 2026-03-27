@@ -1,3 +1,5 @@
+alias dotfiles="git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME/.dotfiles"
+
 # Source zsh plugins
 if [[ "$OSTYPE" == "darwin"* ]]; then
     ZSH_PLUGIN_PREFIX=$(brew --prefix)/share
