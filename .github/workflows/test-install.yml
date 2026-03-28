@@ -1,0 +1,26 @@
+name: Test Install
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and test install
+        run: docker build -t dotfiles-test .
+
+      - name: Run doctor (if available)
+        run: |
+          docker run --rm dotfiles-test bash -c '
+            if [[ -f "$HOME/.dotfiles/installers/doctor.sh" ]]; then
+              bash "$HOME/.dotfiles/installers/doctor.sh"
+            else
+              echo "doctor.sh not found, skipping"
+            fi
+          '

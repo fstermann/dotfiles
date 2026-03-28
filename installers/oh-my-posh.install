@@ -21,7 +21,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     fi
 else
     if ! fc-list 2>/dev/null | grep -qi meslo; then
-        command -v oh-my-posh &>/dev/null && oh-my-posh font install meslo
+        command -v oh-my-posh &>/dev/null && oh-my-posh font install meslo || echo "Warning: font install failed (headless?) — skipping"
     else
         echo "Meslo font is already installed"
     fi

@@ -10,6 +10,9 @@ set -e
 DOTFILES_DIR="$HOME/.dotfiles"
 STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
 
+# Ensure tools installed outside system paths are discoverable
+export PATH="$HOME/.fzf/bin:$HOME/.local/bin:$PATH"
+
 # shellcheck source=lib/ui.sh
 source "$DOTFILES_DIR/installers/lib/ui.sh"
 
@@ -17,9 +20,9 @@ _pass=0
 _warn=0
 _fail=0
 
-_check_pass() { printf "  ${GREEN}✓${RESET}  %s\n" "$*"; (( _pass++ )); }
-_check_warn() { printf "  ${YELLOW}⚠${RESET}  %s\n" "$*"; (( _warn++ )); }
-_check_fail() { printf "  ${RED}✗${RESET}  %s\n" "$*"; (( _fail++ )); }
+_check_pass() { printf "  ${GREEN}✓${RESET}  %s\n" "$*"; (( _pass++ )) || true; }
+_check_warn() { printf "  ${YELLOW}⚠${RESET}  %s\n" "$*"; (( _warn++ )) || true; }
+_check_fail() { printf "  ${RED}✗${RESET}  %s\n" "$*"; (( _fail++ )) || true; }
 
 printf "\n${BOLD}  Dotfiles Doctor${RESET}\n"
 
@@ -28,11 +31,12 @@ section "Symlinks"
 
 _check_symlink() {
   local target="$1"
-  local expected_prefix="$DOTFILES_DIR/"
   if [[ -L "$target" ]]; then
-    local actual
+    local actual resolved
     actual=$(readlink "$target")
-    if [[ "$actual" == "$expected_prefix"* || "$actual" == "$DOTFILES_DIR/"* ]]; then
+    # Resolve relative symlinks to absolute paths portably (macOS + Linux)
+    resolved=$(cd "$(dirname "$target")" && cd "$(dirname "$actual")" && echo "$PWD/$(basename "$actual")")
+    if [[ "$resolved" == "$DOTFILES_DIR/"* ]]; then
       _check_pass "$target → $actual"
     else
       _check_warn "$target is a symlink but points to $actual (expected $DOTFILES_DIR/...)"
@@ -46,13 +50,13 @@ _check_symlink() {
 
 _check_symlink "$HOME/.zshrc"
 _check_symlink "$HOME/.zprofile"
-_check_symlink "$HOME/.config/git"
-_check_symlink "$HOME/.config/fzf"
-_check_symlink "$HOME/.config/zsh/oh-my-posh"
+_check_symlink "$HOME/.gitconfig"
+_check_symlink "$HOME/.config/fzf/fzf.zsh"
+_check_symlink "$HOME/.config/zsh/oh-my-posh/oh-my-posh.zsh"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  _check_symlink "$HOME/.config/macos"
+  _check_symlink "$HOME/.config/macos/Monokai Pro (Filter Octagon).terminal"
 fi
-_check_symlink "$HOME/.claude"
+_check_symlink "$HOME/.claude/settings.json"
 
 # ── Tools on PATH ────────────────────────────────────────────────────────────
 section "Tools"
@@ -73,7 +77,15 @@ _check_command git
 _check_command stow "GNU Stow"
 _check_command zsh
 _check_command fzf
-_check_command bat
+# On Ubuntu/Debian the binary is 'batcat' due to a naming conflict
+if command -v bat &>/dev/null; then
+  _check_command bat
+elif command -v batcat &>/dev/null; then
+  _check_command batcat "bat (batcat)"
+else
+  _check_fail "bat: not found on PATH"
+fi
+_bat_checked=1  # skip the generic check below
 _check_command rg "ripgrep"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -122,8 +134,8 @@ fi
 # ── Git identity ─────────────────────────────────────────────────────────────
 section "Git identity"
 
-_git_name=$(git config --global user.name 2>/dev/null || true)
-_git_email=$(git config --global user.email 2>/dev/null || true)
+_git_name=$(git config user.name 2>/dev/null || true)
+_git_email=$(git config user.email 2>/dev/null || true)
 
 if [[ -n "$_git_name" ]]; then
   _check_pass "user.name: $_git_name"

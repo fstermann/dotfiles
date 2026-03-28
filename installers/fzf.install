@@ -9,5 +9,11 @@ else
         git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
     fi
     "$HOME/.fzf/install" --bin
-    sudo apt-get install -y bat ripgrep
+    # Only install if not already present (e.g. pre-installed in Docker)
+    if ! command -v batcat &>/dev/null && ! command -v bat &>/dev/null; then
+        sudo apt-get install -y bat
+    fi
+    if ! command -v rg &>/dev/null; then
+        sudo apt-get install -y ripgrep
+    fi
 fi
