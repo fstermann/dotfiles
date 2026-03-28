@@ -2,9 +2,14 @@
 
 THEME="$(dirname "${BASH_SOURCE[0]}")/Monokai Pro (Filter Octagon).terminal"
 
-open "$THEME"
-sleep 2
-osascript -e 'tell application "Terminal"
-    set default settings to settings set "Monokai Pro (Filter Octagon)"
-    set startup settings to settings set "Monokai Pro (Filter Octagon)"
-end tell'
+# Skip if the theme is already the default
+if defaults read com.apple.Terminal "Default Window Settings" 2>/dev/null | grep -q "Monokai Pro (Filter Octagon)"; then
+    echo "Terminal theme is already set"
+else
+    open "$THEME"
+    sleep 2
+    osascript -e 'tell application "Terminal"
+        set default settings to settings set "Monokai Pro (Filter Octagon)"
+        set startup settings to settings set "Monokai Pro (Filter Octagon)"
+    end tell'
+fi

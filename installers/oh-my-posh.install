@@ -1,12 +1,28 @@
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install jandedobbeleer/oh-my-posh/oh-my-posh
-    oh-my-posh font install meslo
+if command -v oh-my-posh &>/dev/null; then
+    echo "oh-my-posh is already installed"
 else
-    # Download first so curl's exit code is checked independently of bash.
-    # -f fails on HTTP errors, -S shows errors despite -s, -L follows redirects.
-    if install_script=$(curl -fsSL https://ohmyposh.dev/install.sh) && bash -s <<< "$install_script"; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        brew install jandedobbeleer/oh-my-posh/oh-my-posh
+    else
+        # Download first so curl's exit code is checked independently of bash.
+        # -f fails on HTTP errors, -S shows errors despite -s, -L follows redirects.
+        if ! install_script=$(curl -fsSL https://ohmyposh.dev/install.sh) || ! bash -s <<< "$install_script"; then
+            echo "Warning: oh-my-posh install failed — the fallback prompt will be used instead"
+        fi
+    fi
+fi
+
+# Install Meslo font if not already present
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    if ! ls ~/Library/Fonts/Meslo*.ttf &>/dev/null && ! ls /Library/Fonts/Meslo*.ttf &>/dev/null; then
         oh-my-posh font install meslo
     else
-        echo "Warning: oh-my-posh install failed — the fallback prompt will be used instead"
+        echo "Meslo font is already installed"
+    fi
+else
+    if ! fc-list 2>/dev/null | grep -qi meslo; then
+        command -v oh-my-posh &>/dev/null && oh-my-posh font install meslo
+    else
+        echo "Meslo font is already installed"
     fi
 fi
