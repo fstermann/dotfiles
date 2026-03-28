@@ -61,7 +61,7 @@ else
     _dry_step "Clone dotfiles repository"
   else
     step "Clone dotfiles repository" \
-      git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || (( _errors++ ))
+      git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || (( _errors++ )) || true
   fi
 fi
 
@@ -78,9 +78,9 @@ else
   if [[ $DRY_RUN -eq 1 ]]; then
     _dry_step "Install GNU Stow"
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    step "Install GNU Stow" brew install stow || (( _errors++ ))
+    step "Install GNU Stow" brew install stow || (( _errors++ )) || true
   else
-    step "Install GNU Stow" sudo apt-get install -y stow || (( _errors++ ))
+    step "Install GNU Stow" sudo apt-get install -y stow || (( _errors++ )) || true
   fi
 fi
 
@@ -106,7 +106,7 @@ if [[ $DRY_RUN -eq 1 ]]; then
       fi
     done
   }
-  step "Check for conflicting files" _dry_report_conflicts || (( _errors++ ))
+  step "Check for conflicting files" _dry_report_conflicts || (( _errors++ )) || true
 else
   mkdir -p "$BACKUP_DIR"
 
@@ -128,7 +128,7 @@ else
     done
   }
 
-  step "Back up conflicting files" _backup_conflicts || (( _errors++ ))
+  step "Back up conflicting files" _backup_conflicts || (( _errors++ )) || true
 fi
 
 # ── Stow packages ─────────────────────────────────────────────────────────────
@@ -136,10 +136,10 @@ section "Symlink"
 
 if [[ $DRY_RUN -eq 1 ]]; then
   step "Simulate stow" \
-    stow --no-folding --simulate -v -d "$DOTFILES_DIR" -t "$HOME" "${STOW_PACKAGES[@]}" || (( _errors++ ))
+    stow --no-folding --simulate -v -d "$DOTFILES_DIR" -t "$HOME" "${STOW_PACKAGES[@]}" || (( _errors++ )) || true
 else
   step "Stow dotfile packages" \
-    stow --no-folding -d "$DOTFILES_DIR" -t "$HOME" "${STOW_PACKAGES[@]}" || (( _errors++ ))
+    stow --no-folding -d "$DOTFILES_DIR" -t "$HOME" "${STOW_PACKAGES[@]}" || (( _errors++ )) || true
 fi
 
 # ── Platform packages ─────────────────────────────────────────────────────────
@@ -151,7 +151,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   elif [[ $DRY_RUN -eq 1 ]]; then
     _dry_step "Install Homebrew"
   else
-    source "$DOTFILES_DIR/installers/brew.install" || (( _errors++ ))
+    source "$DOTFILES_DIR/installers/brew.install" || (( _errors++ )) || true
   fi
   if [[ $DRY_RUN -eq 1 ]]; then
     _dry_step "Configure macOS settings"
@@ -159,10 +159,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   else
     # shellcheck source=installers/macos.install
     step "Configure macOS settings" \
-      source "$DOTFILES_DIR/installers/macos.install" || (( _errors++ ))
+      source "$DOTFILES_DIR/installers/macos.install" || (( _errors++ )) || true
     # shellcheck source=installers/terminal.install
     step "Configure macOS terminal settings" \
-      source "$DOTFILES_DIR/installers/terminal.install" || (( _errors++ ))
+      source "$DOTFILES_DIR/installers/terminal.install" || (( _errors++ )) || true
   fi
 fi
 
@@ -174,10 +174,10 @@ if [[ $DRY_RUN -eq 1 ]]; then
 else
   # shellcheck source=installers/zsh.install
   step "Install zsh and plugins" \
-    source "$DOTFILES_DIR/installers/zsh.install" || (( _errors++ ))
+    source "$DOTFILES_DIR/installers/zsh.install" || (( _errors++ )) || true
   # shellcheck source=installers/fzf.install
   step "Install fzf" \
-    source "$DOTFILES_DIR/installers/fzf.install" || (( _errors++ ))
+    source "$DOTFILES_DIR/installers/fzf.install" || (( _errors++ )) || true
 fi
 
 # ── Local config stubs ────────────────────────────────────────────────────────
@@ -187,7 +187,7 @@ if [[ $DRY_RUN -eq 1 ]]; then
 else
   # shellcheck source=installers/local.install
   step "Create .local config stubs" \
-    source "$DOTFILES_DIR/installers/local.install" || (( _errors++ ))
+    source "$DOTFILES_DIR/installers/local.install" || (( _errors++ )) || true
 fi
 
 # ── Summary ───────────────────────────────────────────────────────────────────

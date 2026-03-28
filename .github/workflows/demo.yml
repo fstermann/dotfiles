@@ -1,0 +1,63 @@
+name: Record Demo
+
+on:
+    pull_request:
+        types: [opened, synchronize, edited]
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    record:
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            contains(github.event.pull_request.title, '[demo]')
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: Install system dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y stow zsh bat ripgrep unzip ffmpeg ttyd
+
+            - name: Install VHS
+              run: |
+                  sudo mkdir -p /etc/apt/keyrings
+                  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+                  echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+                  sudo apt-get update && sudo apt-get install -y vhs
+
+            - name: Install dotfiles
+              run: bash install.sh
+
+            - name: Install oh-my-posh
+              run: |
+                  curl -s https://ohmyposh.dev/install.sh | sudo bash -s -- -d /usr/local/bin
+
+                  # Install MesloLGS Nerd Font to user font dir
+                  mkdir -p ~/.local/share/fonts
+                  oh-my-posh font install meslo --headless
+                  fc-cache -f
+
+            - name: Prepare dirty git state
+              run: bash .demo/demo-setup.sh
+              env:
+                  GIT_CONFIG_COUNT: 2
+                  GIT_CONFIG_KEY_0: user.name
+                  GIT_CONFIG_VALUE_0: user
+                  GIT_CONFIG_KEY_1: user.email
+                  GIT_CONFIG_VALUE_1: user@example.com
+
+            - name: Record demo GIF
+              run: vhs .demo/demo.tape
+
+            - name: Commit demo GIF
+              uses: stefanzweifel/git-auto-commit-action@v5
+              with:
+                  commit_message: "docs: update demo.gif [skip ci]"
+                  file_pattern: .demo/demo.gif
