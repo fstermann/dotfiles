@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zsh \
     bat \
     ripgrep \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user (stow and dotfiles assume a real $HOME)
