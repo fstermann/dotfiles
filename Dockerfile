@@ -34,6 +34,7 @@ RUN bash /home/tester/.dotfiles/install.sh
 # Verify key tools are on PATH
 RUN bash -c '\
     set -e; \
+    export PATH="$HOME/.fzf/bin:$HOME/.local/bin:$PATH"; \
     command -v stow; \
     command -v zsh; \
     command -v fzf; \
