@@ -1,7 +1,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install fzf
-    brew install bat
-    brew install ripgrep
+    brew list fzf &>/dev/null || brew install fzf
+    brew list bat &>/dev/null || brew install bat
+    brew list ripgrep &>/dev/null || brew install ripgrep
 else
     # git clone gives a consistent fzf version on any Debian/Ubuntu release;
     # --bin installs only the binary (shell integration is handled by fzf.zsh).

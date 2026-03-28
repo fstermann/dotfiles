@@ -1,13 +1,13 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install zsh
+    brew list zsh &>/dev/null || brew install zsh
 
-    brew install zsh-syntax-highlighting
+    brew list zsh-syntax-highlighting &>/dev/null || brew install zsh-syntax-highlighting
     # brew install zsh-autocomplete
-    brew install zsh-autosuggestions
-    brew install zsh-completions
-    brew install fzf-tab
+    brew list zsh-autosuggestions &>/dev/null || brew install zsh-autosuggestions
+    brew list zsh-completions &>/dev/null || brew install zsh-completions
+    brew list fzf-tab &>/dev/null || brew install fzf-tab
 else
-    apt install zsh
+    command -v zsh &>/dev/null || sudo apt-get install -y zsh
 
     mkdir -p ~/.config/zsh/plugins
     # git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ~/.config/zsh/plugins/zsh-autocomplete
