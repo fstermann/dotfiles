@@ -49,7 +49,7 @@ Enter
 Sleep 2s
 
 # Show a config file with bat
-Type "bat --style=header,grid ~/.config/fzf/fzf.zsh"
+Type "bat --paging=never --style=header,grid ~/.config/fzf/fzf.zsh"
 Sleep 500ms
 Enter
 Sleep 3s
