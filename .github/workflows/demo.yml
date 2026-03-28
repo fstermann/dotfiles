@@ -32,8 +32,9 @@ jobs:
               run: |
                   curl -s https://ohmyposh.dev/install.sh | sudo bash -s -- -d /usr/local/bin
 
-                  # Install MesloLGS Nerd Font
-                  oh-my-posh font install meslo --user
+                  # Install MesloLGS Nerd Font to user font dir
+                  mkdir -p ~/.local/share/fonts
+                  oh-my-posh font install meslo --headless
                   fc-cache -f
 
             - name: Prepare dirty git state
