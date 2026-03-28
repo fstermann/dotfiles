@@ -1,11 +1,17 @@
 FROM ubuntu:24.04
 
 # Minimal deps for a headless install test
+# Pre-install everything the installer scripts would apt-get install so that
+# the package-list cache (removed for image size) is not needed at runtime.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      curl \
-      git \
-      sudo \
-      ca-certificates \
+    curl \
+    git \
+    sudo \
+    ca-certificates \
+    stow \
+    zsh \
+    bat \
+    ripgrep \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user (stow and dotfiles assume a real $HOME)
@@ -26,12 +32,12 @@ RUN bash /home/tester/.dotfiles/install.sh
 
 # Verify key tools are on PATH
 RUN bash -c '\
-  set -e; \
-  command -v stow; \
-  command -v zsh; \
-  command -v fzf; \
-  command -v bat || command -v batcat; \
-  command -v rg; \
-  test -L "$HOME/.zshrc"; \
-  test -L "$HOME/.zprofile"; \
-  echo "All checks passed"'
+    set -e; \
+    command -v stow; \
+    command -v zsh; \
+    command -v fzf; \
+    command -v bat || command -v batcat; \
+    command -v rg; \
+    test -L "$HOME/.zshrc"; \
+    test -L "$HOME/.zprofile"; \
+    echo "All checks passed"'

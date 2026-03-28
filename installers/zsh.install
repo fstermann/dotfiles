@@ -7,7 +7,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install zsh-completions
     brew install fzf-tab
 else
-    apt install zsh
+    command -v zsh &>/dev/null || sudo apt-get install -y zsh
 
     mkdir -p ~/.config/zsh/plugins
     # git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ~/.config/zsh/plugins/zsh-autocomplete
