@@ -2,6 +2,8 @@
 
 Personal dotfiles managed with **[GNU Stow](https://www.gnu.org/software/stow/)** — each tool's config lives in its own package directory and gets symlinked into `$HOME`.
 
+![Terminal demo](.demo/demo.gif)
+
 ## How it works
 
 The repo lives at `~/.dotfiles/`. Each top-level directory is a *stow package* whose internal structure mirrors `$HOME`. Running `stow <package>` creates symlinks from `$HOME` into the repo:

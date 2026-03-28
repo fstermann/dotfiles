@@ -1,0 +1,53 @@
+name: Record Demo
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - ".demo/**"
+            - "oh-my-posh/**"
+            - "zsh/**"
+            - "fzf/**"
+            - "installers/doctor.sh"
+            - "installers/lib/ui.sh"
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    record:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install dotfiles
+              run: |
+                  # Install stow and zsh
+                  sudo apt-get update
+                  sudo apt-get install -y stow zsh bat ripgrep unzip
+
+                  # Install oh-my-posh
+                  curl -s https://ohmyposh.dev/install.sh | bash -s
+
+                  # Install MesloLGS Nerd Font
+                  mkdir -p ~/.local/share/fonts
+                  oh-my-posh font install meslo
+                  fc-cache -f
+
+                  # Run dotfiles install
+                  bash install.sh
+
+            - name: Prepare dirty git state
+              run: bash .demo/demo-setup.sh
+
+            - name: Record demo GIF
+              uses: charmbracelet/vhs-action@v2
+              with:
+                  path: .demo/demo.tape
+
+            - name: Commit demo GIF
+              uses: stefanzweifel/git-auto-commit-action@v5
+              with:
+                  commit_message: "docs: update demo.gif [skip ci]"
+                  file_pattern: .demo/demo.gif
