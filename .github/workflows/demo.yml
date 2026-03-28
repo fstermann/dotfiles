@@ -1,15 +1,9 @@
 name: Record Demo
 
 on:
-    push:
+    pull_request:
+        types: [opened, synchronize, edited]
         branches: [main]
-        paths:
-            - ".demo/**"
-            - "oh-my-posh/**"
-            - "zsh/**"
-            - "fzf/**"
-            - "installers/doctor.sh"
-            - "installers/lib/ui.sh"
     workflow_dispatch:
 
 permissions:
@@ -17,9 +11,14 @@ permissions:
 
 jobs:
     record:
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            contains(github.event.pull_request.title, '[demo]')
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.head_ref }}
 
             - name: Install dotfiles
               run: |
@@ -40,6 +39,12 @@ jobs:
 
             - name: Prepare dirty git state
               run: bash .demo/demo-setup.sh
+              env:
+                  GIT_CONFIG_COUNT: 2
+                  GIT_CONFIG_KEY_0: user.name
+                  GIT_CONFIG_VALUE_0: user
+                  GIT_CONFIG_KEY_1: user.email
+                  GIT_CONFIG_VALUE_1: user@example.com
 
             - name: Record demo GIF
               uses: charmbracelet/vhs-action@v2

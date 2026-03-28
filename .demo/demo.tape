@@ -26,7 +26,8 @@ Sleep 2s
 Type "cd ~/.dotfiles"
 Enter
 Sleep 500ms
-Type "git config user.name 'user' && git config user.email 'user@example.com'"
+# Override git identity via env vars (doesn't touch real config)
+Type "export GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=user.name GIT_CONFIG_VALUE_0=user GIT_CONFIG_KEY_1=user.email GIT_CONFIG_VALUE_1=user@example.com"
 Enter
 Sleep 1s
 Show

@@ -8,10 +8,6 @@ set -e
 DOTFILES_DIR="$HOME/.dotfiles"
 cd "$DOTFILES_DIR"
 
-# Set generic git identity for the recording (avoids leaking real name/email)
-git config user.name  "user" 2>/dev/null || true
-git config user.email "user@example.com" 2>/dev/null || true
-
 # Only create fake changes if the tree is clean (i.e. in CI)
 if git diff --quiet && git diff --cached --quiet 2>/dev/null; then
   echo "# wip" >> README.md
