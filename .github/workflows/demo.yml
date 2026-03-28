@@ -20,22 +20,21 @@ jobs:
               with:
                   ref: ${{ github.head_ref }}
 
-            - name: Install dotfiles
+            - name: Install system dependencies
               run: |
-                  # Install stow and zsh
                   sudo apt-get update
                   sudo apt-get install -y stow zsh bat ripgrep unzip
 
-                  # Install oh-my-posh
-                  curl -s https://ohmyposh.dev/install.sh | bash -s
+            - name: Install dotfiles
+              run: bash install.sh
 
-                  # Install MesloLGS Nerd Font
-                  mkdir -p ~/.local/share/fonts
-                  oh-my-posh font install meslo
+            - name: Install oh-my-posh
+              run: |
+                  curl -s https://ohmyposh.dev/install.sh | sudo bash -s
+
+                  # Install MesloLGS Nerd Font (needs sudo for system font dir)
+                  sudo oh-my-posh font install meslo
                   fc-cache -f
-
-                  # Run dotfiles install
-                  bash install.sh
 
             - name: Prepare dirty git state
               run: bash .demo/demo-setup.sh
