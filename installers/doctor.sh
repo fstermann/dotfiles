@@ -134,8 +134,8 @@ fi
 # ── Git identity ─────────────────────────────────────────────────────────────
 section "Git identity"
 
-_git_name=$(git config --global user.name 2>/dev/null || true)
-_git_email=$(git config --global user.email 2>/dev/null || true)
+_git_name=$(git config user.name 2>/dev/null || true)
+_git_email=$(git config user.email 2>/dev/null || true)
 
 if [[ -n "$_git_name" ]]; then
   _check_pass "user.name: $_git_name"
