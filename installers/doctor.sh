@@ -10,6 +10,9 @@ set -e
 DOTFILES_DIR="$HOME/.dotfiles"
 STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
 
+# Ensure tools installed outside system paths are discoverable
+export PATH="$HOME/.fzf/bin:$HOME/.local/bin:$PATH"
+
 # shellcheck source=lib/ui.sh
 source "$DOTFILES_DIR/installers/lib/ui.sh"
 
