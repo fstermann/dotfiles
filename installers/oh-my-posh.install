@@ -5,7 +5,7 @@ else
     # Download first so curl's exit code is checked independently of bash.
     # -f fails on HTTP errors, -S shows errors despite -s, -L follows redirects.
     if install_script=$(curl -fsSL https://ohmyposh.dev/install.sh) && bash -s <<< "$install_script"; then
-        oh-my-posh font install meslo
+        oh-my-posh font install meslo || echo "Warning: font install failed (headless?) — skipping"
     else
         echo "Warning: oh-my-posh install failed — the fallback prompt will be used instead"
     fi
