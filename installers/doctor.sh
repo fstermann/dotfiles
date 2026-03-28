@@ -31,8 +31,8 @@ _check_symlink() {
   if [[ -L "$target" ]]; then
     local actual resolved
     actual=$(readlink "$target")
-    # Resolve relative symlinks to absolute paths for comparison
-    resolved=$(cd "$(dirname "$target")" && realpath -m "$actual" 2>/dev/null || echo "$actual")
+    # Resolve relative symlinks to absolute paths portably (macOS + Linux)
+    resolved=$(cd "$(dirname "$target")" && cd "$(dirname "$actual")" && echo "$PWD/$(basename "$actual")")
     if [[ "$resolved" == "$DOTFILES_DIR/"* ]]; then
       _check_pass "$target → $actual"
     else
@@ -51,7 +51,7 @@ _check_symlink "$HOME/.gitconfig"
 _check_symlink "$HOME/.config/fzf/fzf.zsh"
 _check_symlink "$HOME/.config/zsh/oh-my-posh/oh-my-posh.zsh"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  _check_symlink "$HOME/.config/macos"
+  _check_symlink "$HOME/.config/macos/Monokai Pro (Filter Octagon).terminal"
 fi
 _check_symlink "$HOME/.claude/settings.json"
 
