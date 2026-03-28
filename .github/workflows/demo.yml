@@ -30,10 +30,10 @@ jobs:
 
             - name: Install oh-my-posh
               run: |
-                  curl -s https://ohmyposh.dev/install.sh | sudo bash -s
+                  curl -s https://ohmyposh.dev/install.sh | sudo bash -s -- -d /usr/local/bin
 
-                  # Install MesloLGS Nerd Font (needs sudo for system font dir)
-                  sudo oh-my-posh font install meslo
+                  # Install MesloLGS Nerd Font
+                  oh-my-posh font install meslo --user
                   fc-cache -f
 
             - name: Prepare dirty git state
