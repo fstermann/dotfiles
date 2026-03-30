@@ -58,9 +58,9 @@ alignment = "left"
 type = "prompt"
 
   [[blocks.segments]]
-  foreground = "#D08770"
+  foreground = "#6C6C6C"
   style = "plain"
-  template = "󰯉 {{ .Model.DisplayName }} {{ .TokenUsagePercent.GaugeUsed }} {{ .FormattedCost }} "
+  template = "󰯉 {{ .Model.DisplayName }} <#A3BE8C>{{ .TokenUsagePercent.GaugeUsed }}</> <#BF616A>{{ .FormattedCost }}</> "
   type = "claude"
 
 [[blocks]]
@@ -72,7 +72,7 @@ type = "prompt"
   foreground = "#B48EAD"
   foreground_templates = [ "{{ if gt .Code 0 }}#BF616A{{ end }}" ]
   style = "plain"
-  template = "❯ "
+  template = "{{ if not .Env.CLAUDE_CODE_SSE_PORT }}❯ {{ end }}"
   type = "status"
 
     [blocks.segments.options]
@@ -81,4 +81,4 @@ type = "prompt"
 [transient_prompt]
 foreground = "#B48EAD"
 foreground_templates = [ "{{ if gt .Code 0 }}#BF616A{{ end }}" ]
-template = "❯ "
+template = "{{ if not .Env.CLAUDE_CODE_SSE_PORT }}❯ {{ end }}"
