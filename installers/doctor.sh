@@ -56,7 +56,7 @@ _check_symlink "$HOME/.config/zsh/oh-my-posh/oh-my-posh.zsh"
 if [[ "$OSTYPE" == "darwin"* ]]; then
   _check_symlink "$HOME/.config/macos/Monokai Pro (Filter Octagon).terminal"
 fi
-_check_symlink "$HOME/.claude/settings.json"
+_check_symlink "$HOME/.claude/settings.local.json"
 
 # ── Tools on PATH ────────────────────────────────────────────────────────────
 section "Tools"
