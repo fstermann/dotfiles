@@ -13,6 +13,7 @@ Options:
   -h, --help      Show this help message and exit.
   --only-added    Only commit files that have been added to the staging area.
   --no-verify     Skip commit message validation.
+  --no-issue      Skip issue creation and search.
 
 Requirements:
   A valid commit message must be provided. The format should follow conventional commits:
@@ -62,6 +63,14 @@ else
     no_verify=false
 fi
 
+# check if contains --no-issue option
+if [[ "$title" == *"--no-issue"* ]]; then
+    no_issue=true
+    title="${title//--no-issue/}"  # Remove the option from the title
+else
+    no_issue=false
+fi
+
 # Clean up any extra spaces in title
 title=$(echo "$title" | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
 
@@ -102,7 +111,10 @@ issue_subject=$(echo "$title" | sed 's/^[^:]*:[[:space:]]*//')
 issue_subject_cap="$(echo "${issue_subject:0:1}" | tr '[:lower:]' '[:upper:]')${issue_subject:1}"
 issue_title="$prefix_cap: $issue_subject_cap"
 
-read -p "Are you sure you want to create a new PR with title '$title'?"$'\n'"$add_info $current_added_info"$'\n'"An issue '$issue_title' will be found or created."$'\n'"Create the PR? [y/N] " -n 1 -r
+if [[ "$no_issue" != true ]]; then
+    issue_prompt=$'\n'"An issue '$issue_title' will be found or created."
+fi
+read -p "Are you sure you want to create a new PR with title '$title'?"$'\n'"$add_info $current_added_info$issue_prompt"$'\n'"Create the PR? [y/N] " -n 1 -r
 echo # move to a new line
 
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -111,7 +123,9 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 # Find or create the issue
-if [ "$remote_type" = "github" ]; then
+if [ "$no_issue" = true ]; then
+    issue_number=""
+elif [ "$remote_type" = "github" ]; then
     # Ensure the label exists (--force creates it if missing, updates if present)
     gh label create "$prefix" --color "#0075ca" --force 2>/dev/null || true
 
@@ -161,11 +175,17 @@ fi
 
 git diff-index --quiet HEAD || git commit -m "$title"
 
+if [ -n "$issue_number" ]; then
+    pr_body="Closes #$issue_number"
+else
+    pr_body=""
+fi
+
 if [ "$remote_type" = "github" ]; then
     git push $push_option
-    gh pr create --title "$title" --body "Closes #$issue_number" --label "$prefix"
+    gh pr create --title "$title" --body "$pr_body" --label "$prefix"
 else
-    git push $push_option -o merge_request.create -o merge_request.title="$title" -o merge_request.description="Closes #$issue_number" -o merge_request.label="$prefix"
+    git push $push_option -o merge_request.create -o merge_request.title="$title" -o merge_request.description="$pr_body" -o merge_request.label="$prefix"
 fi
 
 echo "Branch '$branch' created and pushed to origin."
