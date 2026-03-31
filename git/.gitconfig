@@ -1,6 +1,6 @@
 [alias]
-	pr = !sh ~/.config/git/.git-pr.sh
-	remerge = !sh ~/.config/git/.git-remerge.sh
+	pr = !bash ~/.config/git/.git-pr.sh
+	remerge = !bash ~/.config/git/.git-remerge.sh
 [include]
     path = ~/.gitconfig.local
 [pull]
