@@ -99,7 +99,7 @@ fi
 
 # Detect remote type (GitHub vs GitLab)
 remote_url=$(git remote get-url origin 2>/dev/null || echo "")
-if [[ "$remote_url" == *"github.com"* ]]; then
+if [[ "$remote_url" == *"github"* ]]; then
     remote_type="github"
 else
     remote_type="gitlab"
