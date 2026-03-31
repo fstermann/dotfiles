@@ -55,20 +55,10 @@ type = "prompt"
 
 [[blocks]]
 alignment = "left"
-newline = true
 type = "prompt"
 
   [[blocks.segments]]
-  foreground = "#B48EAD"
-  foreground_templates = [ "{{ if gt .Code 0 }}#BF616A{{ end }}" ]
+  foreground = "#6C6C6C"
   style = "plain"
-  template = "❯ "
-  type = "status"
-
-    [blocks.segments.options]
-    always_enabled = true
-
-[transient_prompt]
-foreground = "#B48EAD"
-foreground_templates = [ "{{ if gt .Code 0 }}#BF616A{{ end }}" ]
-template = "❯ "
+  template = "• [{{ .Model.DisplayName }}] <#A3BE8C>{{ .TokenUsagePercent.GaugeUsed }}</> <#BF616A>{{ .FormattedCost }}</> "
+  type = "claude"

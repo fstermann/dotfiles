@@ -1,6 +1,6 @@
 #!/bin/zsh
 if command -v oh-my-posh &>/dev/null; then
-    oh-my-posh claude --config ~/.config/zsh/oh-my-posh/pure.toml
+    oh-my-posh claude --config ~/.config/zsh/oh-my-posh/pure.claude.toml
 else
     input=$(cat)
 
