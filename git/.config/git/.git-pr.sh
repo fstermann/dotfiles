@@ -185,7 +185,8 @@ if [ "$remote_type" = "github" ]; then
     git push $push_option
     gh pr create --title "$title" --body "$pr_body" --label "$prefix"
 else
-    git push $push_option -o merge_request.create -o merge_request.title="$title" -o merge_request.description="$pr_body" -o merge_request.label="$prefix"
+    git push $push_option
+    glab mr create --title "$title" --description "$pr_body" --label "$prefix"
 fi
 
 echo "Branch '$branch' created and pushed to origin."
