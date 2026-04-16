@@ -125,6 +125,13 @@ fi
 # Find or create the issue
 if [ "$no_issue" = true ]; then
     issue_number=""
+else
+    read -p "Enter issue number (leave blank to find or create one): " issue_input
+    issue_number=$(echo "$issue_input" | grep -o '[0-9]*')
+fi
+
+if [ -n "$issue_number" ]; then
+    echo "Using issue #$issue_number"
 elif [ "$remote_type" = "github" ]; then
     # Ensure the label exists (--force creates it if missing, updates if present)
     gh label create "$prefix" --color "#0075ca" --force 2>/dev/null || true
@@ -144,15 +151,15 @@ else
     # Ensure the label exists
     glab label create --name "$prefix" --color "#0075ca" 2>/dev/null || true
 
-    existing_issue=$(glab issue list --search "$issue_title" -F json 2>/dev/null \
+    existing_issue=$(glab issue list --search "$issue_title" -O json 2>/dev/null \
         | jq -r --arg t "$issue_title" '.[] | select(.title == $t) | .iid' | head -1)
     if [ -n "$existing_issue" ]; then
         issue_number="$existing_issue"
         echo "Using existing issue #$issue_number: $issue_title"
     else
         echo "Creating issue: $issue_title"
-        issue_url=$(glab issue create --title "$issue_title" --description "" --label "$prefix" 2>&1 | grep "https://")
-        issue_number=$(echo "$issue_url" | grep -o '/issues/[0-9]*' | grep -o '[0-9]*')
+        issue_output=$(glab issue create --title "$issue_title" --description "" --label "$prefix" 2>&1)
+        issue_number=$(echo "$issue_output" | grep -o '#[0-9]*' | grep -o '[0-9]*' | head -1)
         echo "Created issue #$issue_number"
     fi
 fi
