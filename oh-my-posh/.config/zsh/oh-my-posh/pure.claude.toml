@@ -60,5 +60,5 @@ type = "prompt"
   [[blocks.segments]]
   foreground = "#6C6C6C"
   style = "plain"
-  template = "• [{{ .Model.DisplayName }}] <#A3BE8C>{{ .TokenUsagePercent.String }}%</> <#BF616A>{{ .FormattedCost }}</> "
+  template = "\n {{ .Model.DisplayName }} • <#A3BE8C>\uf075 {{ .TokenUsagePercent.String }}%</> <#BF616A>{{ .FormattedCost }}</>{{ if .RateLimits }} •{{ if .RateLimits.FiveHour.UsedPercentage }} <#EBCB8B>\uf017 {{ .FiveHourUsage.String }}% <#F5E4BB>↻ {{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</></>{{ end }}{{ if .RateLimits.SevenDay.UsedPercentage }} <#B48EAD>\uf073 {{ .SevenDayUsage.String }}% <#D4BFCF>↻ {{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</></>{{ end }}{{ end }} "
   type = "claude"
