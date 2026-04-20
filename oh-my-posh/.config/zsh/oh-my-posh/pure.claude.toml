@@ -72,13 +72,13 @@ type = "prompt"
 {{ if .RateLimits.FiveHour.UsedPercentage }} \
 <#EBCB8B>\uf017 {{ .FiveHourUsage.String }}%</> \
 {{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
-{{ if gt $fhDelta 0 }}<#BF616A>↑</>{{ else }}<#A3BE8C>↓</>{{ end }}\
+{{ if gt $fhDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $fhDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#6C6C6C>≈</>{{ end }} \
 <#F5E4BB>{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</>\
 {{ end }}\
 {{ if .RateLimits.SevenDay.UsedPercentage }} • \
 <#B48EAD>\uf073 {{ .SevenDayUsage.String }}%</> \
 {{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
-{{ if gt $wkDelta 0 }}<#BF616A>↑</>{{ else }}<#A3BE8C>↓</>{{ end }}\
+{{ if gt $wkDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $wkDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#6C6C6C>≈</>{{ end }} \
 <#D4BFCF>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\
 {{ end }}\
 {{ end }} \
