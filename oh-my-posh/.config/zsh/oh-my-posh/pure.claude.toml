@@ -60,5 +60,27 @@ type = "prompt"
   [[blocks.segments]]
   foreground = "#6C6C6C"
   style = "plain"
-  template = "\n {{ .Model.DisplayName }} • <#A3BE8C>\uf075 {{ .TokenUsagePercent.String }}%</> <#BF616A>{{ .FormattedCost }}</>{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} <#A3BE8C>+{{ .Cost.TotalLinesAdded }}</> <#BF616A>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}{{ if .RateLimits }} •{{ if .RateLimits.FiveHour.UsedPercentage }} <#EBCB8B>\uf017 {{ .FiveHourUsage.String }}% <#F5E4BB>↻ {{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</></>{{ end }}{{ if .RateLimits.SevenDay.UsedPercentage }} <#B48EAD>\uf073 {{ .SevenDayUsage.String }}% <#D4BFCF>↻ {{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</></>{{ end }}{{ end }} "
+  template = """
+\n {{ .Model.DisplayName }} \
+• <#A3BE8C>\uf075 {{ .TokenUsagePercent.String }}%</> \
+<#BF616A>{{ .FormattedCost }}</>\
+{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} \
+<#A3BE8C>+{{ .Cost.TotalLinesAdded }}</> \
+<#BF616A>-{{ .Cost.TotalLinesRemoved }}</>\
+{{ end }}\
+{{ if .RateLimits }} •\
+{{ if .RateLimits.FiveHour.UsedPercentage }} \
+<#EBCB8B>\uf017 {{ .FiveHourUsage.String }}%</> \
+{{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
+{{ if gt $fhDelta 0 }}<#BF616A>↑</>{{ else }}<#A3BE8C>↓</>{{ end }}\
+<#F5E4BB>{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</>\
+{{ end }}\
+{{ if .RateLimits.SevenDay.UsedPercentage }} • \
+<#B48EAD>\uf073 {{ .SevenDayUsage.String }}%</> \
+{{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
+{{ if gt $wkDelta 0 }}<#BF616A>↑</>{{ else }}<#A3BE8C>↓</>{{ end }}\
+<#D4BFCF>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\
+{{ end }}\
+{{ end }} \
+"""
   type = "claude"
