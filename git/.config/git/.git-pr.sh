@@ -180,7 +180,7 @@ if [ "$only_added" = false ]; then
     git add .
 fi
 
-git diff-index --quiet HEAD || git commit -m "$title"
+git diff-index --quiet HEAD || git commit -m "$title" ${no_verify:+--no-verify}
 
 if [ -n "$issue_number" ]; then
     pr_body="Closes #$issue_number"
