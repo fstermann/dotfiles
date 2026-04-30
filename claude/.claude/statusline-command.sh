@@ -1,6 +1,17 @@
 #!/bin/zsh
 if command -v oh-my-posh &>/dev/null; then
-    oh-my-posh claude --config ~/.config/zsh/oh-my-posh/pure.claude.toml
+    input=$(cat)
+    cwd=$(echo "$input" | jq -r '.workspace.current_dir // empty')
+    for f in \
+        "$cwd/.claude/settings.local.json" \
+        "$cwd/.claude/settings.json" \
+        ~/.claude/settings.local.json \
+        ~/.claude/settings.json; do
+        [ -f "$f" ] || continue
+        level=$(jq -r '.effortLevel // empty' "$f" 2>/dev/null)
+        [ -n "$level" ] && export CLAUDE_EFFORT="$level" && break
+    done
+    echo "$input" | oh-my-posh claude --config ~/.config/zsh/oh-my-posh/pure.claude.toml
 else
     input=$(cat)
 

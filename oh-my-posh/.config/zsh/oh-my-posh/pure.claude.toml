@@ -62,6 +62,8 @@ type = "prompt"
   style = "plain"
   template = """
 \n {{ .Model.DisplayName }} \
+{{ if .Env.CLAUDE_EFFORT }}<#5E81AC>\uf0e7 {{ .Env.CLAUDE_EFFORT }}</> \
+{{ end }}\
 • <#A3BE8C>\uf075 {{ .TokenUsagePercent.String }}%</> \
 <#BF616A>{{ .FormattedCost }}</>\
 {{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} \
