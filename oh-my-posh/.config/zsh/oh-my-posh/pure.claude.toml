@@ -54,36 +54,71 @@ type = "prompt"
     [blocks.segments.options]
     style = "austin"
 
+# ─── Claude Code statusline (powerline pills) ───────────────────────────
+# Each pill is its own segment with diamond caps. Order matters.
+
 [[blocks]]
 alignment = "left"
+newline = true
 type = "prompt"
 
+  # Pill 1 — Model
   [[blocks.segments]]
-  foreground = "#6C6C6C"
-  style = "plain"
+  type = "claude"
+  style = "diamond"
+  leading_diamond = ""
+  trailing_diamond = ""
+  background = "#5a5278"
+  foreground = "#d8cdf0"
+  template = " {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} <#b8a8e8>󰣖 {{ .Env.CLAUDE_EFFORT }}</>{{ end }}"
+
+  # Pill 2 — Session: context %, cost, lines
+  [[blocks.segments]]
+  type = "claude"
+  style = "diamond"
+  leading_diamond = " "
+  trailing_diamond = ""
+  background = "#4a5a72"
+  foreground = "#cbd9ea"
+  template = "󰻞 {{ .TokenUsagePercent.String }}% <#BF616A>{{ .FormattedCost }}</>{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} <#A3BE8C>+{{ .Cost.TotalLinesAdded }}</> <#BF616A>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}"
+
+  # Pill 3 — 5-hour rate limit
+  [[blocks.segments]]
+  type = "claude"
+  style = "diamond"
+  leading_diamond = " "
+  trailing_diamond = ""
+  background = "#5d5840"
+  foreground = "#e8d9a8"
   template = """
-\n {{ .Model.DisplayName }} \
-{{ if .Env.CLAUDE_EFFORT }}<#5E81AC>\uf400 {{ .Env.CLAUDE_EFFORT }}</> \
-{{ end }}\
-• <#A3BE8C>\uf075 {{ .TokenUsagePercent.String }}%</> \
-<#BF616A>{{ .FormattedCost }}</>\
-{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} \
-<#A3BE8C>+{{ .Cost.TotalLinesAdded }}</> \
-<#BF616A>-{{ .Cost.TotalLinesRemoved }}</>\
-{{ end }}\
-{{ if .RateLimits }} •\
-{{ if .RateLimits.FiveHour.UsedPercentage }} \
-<#EBCB8B>\uf017 {{ .FiveHourUsage.String }}%</> \
+{{ if and .RateLimits .RateLimits.FiveHour.UsedPercentage }}\
+󰎰 {{ .FiveHourUsage.String }}% \
 {{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
-{{ if gt $fhDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $fhDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#6C6C6C>≈</>{{ end }} \
+{{ if gt $fhDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $fhDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#8a8268>≈</>{{ end }} \
 <#F5E4BB>{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</>\
 {{ end }}\
-{{ if .RateLimits.SevenDay.UsedPercentage }} • \
-<#B48EAD>\uf073 {{ .SevenDayUsage.String }}%</> \
-{{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
-{{ if gt $wkDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $wkDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#6C6C6C>≈</>{{ end }} \
-<#D4BFCF>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\
-{{ end }}\
-{{ end }} \
 """
+
+  # Pill 4 — 7-day rate limit
+  [[blocks.segments]]
   type = "claude"
+  style = "diamond"
+  leading_diamond = " "
+  trailing_diamond = ""
+  background = "#3f5a4f"
+  foreground = "#b3dccb"
+  template = """
+{{ if and .RateLimits .RateLimits.SevenDay.UsedPercentage }}\
+󰎸 {{ .SevenDayUsage.String }}% \
+{{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
+{{ if gt $wkDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $wkDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#6a8076>≈</>{{ end }} \
+<#C8E6D5>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\
+{{ end }}\
+"""
+
+  # Pill 5 — Clock (no background, just trailing text)
+  [[blocks.segments]]
+  type = "text"
+  style = "plain"
+  foreground = "#6C6C6C"
+  template = " {{ now.Format \"15:04\" }}"

@@ -54,6 +54,16 @@ type = "prompt"
     style = "austin"
 
 [[blocks]]
+alignment = "right"
+type = "prompt"
+
+  [[blocks.segments]]
+  foreground = "#6C6C6C"
+  style = "plain"
+  template = "{{ .CurrentDate | date \"15:04\" }}"
+  type = "time"
+
+[[blocks]]
 alignment = "left"
 newline = true
 type = "prompt"
