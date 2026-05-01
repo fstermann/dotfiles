@@ -53,6 +53,14 @@ jobs:
                   GIT_CONFIG_KEY_1: user.email
                   GIT_CONFIG_VALUE_1: user@example.com
 
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Set up mock claude (stub Anthropic API + claude code)
+              run: bash .demo/setup-claude-mock.sh
+
             - name: Record demo GIF
               run: vhs .demo/demo.tape
 

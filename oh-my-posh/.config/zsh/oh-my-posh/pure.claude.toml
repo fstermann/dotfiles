@@ -103,7 +103,7 @@ type = "prompt"
   trailing_diamond = ""
   background = "p:model-bg"
   foreground = "p:model-fg"
-  template = " {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} <p:model-accent>󰣖 {{ .Env.CLAUDE_EFFORT }}</>{{ end }}"
+  template = "󰣖 {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} <p:model-accent>{{ .Env.CLAUDE_EFFORT }}</>{{ end }}"
 
   # Pill 2 — Session: context %, cost, lines
   [[blocks.segments]]
@@ -125,7 +125,7 @@ type = "prompt"
   foreground = "p:rate5h-fg"
   template = """
 {{ if and .RateLimits .RateLimits.FiveHour.UsedPercentage }}\
-󰎰 {{ .FiveHourUsage.String }}% \
+ {{ .FiveHourUsage.String }}% \
 {{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
 {{ if gt $fhDelta 5 }}<p:rate5h-red>\U000F0907</>{{ else if lt $fhDelta -5 }}<p:rate5h-green>\U000F1677</>{{ else }}<p:rate5h-eq>≈</>{{ end }} \
 <p:rate5h-time>{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</>\
@@ -142,7 +142,7 @@ type = "prompt"
   foreground = "p:rate7d-fg"
   template = """
 {{ if and .RateLimits .RateLimits.SevenDay.UsedPercentage }}\
-󰎸 {{ .SevenDayUsage.String }}% \
+󰨳 {{ .SevenDayUsage.String }}% \
 {{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
 {{ if gt $wkDelta 5 }}<p:rate7d-red>\U000F0907</>{{ else if lt $wkDelta -5 }}<p:rate7d-green>\U000F1677</>{{ else }}<p:rate7d-eq>≈</>{{ end }} \
 <p:rate7d-time>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\

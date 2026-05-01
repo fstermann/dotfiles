@@ -37,6 +37,16 @@ Sleep 300ms
 Type "dotfiles log --oneline -5"
 Enter
 Sleep 200ms
+# Route the real `claude` binary through claude-code-router → local ollama,
+# so the demo can record an actual claude session with no network/API key.
+Type "export ANTHROPIC_BASE_URL=http://127.0.0.1:8787 ANTHROPIC_API_KEY=demo DISABLE_TELEMETRY=1"
+Enter
+Sleep 200ms
+# Source the demo shellrc which redefines `claude` to use an isolated $HOME
+# (pre-onboarded, custom-API-key pre-approved).
+Type "source /tmp/dotfiles-demo-shellrc.zsh"
+Enter
+Sleep 200ms
 Type "clear"
 Enter
 Sleep 500ms
@@ -48,7 +58,30 @@ Sleep 700ms
 Enter
 Sleep 3s
 
-# ─── 2. Recent changes via autosuggestion ───────────────────────────
+# ─── 2. Claude Code statusline ──────────────────────────────────────
+Type "clear"
+Enter
+Sleep 300ms
+Type "claude"
+Sleep 600ms
+Enter
+Sleep 5s
+# Send a tiny prompt so the statusline picks up cost / line / rate-limit data.
+Type@60ms "say hi"
+Sleep 400ms
+Enter
+Sleep 4s
+# Exit the TUI with two Ctrl+C.
+Ctrl+C
+Sleep 400ms
+Ctrl+C
+Sleep 800ms
+
+Type "clear"
+Enter
+Sleep 500ms
+
+# ─── 3. Recent changes via autosuggestion ───────────────────────────
 # Type a prefix matching seeded history; plugin shows the rest in grey.
 Type@80ms "dotfiles l"
 Sleep 500ms
@@ -62,7 +95,7 @@ Type "clear"
 Enter
 Sleep 500ms
 
-# ─── 3. fzf-tab completion with file preview on <Tab> ───────────────
+# ─── 4. fzf-tab completion with file preview on <Tab> ───────────────
 Type "cat installers/"
 Sleep 400ms
 # Tab opens the fzf-tab picker with a side-pane bat preview
