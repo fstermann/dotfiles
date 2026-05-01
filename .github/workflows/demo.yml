@@ -23,7 +23,7 @@ jobs:
             - name: Install system dependencies
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y stow zsh bat ripgrep unzip ffmpeg ttyd
+                  sudo apt-get install -y stow zsh bat ripgrep fzf jq unzip ffmpeg ttyd
 
             - name: Install VHS
               run: |
