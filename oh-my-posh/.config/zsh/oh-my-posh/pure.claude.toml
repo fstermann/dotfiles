@@ -4,18 +4,51 @@
 console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 version = 4
 
+[palette]
+red          = "#bf616a"
+green        = "#a3be8c"
+blue         = "#81a1c1"
+cyan         = "#88c0d0"
+pink         = "#ffafd7"
+gray         = "#6c6c6c"
+
+model-bg       = "#4e4a5e"
+model-fg       = "#d7d0f3"
+model-accent   = "#b5a8e8"
+model-red      = "#bf616a"
+model-green    = "#a3be8c"
+
+session-bg     = "#414e60"
+session-fg     = "#c2d8f6"
+session-red    = "#bf616a"
+session-green  = "#a3be8c"
+
+rate5h-bg      = "#534d38"
+rate5h-fg      = "#dfd6b3"
+rate5h-eq      = "#837d67"
+rate5h-time    = "#ebe2be"
+rate5h-red     = "#bf616a"
+rate5h-green   = "#a3be8c"
+
+rate7d-bg      = "#3b5349"
+rate7d-fg      = "#b9e0cf"
+rate7d-eq      = "#6b8479"
+rate7d-time    = "#c4ecda"
+rate7d-red     = "#bf616a"
+rate7d-green   = "#a3be8c"
+
 [[blocks]]
 alignment = "left"
 type = "prompt"
 
   [[blocks.segments]]
-  foreground = "#BF616A"
+  foreground = "p:red"
   style = "plain"
   template = "{{ .UserName }} "
   type = "session"
 
   [[blocks.segments]]
-  foreground = "#81A1C1"
+  foreground = "p:blue"
   style = "plain"
   template = "{{ .Path }} "
   type = "path"
@@ -28,14 +61,14 @@ alignment = "left"
 type = "prompt"
 
   [[blocks.segments]]
-  foreground = "#6C6C6C"
+  foreground = "p:gray"
   style = "plain"
-  template = "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<#FFAFD7>*</>{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} "
+  template = "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<p:pink>*</>{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} "
   type = "git"
 
     [blocks.segments.options]
-    branch_ahead_icon = "<#88C0D0>⇡ </>"
-    branch_behind_icon = "<#88C0D0>⇣ </>"
+    branch_ahead_icon = "<p:cyan>⇡ </>"
+    branch_behind_icon = "<p:cyan>⇣ </>"
     branch_icon = ""
     fetch_status = true
     fetch_upstream_icon = true
@@ -46,7 +79,7 @@ alignment = "left"
 type = "prompt"
 
   [[blocks.segments]]
-  foreground = "#A3BE8C"
+  foreground = "p:green"
   style = "plain"
   template = " {{ .FormattedMs }} "
   type = "executiontime"
@@ -68,9 +101,9 @@ type = "prompt"
   style = "diamond"
   leading_diamond = ""
   trailing_diamond = ""
-  background = "#5a5278"
-  foreground = "#d8cdf0"
-  template = " {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} <#b8a8e8>󰣖 {{ .Env.CLAUDE_EFFORT }}</>{{ end }}"
+  background = "p:model-bg"
+  foreground = "p:model-fg"
+  template = " {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} <p:model-accent>󰣖 {{ .Env.CLAUDE_EFFORT }}</>{{ end }}"
 
   # Pill 2 — Session: context %, cost, lines
   [[blocks.segments]]
@@ -78,9 +111,9 @@ type = "prompt"
   style = "diamond"
   leading_diamond = " "
   trailing_diamond = ""
-  background = "#4a5a72"
-  foreground = "#cbd9ea"
-  template = "󰻞 {{ .TokenUsagePercent.String }}% <#BF616A>{{ .FormattedCost }}</>{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} <#A3BE8C>+{{ .Cost.TotalLinesAdded }}</> <#BF616A>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}"
+  background = "p:session-bg"
+  foreground = "p:session-fg"
+  template = "󰻞 {{ .TokenUsagePercent.String }}% <p:session-red>{{ .FormattedCost }}</>{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} <p:session-green>+{{ .Cost.TotalLinesAdded }}</> <p:session-red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}"
 
   # Pill 3 — 5-hour rate limit
   [[blocks.segments]]
@@ -88,14 +121,14 @@ type = "prompt"
   style = "diamond"
   leading_diamond = " "
   trailing_diamond = ""
-  background = "#5d5840"
-  foreground = "#e8d9a8"
+  background = "p:rate5h-bg"
+  foreground = "p:rate5h-fg"
   template = """
 {{ if and .RateLimits .RateLimits.FiveHour.UsedPercentage }}\
 󰎰 {{ .FiveHourUsage.String }}% \
 {{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
-{{ if gt $fhDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $fhDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#8a8268>≈</>{{ end }} \
-<#F5E4BB>{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</>\
+{{ if gt $fhDelta 5 }}<p:rate5h-red>\U000F0907</>{{ else if lt $fhDelta -5 }}<p:rate5h-green>\U000F1677</>{{ else }}<p:rate5h-eq>≈</>{{ end }} \
+<p:rate5h-time>{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}</>\
 {{ end }}\
 """
 
@@ -105,14 +138,14 @@ type = "prompt"
   style = "diamond"
   leading_diamond = " "
   trailing_diamond = ""
-  background = "#3f5a4f"
-  foreground = "#b3dccb"
+  background = "p:rate7d-bg"
+  foreground = "p:rate7d-fg"
   template = """
 {{ if and .RateLimits .RateLimits.SevenDay.UsedPercentage }}\
 󰎸 {{ .SevenDayUsage.String }}% \
 {{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
-{{ if gt $wkDelta 5 }}<#BF616A>\U000F0907</>{{ else if lt $wkDelta -5 }}<#A3BE8C>\U000F1677</>{{ else }}<#6a8076>≈</>{{ end }} \
-<#C8E6D5>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\
+{{ if gt $wkDelta 5 }}<p:rate7d-red>\U000F0907</>{{ else if lt $wkDelta -5 }}<p:rate7d-green>\U000F1677</>{{ else }}<p:rate7d-eq>≈</>{{ end }} \
+<p:rate7d-time>{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}</>\
 {{ end }}\
 """
 
@@ -120,5 +153,5 @@ type = "prompt"
   [[blocks.segments]]
   type = "text"
   style = "plain"
-  foreground = "#6C6C6C"
+  foreground = "p:gray"
   template = " {{ now.Format \"15:04\" }}"
