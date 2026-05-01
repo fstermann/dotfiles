@@ -1,4 +1,5 @@
 # Source: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/pure.omp.json
+# Docs: https://ohmyposh.dev/docs/segments/cli/claude
 "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
 console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 version = 4
