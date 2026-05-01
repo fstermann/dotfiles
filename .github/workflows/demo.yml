@@ -24,6 +24,8 @@ jobs:
               run: |
                   sudo apt-get update
                   sudo apt-get install -y stow zsh bat ripgrep fzf jq unzip ffmpeg ttyd
+                  # Debian/Ubuntu ships `bat` as `batcat`; VHS' Require checks PATH directly.
+                  sudo ln -sf "$(command -v batcat)" /usr/local/bin/bat
 
             - name: Install VHS
               run: |
