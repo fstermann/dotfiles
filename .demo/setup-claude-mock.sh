@@ -42,40 +42,44 @@ fi
 # ─── isolated $HOME for claude (pre-onboarded, pre-approved API key, ──
 #     workspace already trusted) ────────────────────────────────────────
 mkdir -p "$DEMO_HOME"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-cat > "$DEMO_HOME/.claude.json" <<EOF
-{
-  "hasCompletedOnboarding": true,
-  "hasIdeOnboardingBeenShown": true,
-  "customApiKeyResponses": {
-    "approved": ["demo"],
-    "rejected": []
+
+# Trust every plausible repo path so the workspace prompt never shows up,
+# regardless of where the demo recording is launched from (local checkout,
+# stowed `~/.dotfiles`, GitHub Actions runner workspace, custom dir).
+trust_paths=("$HOME/.dotfiles" "$PWD")
+[[ -n "${DOTFILES_DIR:-}" ]]      && trust_paths+=("$DOTFILES_DIR")
+[[ -n "${GITHUB_WORKSPACE:-}" ]]  && trust_paths+=("$GITHUB_WORKSPACE")
+
+projects_json=$(printf '%s\n' "${trust_paths[@]}" | sort -u | jq -R . | jq -s '
+  map({(.): {
+    hasTrustDialogAccepted: true,
+    projectOnboardingSeenCount: 5,
+    hasClaudeMdExternalIncludesApproved: true,
+    hasClaudeMdExternalIncludesWarningShown: true,
+    allowedTools: [],
+    mcpContextUris: [],
+    mcpServers: {},
+    enabledMcpjsonServers: [],
+    disabledMcpjsonServers: []
+  }}) | add
+')
+
+jq -n --argjson projects "$projects_json" '{
+  hasCompletedOnboarding: true,
+  hasIdeOnboardingBeenShown: true,
+  customApiKeyResponses: { approved: ["demo"], rejected: [] },
+  firstStartTime: "2024-01-01T00:00:00.000Z",
+  userID: "demo-user",
+  oauthAccount: {
+    accountUuid: "demo",
+    emailAddress: "demo@example.com",
+    organizationUuid: "demo-org",
+    organizationRole: "user"
   },
-  "firstStartTime": "2024-01-01T00:00:00.000Z",
-  "userID": "demo-user",
-  "oauthAccount": {
-    "accountUuid": "demo",
-    "emailAddress": "demo@example.com",
-    "organizationUuid": "demo-org",
-    "organizationRole": "user"
-  },
-  "autoUpdates": false,
-  "btwUseCount": 999,
-  "projects": {
-    "${DOTFILES_DIR}": {
-      "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 5,
-      "hasClaudeMdExternalIncludesApproved": true,
-      "hasClaudeMdExternalIncludesWarningShown": true,
-      "allowedTools": [],
-      "mcpContextUris": [],
-      "mcpServers": {},
-      "enabledMcpjsonServers": [],
-      "disabledMcpjsonServers": []
-    }
-  }
-}
-EOF
+  autoUpdates: false,
+  btwUseCount: 999,
+  projects: $projects
+}' > "$DEMO_HOME/.claude.json"
 
 # Wire up the user's oh-my-posh config (so palette edits flow through) and
 # write a thin statusline wrapper that overlays "as if I'd been working all
