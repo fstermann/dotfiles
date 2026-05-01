@@ -2,7 +2,9 @@
 
 Personal dotfiles managed with **[GNU Stow](https://www.gnu.org/software/stow/)** — each tool's config lives in its own package directory and gets symlinked into `$HOME`.
 
-![Terminal demo](.demo/demo.gif)
+<p align="center">
+  <img src=".demo/demo.gif" alt="Terminal demo" width="90%">
+</p>
 
 ## How it works
 
