@@ -113,7 +113,7 @@ type = "prompt"
   trailing_diamond = ""
   background = "p:session-bg"
   foreground = "p:session-fg"
-  template = "󰻞 {{ .TokenUsagePercent.String }}% <p:session-red>{{ .FormattedCost }}</>{{ if or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved }} <p:session-green>+{{ .Cost.TotalLinesAdded }}</> <p:session-red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}"
+  template = "󰻞 {{ .TokenUsagePercent.String }}% <p:session-red>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:session-green>+{{ .Cost.TotalLinesAdded }}</> <p:session-red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}"
 
   # Pill 3 — 5-hour rate limit
   [[blocks.segments]]
