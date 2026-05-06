@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "terminal-notifier -message \"Claude has a question in $(basename $PWD)\" -title \"Claude Code\" -activate com.microsoft.VSCode -contentImage \"/Applications/Visual Studio Code.app/Contents/Resources/Code.icns\""
+            "command": "~/.claude/notify.sh \"Claude has a question in $(basename $PWD)\""
           }
         ]
       },
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "terminal-notifier -message \"Plan ready for review in $(basename $PWD)\" -title \"Claude Code\" -activate com.microsoft.VSCode -contentImage \"/Applications/Visual Studio Code.app/Contents/Resources/Code.icns\""
+            "command": "~/.claude/notify.sh \"Plan ready for review in $(basename $PWD)\""
           }
         ]
       }
@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "terminal-notifier -message \"Permission required in $(basename $PWD)\" -title \"Claude Code\" -activate com.microsoft.VSCode -contentImage \"/Applications/Visual Studio Code.app/Contents/Resources/Code.icns\""
+            "command": "~/.claude/notify.sh \"Permission required in $(basename $PWD)\""
           }
         ]
       }
@@ -38,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "terminal-notifier -message \"Task completed in $(basename $PWD)\" -title \"Claude Code\" -activate com.microsoft.VSCode -contentImage \"/Applications/Visual Studio Code.app/Contents/Resources/Code.icns\""
+            "command": "~/.claude/notify.sh \"Task completed in $(basename $PWD)\""
           }
         ]
       }
