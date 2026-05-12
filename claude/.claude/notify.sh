@@ -10,5 +10,5 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         -activate com.microsoft.VSCode \
         -contentImage "/Applications/Visual Studio Code.app/Contents/Resources/Code.icns"
 else
-    printf '\a' > /dev/tty 2>/dev/null
+    printf '\a' > /dev/tty 2>/dev/null || printf '\a' >&2
 fi
