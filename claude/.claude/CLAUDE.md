@@ -55,3 +55,10 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+## 5. Concise Communication
+
+**Be precise. Don't over-elaborate.**
+
+Be concise in communication with the user, code comments, commit messages, and documentation.
+Cut marketing tone, hedging, filler (just/really/basically/actually/simply) and pleasantries (sure/certainly/of course/happy to).
