@@ -20,18 +20,18 @@
     font-size: 14px;
   }
   h1 { font-size: 16px; margin: 0 0 16px; font-weight: 500; opacity: 0.8; }
-  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1280px; }
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; }
   .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
   .section-head { display: flex; align-items: center; justify-content: space-between; margin: 0 0 12px; }
-  .section-head + .section-head, .section-head:not(:first-child) { margin-top: 18px; }
+  .section-head:not(:first-child) { margin-top: 18px; }
   .section-head h2 { font-size: 13px; margin: 0; font-weight: 500; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; }
-  .section-head .reset-section { font-size: 10px; padding: 3px 8px; opacity: 0.6; }
-  .section-head .reset-section:hover { opacity: 1; }
+  .reset-section { font-size: 10px; padding: 3px 8px; opacity: 0.6; }
+  .reset-section:hover { opacity: 1; }
 
-  .slider-row { display: grid; grid-template-columns: 90px 1fr 56px 22px; gap: 10px; align-items: center; margin-bottom: 8px; }
-  .slider-row label { font-size: 12px; opacity: 0.8; }
-  .slider-row input[type=range] { width: 100%; }
-  .slider-row .val { font-variant-numeric: tabular-nums; opacity: 0.7; font-size: 12px; text-align: right; }
+  .color-row { display: grid; grid-template-columns: 110px 32px 1fr 22px; gap: 10px; align-items: center; margin-bottom: 6px; }
+  .color-row label { font-size: 12px; opacity: 0.8; }
+  .color-row input[type=color] { width: 32px; height: 22px; padding: 0; border: 1px solid var(--border); border-radius: 3px; background: transparent; cursor: pointer; }
+  .color-row .hex { font-size: 11.5px; opacity: 0.7; font-variant-numeric: tabular-nums; }
   .reset-one {
     background: transparent; border: 1px solid transparent; color: var(--term-fg);
     opacity: 0.35; cursor: pointer; padding: 0; width: 22px; height: 22px;
@@ -39,24 +39,6 @@
   }
   .reset-one:hover { opacity: 1; background: #2c2c44; border-color: var(--border); }
   .reset-one[disabled] { opacity: 0.1; cursor: default; }
-
-  .color-row { display: grid; grid-template-columns: 90px 32px 1fr 22px; gap: 10px; align-items: center; margin-bottom: 6px; }
-  .color-row label { font-size: 12px; opacity: 0.8; }
-  .color-row input[type=color] { width: 32px; height: 22px; padding: 0; border: 1px solid var(--border); border-radius: 3px; background: transparent; cursor: pointer; }
-  .color-row .hex { font-size: 11.5px; opacity: 0.7; font-variant-numeric: tabular-nums; }
-
-  .hue-slider::-webkit-slider-runnable-track {
-    height: 14px; border-radius: 7px;
-    background: linear-gradient(to right,
-      oklch(0.7 0.15 0), oklch(0.7 0.15 60), oklch(0.7 0.15 120),
-      oklch(0.7 0.15 180), oklch(0.7 0.15 240), oklch(0.7 0.15 300), oklch(0.7 0.15 360));
-  }
-  .hue-slider::-moz-range-track {
-    height: 14px; border-radius: 7px;
-    background: linear-gradient(to right,
-      oklch(0.7 0.15 0), oklch(0.7 0.15 60), oklch(0.7 0.15 120),
-      oklch(0.7 0.15 180), oklch(0.7 0.15 240), oklch(0.7 0.15 300), oklch(0.7 0.15 360));
-  }
 
   .preview {
     background: var(--term-bg);
@@ -69,9 +51,6 @@
     white-space: nowrap;
     overflow-x: auto;
   }
-  .pill { display: inline-flex; align-items: center; }
-  .pill .body { padding: 4px 12px; border-radius: 999px; }
-  .pill + .pill { margin-left: 4px; }
 
   pre.output {
     background: #15151f;
@@ -89,10 +68,6 @@
     padding: 6px 12px; border-radius: 4px; cursor: pointer; font: inherit; font-size: 12px;
   }
   button:hover { background: #353554; }
-  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(255,255,255,0.1); }
-  .pill-row { display: grid; grid-template-columns: 90px 1fr 56px 22px; gap: 10px; align-items: center; margin-bottom: 6px; }
-  .pill-row .name { display: flex; align-items: center; font-size: 12px; }
-  .hint { font-size: 11px; opacity: 0.5; margin-top: 8px; }
   .source-hint { font-size: 11px; opacity: 0.5; margin-bottom: 12px; }
   .source-hint.error { color: #ffb3b3; opacity: 0.8; }
 
@@ -112,7 +87,7 @@
 </style>
 </head>
 <body>
-  <h1>pure.claude palette tweaker · OKLCH</h1>
+  <h1>pure.claude palette tweaker</h1>
   <div class="source-hint" id="source_hint">Loading defaults from pure.claude.toml…</div>
 
   <div class="preview-bar" id="preview_bar">
@@ -126,53 +101,27 @@
   <div class="layout">
     <div class="panel">
       <div class="section-head">
-        <h2>Shared (bg / fg lightness & chroma)</h2>
-        <button class="reset-section" data-section="shared">↺ reset</button>
+        <h2>Section colors</h2>
+        <button class="reset-section" data-section="sections">↺ reset</button>
       </div>
-      <div class="slider-row" data-section="shared"><label>bg L</label><input type="range" id="bgL" min="0.15" max="0.55" step="0.005"><span class="val" id="bgL_v"></span><button class="reset-one" data-target="bgL" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="shared"><label>bg C</label><input type="range" id="bgC" min="0" max="0.12" step="0.002"><span class="val" id="bgC_v"></span><button class="reset-one" data-target="bgC" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="shared"><label>fg L</label><input type="range" id="fgL" min="0.6" max="0.98" step="0.005"><span class="val" id="fgL_v"></span><button class="reset-one" data-target="fgL" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="shared"><label>fg C</label><input type="range" id="fgC" min="0" max="0.18" step="0.002"><span class="val" id="fgC_v"></span><button class="reset-one" data-target="fgC" title="Reset">↺</button></div>
-
-      <div class="section-head">
-        <h2>Derived variants (offsets)</h2>
-        <button class="reset-section" data-section="offsets">↺ reset</button>
-      </div>
-      <div class="slider-row" data-section="offsets"><label>accent ΔL</label><input type="range" id="accentDL" min="-0.2" max="0.2" step="0.01"><span class="val" id="accentDL_v"></span><button class="reset-one" data-target="accentDL" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="offsets"><label>accent ×C</label><input type="range" id="accentMC" min="0.5" max="2.5" step="0.05"><span class="val" id="accentMC_v"></span><button class="reset-one" data-target="accentMC" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="offsets"><label>time ΔL</label><input type="range" id="timeDL" min="-0.1" max="0.15" step="0.005"><span class="val" id="timeDL_v"></span><button class="reset-one" data-target="timeDL" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="offsets"><label>eq L</label><input type="range" id="eqL" min="0.35" max="0.7" step="0.01"><span class="val" id="eqL_v"></span><button class="reset-one" data-target="eqL" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="offsets"><label>eq C</label><input type="range" id="eqC" min="0" max="0.08" step="0.002"><span class="val" id="eqC_v"></span><button class="reset-one" data-target="eqC" title="Reset">↺</button></div>
-
-      <div class="section-head">
-        <h2>Section red/green tint</h2>
-        <button class="reset-section" data-section="tint">↺ reset</button>
-      </div>
-      <div class="slider-row" data-section="tint"><label>tint H</label><input type="range" id="tintH" min="0" max="1" step="0.01"><span class="val" id="tintH_v"></span><button class="reset-one" data-target="tintH" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="tint"><label>tint ×C</label><input type="range" id="tintC" min="0.4" max="1.4" step="0.02"><span class="val" id="tintC_v"></span><button class="reset-one" data-target="tintC" title="Reset">↺</button></div>
-      <div class="slider-row" data-section="tint"><label>tint ΔL</label><input type="range" id="tintDL" min="-0.15" max="0.15" step="0.005"><span class="val" id="tintDL_v"></span><button class="reset-one" data-target="tintDL" title="Reset">↺</button></div>
+      <div class="color-row" data-section="sections"><label>model-fg</label><input type="color" id="model-fg"><span class="hex" id="model-fg_v"></span><button class="reset-one" data-target="model-fg" title="Reset">↺</button></div>
+      <div class="color-row" data-section="sections"><label>session-fg</label><input type="color" id="session-fg"><span class="hex" id="session-fg_v"></span><button class="reset-one" data-target="session-fg" title="Reset">↺</button></div>
+      <div class="color-row" data-section="sections"><label>rate5h-fg</label><input type="color" id="rate5h-fg"><span class="hex" id="rate5h-fg_v"></span><button class="reset-one" data-target="rate5h-fg" title="Reset">↺</button></div>
+      <div class="color-row" data-section="sections"><label>rate7d-fg</label><input type="color" id="rate7d-fg"><span class="hex" id="rate7d-fg_v"></span><button class="reset-one" data-target="rate7d-fg" title="Reset">↺</button></div>
     </div>
 
     <div class="panel">
       <div class="section-head">
-        <h2>Per-pill hue</h2>
-        <button class="reset-section" data-section="hues">↺ reset</button>
-      </div>
-      <div class="pill-row" data-section="hues"><span class="name"><span class="swatch" id="sw_model"></span>model</span><input type="range" class="hue-slider" id="hue_model"   min="0" max="360" step="1"><span class="val" id="hue_model_v"></span><button class="reset-one" data-target="hue_model" title="Reset">↺</button></div>
-      <div class="pill-row" data-section="hues"><span class="name"><span class="swatch" id="sw_session"></span>session</span><input type="range" class="hue-slider" id="hue_session" min="0" max="360" step="1"><span class="val" id="hue_session_v"></span><button class="reset-one" data-target="hue_session" title="Reset">↺</button></div>
-      <div class="pill-row" data-section="hues"><span class="name"><span class="swatch" id="sw_rate5h"></span>rate5h</span><input type="range" class="hue-slider" id="hue_rate5h"  min="0" max="360" step="1"><span class="val" id="hue_rate5h_v"></span><button class="reset-one" data-target="hue_rate5h" title="Reset">↺</button></div>
-      <div class="pill-row" data-section="hues"><span class="name"><span class="swatch" id="sw_rate7d"></span>rate7d</span><input type="range" class="hue-slider" id="hue_rate7d"  min="0" max="360" step="1"><span class="val" id="hue_rate7d_v"></span><button class="reset-one" data-target="hue_rate7d" title="Reset">↺</button></div>
-
-      <div class="section-head">
         <h2>Static colors</h2>
         <button class="reset-section" data-section="statics">↺ reset</button>
       </div>
-      <div class="color-row" data-section="statics"><label>red</label><input type="color" id="static_red"><span class="hex" id="static_red_v"></span><button class="reset-one" data-target="static_red" title="Reset">↺</button></div>
-      <div class="color-row" data-section="statics"><label>green</label><input type="color" id="static_green"><span class="hex" id="static_green_v"></span><button class="reset-one" data-target="static_green" title="Reset">↺</button></div>
-      <div class="color-row" data-section="statics"><label>blue</label><input type="color" id="static_blue"><span class="hex" id="static_blue_v"></span><button class="reset-one" data-target="static_blue" title="Reset">↺</button></div>
-      <div class="color-row" data-section="statics"><label>cyan</label><input type="color" id="static_cyan"><span class="hex" id="static_cyan_v"></span><button class="reset-one" data-target="static_cyan" title="Reset">↺</button></div>
-      <div class="color-row" data-section="statics"><label>pink</label><input type="color" id="static_pink"><span class="hex" id="static_pink_v"></span><button class="reset-one" data-target="static_pink" title="Reset">↺</button></div>
-      <div class="color-row" data-section="statics"><label>gray</label><input type="color" id="static_gray"><span class="hex" id="static_gray_v"></span><button class="reset-one" data-target="static_gray" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>red</label><input type="color" id="red"><span class="hex" id="red_v"></span><button class="reset-one" data-target="red" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>green</label><input type="color" id="green"><span class="hex" id="green_v"></span><button class="reset-one" data-target="green" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>blue</label><input type="color" id="blue"><span class="hex" id="blue_v"></span><button class="reset-one" data-target="blue" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>cyan</label><input type="color" id="cyan"><span class="hex" id="cyan_v"></span><button class="reset-one" data-target="cyan" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>pink</label><input type="color" id="pink"><span class="hex" id="pink_v"></span><button class="reset-one" data-target="pink" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>yellow</label><input type="color" id="yellow"><span class="hex" id="yellow_v"></span><button class="reset-one" data-target="yellow" title="Reset">↺</button></div>
+      <div class="color-row" data-section="statics"><label>gray</label><input type="color" id="gray"><span class="hex" id="gray_v"></span><button class="reset-one" data-target="gray" title="Reset">↺</button></div>
 
       <div class="section-head">
         <h2>Output</h2>
@@ -182,264 +131,91 @@
         <button id="reset_all">↺ reset all</button>
       </div>
       <pre class="output" id="output"></pre>
-      <div class="hint">Per-pill red/green are computed from the static colors via tint sliders (hue blends toward the pill hue, chroma multiplied, lightness shifted).</div>
     </div>
   </div>
 
 <script>
-// ─── OKLCH ↔ sRGB hex ──────────────────────────────────────────────────
-function oklchToHex(L, C, hDeg) {
-  const h = hDeg * Math.PI / 180;
-  const a = C * Math.cos(h);
-  const b = C * Math.sin(h);
-  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
-  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
-  const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
-  const lc = l_ ** 3, mc = m_ ** 3, sc = s_ ** 3;
-  let r = +4.0767416621 * lc - 3.3077115913 * mc + 0.2309699292 * sc;
-  let g = -1.2684380046 * lc + 2.6097574011 * mc - 0.3413193965 * sc;
-  let bl= -0.0041960863 * lc - 0.7034186147 * mc + 1.7076147010 * sc;
-  const enc = (v) => {
-    v = Math.max(0, Math.min(1, v));
-    return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1/2.4) - 0.055;
-  };
-  r = enc(r); g = enc(g); bl = enc(bl);
-  const to2 = (v) => Math.round(v * 255).toString(16).padStart(2, '0');
-  return '#' + to2(r) + to2(g) + to2(bl);
-}
+const STATIC_KEYS  = ['red','green','blue','cyan','pink','yellow','gray'];
+const SECTION_KEYS = ['model-fg','session-fg','rate5h-fg','rate7d-fg'];
+const ALL_KEYS = [...SECTION_KEYS, ...STATIC_KEYS];
 
-function hexToOklch(hex) {
-  const m = String(hex).trim().match(/^#?([0-9a-f]{6})$/i);
-  if (!m) return null;
-  const num = parseInt(m[1], 16);
-  let r = ((num >> 16) & 255) / 255;
-  let g = ((num >> 8) & 255) / 255;
-  let b = (num & 255) / 255;
-  const dec = (v) => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-  r = dec(r); g = dec(g); b = dec(b);
-  const l = 0.4122214708*r + 0.5363325363*g + 0.0514459929*b;
-  const m1 = 0.2119034982*r + 0.6806995451*g + 0.1073969566*b;
-  const s = 0.0883024619*r + 0.2817188376*g + 0.6299787005*b;
-  const l_ = Math.cbrt(l), m_ = Math.cbrt(m1), s_ = Math.cbrt(s);
-  const L = 0.2104542553*l_ + 0.7936177850*m_ - 0.0040720468*s_;
-  const aa = 1.9779984951*l_ - 2.4285922050*m_ + 0.4505937099*s_;
-  const bb = 0.0259040371*l_ + 0.7827717662*m_ - 0.8086757660*s_;
-  const C = Math.sqrt(aa*aa + bb*bb);
-  let H = Math.atan2(bb, aa) * 180 / Math.PI;
-  if (H < 0) H += 360;
-  return { L, C, H };
-}
+// Hardcoded fallback (matches the toml shipped alongside this file).
+const FALLBACK = {
+  red:'#bf616a', green:'#a3be8c', blue:'#81a1c1',
+  cyan:'#88c0d0', pink:'#ffafd7', yellow:'#ebcb8b', gray:'#6c6c6c',
+  'model-fg':'#d7d0f3',
+  'session-fg':'#c2d8f6',
+  'rate5h-fg':'#dfd6b3',
+  'rate7d-fg':'#b9e0cf',
+};
 
-function lerpHue(a, b, t) {
-  let d = ((b - a + 540) % 360) - 180;
-  return (a + d * t + 360) % 360;
-}
+let defaults = null;
 
-function tintTowardHue(baseHex, pillHue, tintH, tintC, tintDL) {
-  const o = hexToOklch(baseHex);
-  if (!o) return baseHex;
-  return oklchToHex(o.L + tintDL, o.C * tintC, lerpHue(o.H, pillHue, tintH));
-}
-
-// ─── TOML palette parser (simple, just key = "#hex" lines) ────────────
 function parsePaletteToml(text) {
   const out = {};
-  const inPalette = /^\s*\[palette\]\s*$/m;
-  const startMatch = text.match(inPalette);
-  if (!startMatch) return null;
-  const start = startMatch.index + startMatch[0].length;
-  const rest = text.slice(start);
-  const endMatch = rest.match(/^\s*\[/m);
-  const body = endMatch ? rest.slice(0, endMatch.index) : rest;
+  const m = text.match(/^\s*\[palette\]\s*$/m);
+  if (!m) return null;
+  const rest = text.slice(m.index + m[0].length);
+  const end = rest.match(/^\s*\[/m);
+  const body = end ? rest.slice(0, end.index) : rest;
   for (const line of body.split('\n')) {
-    const m = line.match(/^\s*([A-Za-z0-9_-]+)\s*=\s*"(#[0-9a-fA-F]{6})"/);
-    if (m) out[m[1]] = m[2];
+    const kv = line.match(/^\s*([A-Za-z0-9_-]+)\s*=\s*"(#[0-9a-fA-F]{6})"/);
+    if (kv) out[kv[1]] = kv[2].toLowerCase();
   }
   return out;
 }
 
-// ─── Derive slider defaults from a palette object ─────────────────────
-function deriveDefaults(p) {
-  const need = ['model-bg','session-bg','rate5h-bg','rate7d-bg',
-                'model-fg','session-fg','rate5h-fg','rate7d-fg',
-                'model-accent','rate5h-eq','rate5h-time','rate7d-eq','rate7d-time'];
-  for (const k of need) if (!p[k]) return null;
-
-  const bgs = ['model-bg','session-bg','rate5h-bg','rate7d-bg'].map(k => hexToOklch(p[k]));
-  const fgs = ['model-fg','session-fg','rate5h-fg','rate7d-fg'].map(k => hexToOklch(p[k]));
-  const avg = (arr, key) => arr.reduce((s,o)=>s+o[key],0) / arr.length;
-
-  const bgL = avg(bgs,'L'), bgC = avg(bgs,'C');
-  const fgL = avg(fgs,'L'), fgC = avg(fgs,'C');
-
-  const huesByPill = {
-    model:   hexToOklch(p['model-bg']).H,
-    session: hexToOklch(p['session-bg']).H,
-    rate5h:  hexToOklch(p['rate5h-bg']).H,
-    rate7d:  hexToOklch(p['rate7d-bg']).H,
-  };
-
-  const accent = hexToOklch(p['model-accent']);
-  const t5 = hexToOklch(p['rate5h-time']), t7 = hexToOklch(p['rate7d-time']);
-  const e5 = hexToOklch(p['rate5h-eq']),   e7 = hexToOklch(p['rate7d-eq']);
-
-  const accentDL = accent.L - fgL;
-  const accentMC = fgC > 1e-4 ? accent.C / fgC : 1;
-  const timeDL   = ((t5.L + t7.L) / 2) - fgL;
-  const eqL      = (e5.L + e7.L) / 2;
-  const eqC      = (e5.C + e7.C) / 2;
-
-  const r3 = (n, p2=3) => {
-    const f = Math.pow(10, p2);
-    return Math.round(n * f) / f;
-  };
-  return {
-    bgL: r3(bgL), bgC: r3(bgC), fgL: r3(fgL), fgC: r3(fgC),
-    accentDL: r3(accentDL), accentMC: r3(accentMC, 2),
-    timeDL: r3(timeDL), eqL: r3(eqL, 2), eqC: r3(eqC),
-    hue_model:   Math.round(huesByPill.model),
-    hue_session: Math.round(huesByPill.session),
-    hue_rate5h:  Math.round(huesByPill.rate5h),
-    hue_rate7d:  Math.round(huesByPill.rate7d),
-    // Tint defaults: 0 keeps base red/green untouched per pill.
-    tintH: 0, tintC: 1, tintDL: 0,
-    // Static colors
-    static_red:   (p.red   || '#BF616A').toLowerCase(),
-    static_green: (p.green || '#A3BE8C').toLowerCase(),
-    static_blue:  (p.blue  || '#81A1C1').toLowerCase(),
-    static_cyan:  (p.cyan  || '#88C0D0').toLowerCase(),
-    static_pink:  (p.pink  || '#FFAFD7').toLowerCase(),
-    static_gray:  (p.gray  || '#6C6C6C').toLowerCase(),
-  };
-}
-
-// Hardcoded fallback (matches the toml shipped alongside this file).
-const FALLBACK_PALETTE = {
-  red: '#BF616A', green: '#A3BE8C', blue: '#81A1C1',
-  cyan: '#88C0D0', pink: '#FFAFD7', gray: '#6C6C6C',
-  'model-bg':     '#403a55', 'model-fg':     '#d8cdf0', 'model-accent': '#b8a8e8',
-  'session-bg':   '#364252', 'session-fg':   '#cbd9ea',
-  'rate5h-bg':    '#433f30', 'rate5h-fg':    '#e8d9a8', 'rate5h-eq': '#8a8268', 'rate5h-time': '#F5E4BB',
-  'rate7d-bg':    '#32443c', 'rate7d-fg':    '#b3dccb', 'rate7d-eq': '#6a8076', 'rate7d-time': '#C8E6D5',
-};
-
-const PILLS = ['model','session','rate5h','rate7d'];
-
-const sliderIds = ['bgL','bgC','fgL','fgC','accentDL','accentMC','timeDL','eqL','eqC',
-                   'tintH','tintC','tintDL',
-                   'hue_model','hue_session','hue_rate5h','hue_rate7d'];
-const staticIds = ['static_red','static_green','static_blue','static_cyan','static_pink','static_gray'];
-const allIds = [...sliderIds, ...staticIds];
-
-let defaults = null;
+function val(id) { return document.getElementById(id).value; }
 
 function applyDefaults(d) {
   defaults = d;
-  for (const id of allIds) {
-    const el = document.getElementById(id);
-    if (el && id in d) el.value = d[id];
+  for (const k of ALL_KEYS) {
+    const el = document.getElementById(k);
+    if (el && d[k]) el.value = d[k];
   }
   render();
 }
 
-function num(id) { return parseFloat(document.getElementById(id).value); }
-function str(id) { return document.getElementById(id).value; }
-
-function compute() {
-  const bgL = num('bgL'), bgC = num('bgC');
-  const fgL = num('fgL'), fgC = num('fgC');
-  const accentDL = num('accentDL'), accentMC = num('accentMC');
-  const timeDL = num('timeDL');
-  const eqL = num('eqL'), eqC = num('eqC');
-  const tintH = num('tintH'), tintC = num('tintC'), tintDL = num('tintDL');
-
-  const baseRed   = str('static_red');
-  const baseGreen = str('static_green');
-
-  const colors = {
-    red:   baseRed,
-    green: baseGreen,
-    blue:  str('static_blue'),
-    cyan:  str('static_cyan'),
-    pink:  str('static_pink'),
-    gray:  str('static_gray'),
-  };
-
-  for (const name of PILLS) {
-    const h = num('hue_' + name);
-    colors[name + '-bg'] = oklchToHex(bgL, bgC, h);
-    colors[name + '-fg'] = oklchToHex(fgL, fgC, h);
-    colors[name + '-red']   = tintTowardHue(baseRed,   h, tintH, tintC, tintDL);
-    colors[name + '-green'] = tintTowardHue(baseGreen, h, tintH, tintC, tintDL);
-  }
-
-  const mh = num('hue_model');
-  colors['model-accent'] = oklchToHex(fgL + accentDL, fgC * accentMC, mh);
-  const r5h = num('hue_rate5h');
-  colors['rate5h-eq']   = oklchToHex(eqL, eqC, r5h);
-  colors['rate5h-time'] = oklchToHex(fgL + timeDL, fgC, r5h);
-  const r7h = num('hue_rate7d');
-  colors['rate7d-eq']   = oklchToHex(eqL, eqC, r7h);
-  colors['rate7d-time'] = oklchToHex(fgL + timeDL, fgC, r7h);
-  return colors;
-}
-
-function pillContent(name, c) {
+function sectionContent(name, c) {
   switch (name) {
     case 'model':
-      return `Opus 4.7 (1M context) <span style="color:${c['model-accent']}">◆ medium</span>`;
+      return `<span style="color:${c['model-fg']}">✦ Opus 4.7 (1M context) medium</span>`;
     case 'session':
-      return `○ 3% <span style="color:${c['session-red']}">$0.31</span> <span style="color:${c['session-green']}">+3</span> <span style="color:${c['session-red']}">−3</span>`;
+      return `<span style="color:${c['session-fg']}">○ 3% <span style="color:${c.yellow}">$0.31</span> <span style="color:${c.green}">+3</span> <span style="color:${c.red}">−3</span></span>`;
     case 'rate5h':
-      return `⏱ 64% <span style="color:${c['rate5h-red']}">↑</span> <span style="color:${c['rate5h-time']}">1h 29m</span>`;
+      return `<span style="color:${c['rate5h-fg']}">⏱ 64% <span style="color:${c.red}">↑</span> 1h 29m</span>`;
     case 'rate7d':
-      return `▦ 26% <span style="color:${c['rate7d-green']}">↓</span> <span style="color:${c['rate7d-time']}">5h 19m</span>`;
+      return `<span style="color:${c['rate7d-fg']}">▦ 26% <span style="color:${c.green}">↓</span> 5h 19m</span>`;
   }
 }
 
 function render() {
-  for (const id of sliderIds) {
-    const el = document.getElementById(id + '_v');
-    if (el) el.textContent = document.getElementById(id).value;
-  }
-  for (const id of staticIds) {
-    const el = document.getElementById(id + '_v');
-    if (el) el.textContent = document.getElementById(id).value;
-  }
-  // dim per-control reset if value matches default
-  if (defaults) {
-    for (const id of allIds) {
-      const btn = document.querySelector(`.reset-one[data-target="${id}"]`);
-      if (!btn) continue;
-      const cur = document.getElementById(id).value;
-      const def = defaults[id];
-      const matches = (typeof def === 'number')
-        ? parseFloat(cur) === parseFloat(def)
-        : String(cur).toLowerCase() === String(def).toLowerCase();
-      btn.disabled = matches;
-    }
-  }
-
-  const c = compute();
-
-  for (const name of PILLS) {
-    document.getElementById('sw_' + name).style.background = c[name + '-bg'];
+  const c = {};
+  for (const k of ALL_KEYS) {
+    c[k] = val(k);
+    const hex = document.getElementById(k + '_v');
+    if (hex) hex.textContent = c[k];
+    const btn = document.querySelector(`.reset-one[data-target="${k}"]`);
+    if (btn && defaults) btn.disabled = (c[k].toLowerCase() === (defaults[k] || '').toLowerCase());
   }
 
   const preview = document.getElementById('preview');
   preview.innerHTML = '';
-  PILLS.forEach((name) => {
-    const bg = c[name + '-bg'];
-    const fg = c[name + '-fg'];
-    const pill = document.createElement('span');
-    pill.className = 'pill';
-    pill.innerHTML = `<span class="body" style="background:${bg};color:${fg}">${pillContent(name, c)}</span>`;
-    preview.appendChild(pill);
+  ['model','session','rate5h','rate7d'].forEach((name, i) => {
+    if (i > 0) {
+      const sep = document.createElement('span');
+      sep.style.color = c.gray;
+      sep.textContent = ' · ';
+      preview.appendChild(sep);
+    }
+    const seg = document.createElement('span');
+    seg.innerHTML = sectionContent(name, c);
+    preview.appendChild(seg);
   });
   const clock = document.createElement('span');
   clock.style.color = c.gray;
-  clock.style.marginLeft = '6px';
-  clock.textContent = ' 13:40';
+  clock.style.marginLeft = '12px';
+  clock.textContent = '13:40';
   preview.appendChild(clock);
 
   const lines = [
@@ -449,32 +225,13 @@ function render() {
     `blue         = "${c.blue}"`,
     `cyan         = "${c.cyan}"`,
     `pink         = "${c.pink}"`,
+    `yellow       = "${c.yellow}"`,
     `gray         = "${c.gray}"`,
     '',
-    `model-bg       = "${c['model-bg']}"`,
     `model-fg       = "${c['model-fg']}"`,
-    `model-accent   = "${c['model-accent']}"`,
-    `model-red      = "${c['model-red']}"`,
-    `model-green    = "${c['model-green']}"`,
-    '',
-    `session-bg     = "${c['session-bg']}"`,
     `session-fg     = "${c['session-fg']}"`,
-    `session-red    = "${c['session-red']}"`,
-    `session-green  = "${c['session-green']}"`,
-    '',
-    `rate5h-bg      = "${c['rate5h-bg']}"`,
     `rate5h-fg      = "${c['rate5h-fg']}"`,
-    `rate5h-eq      = "${c['rate5h-eq']}"`,
-    `rate5h-time    = "${c['rate5h-time']}"`,
-    `rate5h-red     = "${c['rate5h-red']}"`,
-    `rate5h-green   = "${c['rate5h-green']}"`,
-    '',
-    `rate7d-bg      = "${c['rate7d-bg']}"`,
     `rate7d-fg      = "${c['rate7d-fg']}"`,
-    `rate7d-eq      = "${c['rate7d-eq']}"`,
-    `rate7d-time    = "${c['rate7d-time']}"`,
-    `rate7d-red     = "${c['rate7d-red']}"`,
-    `rate7d-green   = "${c['rate7d-green']}"`,
   ];
   document.getElementById('output').textContent = lines.join('\n');
 }
@@ -519,7 +276,7 @@ function setPreviewBg(color) {
 })();
 
 // ─── Wire up controls ─────────────────────────────────────────────────
-for (const id of allIds) document.getElementById(id).addEventListener('input', render);
+for (const k of ALL_KEYS) document.getElementById(k).addEventListener('input', render);
 
 document.getElementById('copy').addEventListener('click', () => {
   navigator.clipboard.writeText(document.getElementById('output').textContent);
@@ -527,15 +284,15 @@ document.getElementById('copy').addEventListener('click', () => {
 
 document.getElementById('reset_all').addEventListener('click', () => {
   if (!defaults) return;
-  for (const id of allIds) if (id in defaults) document.getElementById(id).value = defaults[id];
+  for (const k of ALL_KEYS) if (defaults[k]) document.getElementById(k).value = defaults[k];
   render();
 });
 
 document.querySelectorAll('.reset-one').forEach(btn => {
   btn.addEventListener('click', () => {
-    const target = btn.dataset.target;
-    if (!defaults || !(target in defaults)) return;
-    document.getElementById(target).value = defaults[target];
+    const t = btn.dataset.target;
+    if (!defaults || !defaults[t]) return;
+    document.getElementById(t).value = defaults[t];
     render();
   });
 });
@@ -543,10 +300,9 @@ document.querySelectorAll('.reset-one').forEach(btn => {
 document.querySelectorAll('.reset-section').forEach(btn => {
   btn.addEventListener('click', () => {
     if (!defaults) return;
-    const section = btn.dataset.section;
-    document.querySelectorAll(`[data-section="${section}"]`).forEach(row => {
+    document.querySelectorAll(`[data-section="${btn.dataset.section}"]`).forEach(row => {
       const input = row.querySelector('input');
-      if (input && input.id in defaults) input.value = defaults[input.id];
+      if (input && defaults[input.id]) input.value = defaults[input.id];
     });
     render();
   });
@@ -566,18 +322,11 @@ async function init() {
     }
   } catch (e) { /* file:// in Chrome blocks fetch */ }
 
-  if (!palette) palette = FALLBACK_PALETTE;
-  const d = deriveDefaults(palette);
-  if (!d) {
-    hint.textContent = 'Could not derive defaults — using built-in fallback.';
-    hint.classList.add('error');
-    applyDefaults(deriveDefaults(FALLBACK_PALETTE));
-    return;
-  }
+  const merged = Object.assign({}, FALLBACK, palette || {});
   hint.textContent = source === 'pure.claude.toml'
     ? 'Defaults loaded from pure.claude.toml (live).'
     : 'Defaults from built-in fallback (could not fetch pure.claude.toml — serve over http if you want live load).';
-  applyDefaults(d);
+  applyDefaults(merged);
 }
 init();
 </script>
