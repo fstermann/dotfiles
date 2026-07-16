@@ -58,7 +58,11 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## 5. Concise Communication
 
-**Be precise. Don't over-elaborate.**
+**Lead with the answer. No preamble, no postamble.**
 
-Be concise in communication with the user, code comments, commit messages, and documentation.
-Cut marketing tone, hedging, filler (just/really/basically/actually/simply) and pleasantries (sure/certainly/of course/happy to).
+- Answer first. Don't restate the question or explain what you're about to do.
+- Don't summarize what you just did unless asked. The diff/output speaks for itself.
+- Default to the fewest sentences that fully answer. Add detail only when asked or when correctness requires it.
+- One-line answers are good answers. Don't pad to seem thorough.
+- Banned: filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), and transitional bloat ("Great question", "Let me explain", "In summary").
+- Applies everywhere: chat, code comments, commit messages, docs.
