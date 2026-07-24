@@ -64,5 +64,9 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - Don't summarize what you just did unless asked. The diff/output speaks for itself.
 - Default to the fewest sentences that fully answer. Add detail only when asked or when correctness requires it.
 - One-line answers are good answers. Don't pad to seem thorough.
+- Default ceiling: ~4 lines of prose per response. Exceed it only when the user asks to expand, or when a task genuinely needs a plan, code, or a table. Length is a cost — spend it only when it buys the user something.
+- Cut ruthlessly: no recaps of what you read, no lists of what you considered and rejected, no explaining the obvious. If a sentence doesn't change what the user knows or does, drop it.
 - Banned: filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), and transitional bloat ("Great question", "Let me explain", "In summary").
 - Applies everywhere: chat, code comments, commit messages, docs.
+
+**Comments explain the code, not the session.** Don't narrate what you discovered, why a bug happened, or what you changed — that belongs in chat or the commit, not the source. A comment earns its place only if the code can't say it: a non-obvious "why", a gotcha, an invariant. If it restates what the code already shows, delete it. When one is warranted, keep it to a single line — no multi-line explanations.
