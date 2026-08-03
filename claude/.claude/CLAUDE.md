@@ -56,6 +56,8 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+**When you can't verify, say so.** If the effect only shows in a GUI, on a device, or in a run you can't execute, don't report it as fixed. State what you changed, what you expect, and what the user needs to check. A claimed fix the user has to disprove costs more than an honest "unverified".
+
 ## 5. Concise Communication
 
 **Lead with the answer. No preamble, no postamble.**
