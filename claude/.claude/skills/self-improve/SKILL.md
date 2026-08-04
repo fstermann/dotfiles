@@ -67,6 +67,8 @@ One-time, or occasional. It reads a lot of text — say what it will do before s
    Flags: `--since ISO_DATE`, `--project SUBSTRING`, `--limit N` (default 400), `--root PATH`. It returns matched user prompts with the preceding assistant message and a `signal_counts` summary.
 
 2. Read `signal_counts` first — it tells you which failure mode dominates before you read a single hit.
+
+   Then read `silent_signals`: tool calls the user **rejected** or **interrupted**, each with the exact call that was in flight. These need no complaint to exist, so they catch what the user worked around instead of voicing. Read the `call` field, not the words — the signal is what was being attempted. One veto usually produces both a `rejected` and an `interrupt` record, so count distinct calls, not rows.
 3. Cluster the hits by *underlying cause*, not by wording. Ten "no, simpler" corrections across eight projects are one finding, and a strong one.
 4. **Rank by frequency and drop the tail.** A cluster that appears once is noise; the regex is deliberately loose and over-matches. Require a pattern across at least three separate sessions before proposing it, and say how many sessions each proposal rests on.
 5. Distinguish two cases, because the fix differs:

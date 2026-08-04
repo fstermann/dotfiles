@@ -49,6 +49,12 @@ SIGNALS = [
 ]
 SIGNALS = [(re.compile(p, re.IGNORECASE), label) for p, label in SIGNALS]
 
+# Tool results carrying a user veto rather than an execution failure.
+REJECT = re.compile(
+    r"(user doesn'?t want to|user rejected|user declined|didn't want to take this action)",
+    re.IGNORECASE,
+)
+
 # Injected wrappers, not things the user typed.
 NOISE = re.compile(
     r"^\s*<(command-message|command-name|command-args|local-command|system-reminder|user-prompt-submit-hook)",
@@ -70,9 +76,21 @@ def text_of(msg):
     return ""
 
 
+def describe(tool, inp):
+    """One-line rendering of a tool call, enough to see what was being attempted."""
+    if not isinstance(inp, dict):
+        return tool
+    for key in ("command", "file_path", "pattern", "query", "url", "prompt"):
+        if key in inp:
+            return f"{tool}: {' '.join(str(inp[key]).split())[:200]}"
+    return tool
+
+
 def scan(path):
     prev_assistant = ""
-    out = []
+    pending = {}  # tool_use_id -> (name, rendered call)
+    last_tool = None
+    out, silent = [], []
     with path.open(errors="replace") as fh:
         for line in fh:
             try:
@@ -83,16 +101,50 @@ def scan(path):
                 continue
             kind = rec.get("type")
             if kind == "assistant":
-                t = text_of(rec.get("message", {}))
+                msg = rec.get("message", {})
+                t = text_of(msg)
                 if t:
                     prev_assistant = t
+                for b in msg.get("content") or []:
+                    if isinstance(b, dict) and b.get("type") == "tool_use":
+                        last_tool = (b.get("name", "?"), describe(b.get("name", "?"), b.get("input")))
+                        pending[b.get("id")] = last_tool
                 continue
             if kind != "user":
                 continue
-            body = text_of(rec.get("message", {}))
+            msg = rec.get("message", {})
+            common = {
+                "project": path.parent.name,
+                "timestamp": rec.get("timestamp", ""),
+                "transcript": str(path),
+            }
+
+            # A vetoed tool call: the user said no without saying why.
+            for b in msg.get("content") or []:
+                if not isinstance(b, dict) or b.get("type") != "tool_result":
+                    continue
+                blob = json.dumps(b.get("content", ""))[:2000]
+                if not REJECT.search(blob):
+                    continue
+                name, call = pending.get(b.get("tool_use_id"), ("?", "?"))
+                silent.append(
+                    {**common, "kind": "rejected", "tool": name, "call": call,
+                     "assistant_before": prev_assistant[-500:]}
+                )
+
+            body = text_of(msg)
             # Tool results arrive as user records with no text; skip those and wrappers.
             if not body.strip() or NOISE.match(body):
                 continue
+
+            # An interrupt: what mattered is what was in flight, not the words.
+            if "[Request interrupted by user" in body:
+                name, call = last_tool or ("?", "?")
+                silent.append(
+                    {**common, "kind": "interrupt", "tool": name, "call": call,
+                     "assistant_before": prev_assistant[-500:], "user_after": " ".join(body.split())[:300]}
+                )
+
             hits = [label for pat, label in SIGNALS if pat.search(body[:1500])]
             if not hits:
                 continue
@@ -107,7 +159,7 @@ def scan(path):
                     "assistant_before": prev_assistant[-800:],
                 }
             )
-    return out
+    return out, silent
 
 
 def main():
@@ -124,18 +176,27 @@ def main():
     if args.project:
         files = [f for f in files if args.project in f.parent.name]
 
-    results = []
+    results, silent = [], []
     for f in files:
-        results.extend(scan(f))
+        hits, sig = scan(f)
+        results.extend(hits)
+        silent.extend(sig)
 
     if args.since:
         results = [r for r in results if r["timestamp"] >= args.since]
+        silent = [r for r in silent if r["timestamp"] >= args.since]
     results.sort(key=lambda r: r["timestamp"], reverse=True)
+    silent.sort(key=lambda r: r["timestamp"], reverse=True)
 
     counts = {}
     for r in results:
         for s in r["signals"]:
             counts[s] = counts.get(s, 0) + 1
+
+    silent_counts = {}
+    for r in silent:
+        key = f"{r['kind']}:{r['tool']}"
+        silent_counts[key] = silent_counts.get(key, 0) + 1
 
     json.dump(
         {
@@ -144,6 +205,8 @@ def main():
             "signal_counts": dict(sorted(counts.items(), key=lambda kv: -kv[1])),
             "truncated_to": min(len(results), args.limit),
             "hits": results[: args.limit],
+            "silent_counts": dict(sorted(silent_counts.items(), key=lambda kv: -kv[1])),
+            "silent_signals": silent,
         },
         sys.stdout,
         indent=1,
