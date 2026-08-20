@@ -70,7 +70,7 @@ One-time, or occasional. It reads a lot of text — say what it will do before s
 
    Then read `silent_signals`: tool calls the user **rejected** or **interrupted**, each with the exact call that was in flight. These need no complaint to exist, so they catch what the user worked around instead of voicing. Read the `call` field, not the words — the signal is what was being attempted. One veto usually produces both a `rejected` and an `interrupt` record, so count distinct calls, not rows.
 3. Cluster the hits by *underlying cause*, not by wording. Ten "no, simpler" corrections across eight projects are one finding, and a strong one.
-4. **Rank by frequency and drop the tail.** A cluster that appears once is noise; the regex is deliberately loose and over-matches. Require a pattern across at least three separate sessions before proposing it, and say how many sessions each proposal rests on.
+4. **Rank by frequency and drop the tail.** A cluster that appears once is noise; the regex is deliberately loose and over-matches. Require a pattern across at least two separate sessions before proposing it — unless a single hit is an unambiguous standing preference or a verifiable config violation, which stand on their own. Say how many sessions each proposal rests on.
 5. Distinguish two cases, because the fix differs:
    - Config never covered this → propose a new rule.
    - Config covered it and it happened anyway → propose a *rewrite* of the existing rule. The old phrasing did not work; adding a second rule saying the same thing will not either.

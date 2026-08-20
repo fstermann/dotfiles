@@ -3,7 +3,7 @@
 # self-improvement review. Silent otherwise.
 set -euo pipefail
 
-THRESHOLD="${SELF_IMPROVE_THRESHOLD:-25}"
+THRESHOLD="${SELF_IMPROVE_THRESHOLD:-20}"
 STATE_DIR="$HOME/.claude/.self-improve"
 
 input=$(cat)
