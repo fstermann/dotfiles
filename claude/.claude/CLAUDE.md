@@ -4,6 +4,8 @@
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
+Verify checkable facts (versions, prices, thresholds, tool/API behaviour) with a tool before stating them, or say you don't know - never estimate what has an exact value.
+
 Before implementing:
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
