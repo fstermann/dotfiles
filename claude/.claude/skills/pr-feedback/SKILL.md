@@ -35,7 +35,7 @@ Returns `{owner,repo,num,me,url,headRef,currentBranch,dirty}`. Then:
 "$S/fetch-comments.sh" <owner> <repo> <num> <me>
 ```
 
-Returns my top-level comments as JSON: `[{id, source, path, line, body, diff_hunk, url, thread_id, review_id}]`. Already-answered ones (a reply whose marker cites their id) are dropped.
+Returns my unanswered comments as JSON: `[{id, source, path, line, body, diff_hunk, url, thread_id, review_id}]`. Replies are included, not just top-level comments — a follow-up I post inside a thread I already answered reopens it. Already-answered ones (a reply whose marker cites their id) and my own marker-replies are dropped.
 
 - `source: review` → published inline; reply is a published thread reply.
 - `source: issue` → general conversation comment; reply is a new published conversation comment.

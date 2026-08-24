@@ -43,14 +43,16 @@ jq -n --arg me "$ME" --arg marker "$MARKER" \
   ($pub[0]) as $pub | ($iss[0]) as $iss | ($pend[0]) as $pend
   | ($pub + $iss + $pend) as $all
   | ([ $all[] | select(.body|contains($marker)) | (.body|capture("id=(?<n>[0-9]+)")|.n|tonumber)? ]) as $answered
+  # Replies are kept, not just top-level comments: a follow-up I post inside a thread I already
+  # answered reopens it, and would otherwise be invisible. My own marker-replies carry the marker
+  # (dropped below) and every already-answered id is in $answered, so neither is re-surfaced.
   | ( $pub
-      | map(select(.user.login==$me and .in_reply_to_id==null
+      | map(select(.user.login==$me
                    and (.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, source:"review", path, line:(.line // .original_line), body, diff_hunk,
              url:.html_url, thread_id:null, review_id:null}) )
   + ( $pend
-      | map(select(.reply_to==null
-                   and (.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
+      | map(select((.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, source:"pending", path, line, body, diff_hunk, url, thread_id, review_id}) )
   + ( $iss
       | map(select(.user.login==$me and (.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
