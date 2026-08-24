@@ -1,6 +1,6 @@
 ---
 name: pr-feedback
-description: Address my review comments on a pull request. Fetches published, pending, and general comments on a PR (by number, URL, or the current branch's PR), then for each one either fixes the code or answers it, marks each with a status emoji, and — after one confirmation — commits, pushes, and posts a reply to each comment (published reply for published comments, draft reply for pending ones). Trigger on "address my PR comments", "review my PR feedback", "handle the comments on PR #N", or a PR ref plus "address the comments".
+description: Address my review comments on a pull request. Fetches published, pending, and general comments on a PR (by number, URL, or the current branch's PR), then for each one either fixes the code or answers it, marks each with a status emoji, commits, pushes, and posts a reply to each comment (published reply for published comments, draft reply for pending ones). Trigger on "address my PR comments", "review my PR feedback", "handle the comments on PR #N", or a PR ref plus "address the comments".
 ---
 
 For each of my review comments on a PR: fix the code or answer it, tag it with a status emoji, report in the session, and reply on GitHub (published reply for published comments, draft reply for pending ones).
@@ -57,9 +57,7 @@ fix(review): <short summary>
 Addresses PR #<num> comment on <path>:<line>
 ```
 
-Don't push or post yet.
-
-## Step 4 — Summarize and confirm
+## Step 4 — Summarize
 
 Print the table, then list every ❓ and ⚠️ in full:
 
@@ -76,9 +74,9 @@ PR #<num> — <title>
 └─────────────────────────────┴────┴───────────────────────────┘
 ```
 
-Ask for one confirmation before pushing — it's public. Offer to hold ❓ replies until I answer.
+Then proceed straight to Step 5 — no confirmation needed. Hold the reply for any ❓ item until I answer it; push and reply to the rest.
 
-## Step 5 — Push and reply (after confirmation)
+## Step 5 — Push and reply
 
 ```bash
 git push
@@ -89,7 +87,7 @@ git push
 "$S/post-reply.sh" pending <thread_id> <review_id> <comment_id> "✅ Addressed in <sha>."
 ```
 
-The script appends the marker. Pending replies stay pending (not public) — the push and any `review`/`issue` replies are the public part the confirmation gates. Report SHAs pushed, comments replied to, and anything still needing me.
+The script appends the marker. Pending replies stay pending (not public); the push and any `review`/`issue` replies are the public part. Report SHAs pushed, comments replied to, and anything still needing me.
 
 ## Notes
 
