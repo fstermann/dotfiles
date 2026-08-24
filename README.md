@@ -61,6 +61,7 @@ After installation, a `dotfiles` shell function is available with these subcomma
 ```sh
 dotfiles install   # Run the full installer
 dotfiles update    # Pull latest changes, restow packages, upgrade tools
+dotfiles restow    # Re-link packages — pick up new files, prune dead links
 dotfiles doctor    # Health check — verify symlinks, tools, and config
 dotfiles <git …>  # Any git command on the dotfiles repo (e.g. dotfiles status)
 ```
@@ -78,9 +79,20 @@ Runs a health check to verify your installation is in good shape:
 
 Pulls the latest changes from the repo and:
 
-- Restows all packages
+- Restows all packages (via `dotfiles restow`)
 - Upgrades Homebrew packages (macOS)
 - Updates oh-my-posh, fzf, and zsh plugins
+
+### `dotfiles restow`
+
+Re-links all packages with `stow --restow`. Run it after adding new files to a package — it links the new files and prunes dead symlinks, and is idempotent on links that already exist. Accepts `--dry-run` (simulate) and `--quiet`.
+
+- Any real (non-symlink) file blocking a target is moved to `~/.dotfiles-backup/` before linking.
+- **Machine-local skips** — to leave specific targets alone on one machine, list one basename regex per line in `~/.dotfiles/.restow-ignore.local` (gitignored, so it never affects other machines). Example — keep a hand-merged `~/.claude/settings.json` untouched:
+
+  ```sh
+  echo 'settings\.json' > ~/.dotfiles/.restow-ignore.local
+  ```
 
 ---
 

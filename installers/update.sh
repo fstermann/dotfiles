@@ -8,7 +8,6 @@
 set -e
 
 DOTFILES_DIR="$HOME/.dotfiles"
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
 
 # shellcheck source=lib/ui.sh
 source "$DOTFILES_DIR/installers/lib/ui.sh"
@@ -28,10 +27,7 @@ step "Pull latest dotfiles" \
 source "$DOTFILES_DIR/installers/lib/ui.sh"
 
 # ── Restow ───────────────────────────────────────────────────────────────────
-section "Symlinks"
-
-step "Restow packages" \
-  stow --restow --no-folding -d "$DOTFILES_DIR" -t "$HOME" "${STOW_PACKAGES[@]}" || (( _errors++ ))
+bash "$DOTFILES_DIR/installers/restow.sh" --quiet || (( _errors++ ))
 
 # ── Platform tools ───────────────────────────────────────────────────────────
 section "Tools"

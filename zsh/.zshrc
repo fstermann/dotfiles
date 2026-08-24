@@ -1,6 +1,7 @@
 dotfiles() {
   case "$1" in
     update)  bash "$HOME/.dotfiles/installers/update.sh" ;;
+    restow)  bash "$HOME/.dotfiles/installers/restow.sh" "${@:2}" ;;
     doctor)  bash "$HOME/.dotfiles/installers/doctor.sh" ;;
     install) bash "$HOME/.dotfiles/install.sh" ;;
     *)       git --git-dir="$HOME/.dotfiles/.git" --work-tree="$HOME/.dotfiles" "$@" ;;

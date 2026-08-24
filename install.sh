@@ -14,8 +14,7 @@ DOTFILES_REPO="https://github.com/fstermann/dotfiles.git"
 DOTFILES_DIR="$HOME/.dotfiles"
 BACKUP_DIR="$HOME/.dotfiles-backup"
 
-# Stow packages (one per tool — each mirrors $HOME structure)
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
+# STOW_PACKAGES is sourced from installers/lib/packages.sh after the repo is cloned.
 
 # ── Load UI library ──────────────────────────────────────────────────────────
 # On a fresh install the repo hasn't been cloned yet, so fetch ui.sh directly
@@ -68,6 +67,8 @@ fi
 # Re-source the local copy now that the repo is cloned
 # shellcheck source=installers/lib/ui.sh
 [[ -f "$DOTFILES_DIR/installers/lib/ui.sh" ]] && source "$DOTFILES_DIR/installers/lib/ui.sh"
+# shellcheck source=installers/lib/packages.sh
+[[ -f "$DOTFILES_DIR/installers/lib/packages.sh" ]] && source "$DOTFILES_DIR/installers/lib/packages.sh"
 
 # ── Install GNU Stow ──────────────────────────────────────────────────────────
 section "Stow"
@@ -194,4 +195,4 @@ fi
 install_summary "$_errors"
 
 info "Dotfiles are managed with GNU Stow. Repo is at $DOTFILES_DIR"
-info "To restow: stow --no-folding -d ~/.dotfiles -t \$HOME zsh git fzf oh-my-posh macos"
+info "To restow: dotfiles restow  (or: bash ~/.dotfiles/installers/restow.sh)"

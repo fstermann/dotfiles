@@ -13,7 +13,7 @@ set -e
 DOTFILES_REPO="https://github.com/fstermann/dotfiles.git"
 DOTFILES_DIR="$HOME/.dotfiles"
 BARE_BACKUP="$HOME/.dotfiles-bare-backup"
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos)
+# STOW_PACKAGES is sourced from installers/lib/packages.sh after the repo is cloned.
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 RESET=$'\033[0m'; BOLD=$'\033[1m'; DIM=$'\033[2m'
@@ -59,9 +59,11 @@ info "Cloning $DOTFILES_REPO → $DOTFILES_DIR …"
 git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 ok "Cloned repository"
 
-# Source the UI library now that the repo is available
+# Source the UI library and package list now that the repo is available
 # shellcheck source=installers/lib/ui.sh
 source "$DOTFILES_DIR/installers/lib/ui.sh"
+# shellcheck source=installers/lib/packages.sh
+source "$DOTFILES_DIR/installers/lib/packages.sh"
 
 # ── Step 3: stow --adopt ──────────────────────────────────────────────────────
 section "Adopt existing files"
@@ -91,6 +93,6 @@ fi
 install_summary 0
 
 info "Repo: $DOTFILES_DIR"
-info "To restow:  stow --no-folding -d ~/.dotfiles -t \$HOME zsh git fzf oh-my-posh macos"
-info "To unstow:  stow -d ~/.dotfiles -t \$HOME -D zsh git fzf oh-my-posh macos"
+info "To restow:  dotfiles restow  (or: bash ~/.dotfiles/installers/restow.sh)"
+info "To unstow:  stow -d ~/.dotfiles -t \$HOME -D zsh git fzf oh-my-posh macos claude"
 info "Old bare repo backup: $BARE_BACKUP (delete when satisfied)"
