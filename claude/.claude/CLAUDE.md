@@ -60,18 +60,6 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 **When you can't verify, say so.** If the effect only shows in a GUI, on a device, or in a run you can't execute, don't report it as fixed. State what you changed, what you expect, and what the user needs to check. A claimed fix the user has to disprove costs more than an honest "unverified".
 
-## 5. Concise Communication
+## 5. Self-Explanatory Code Over Comments
 
-**Lead with the answer. No preamble, no postamble.**
-
-- Answer first. Don't restate the question or explain what you're about to do.
-- Don't summarize what you just did unless asked. The diff/output speaks for itself.
-- Default to the fewest sentences that fully answer. Add detail only when asked or when correctness requires it.
-- One-line answers are good answers. Don't pad to seem thorough.
-- Default ceiling: ~4 lines of prose per response. Exceed it only when the user asks to expand, or when a task genuinely needs a plan, code, or a table. Length is a cost — spend it only when it buys the user something.
-- Cut ruthlessly: no recaps of what you read, no lists of what you considered and rejected, no explaining the obvious. If a sentence doesn't change what the user knows or does, drop it.
-- No unexplained jargon. Don't reach for an internal/implementation term the user hasn't used first — say what happens in plain words, and if a term is genuinely needed, say what it means in the same breath. Holds in the questions you ask, too.
-- Banned: filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), and transitional bloat ("Great question", "Let me explain", "In summary").
-- Applies everywhere: chat, code comments, commit messages, docs.
-
-**Comments explain the code, not the session.** Don't narrate what you discovered, why a bug happened, or what you changed — that belongs in chat or the commit, not the source. A comment earns its place only if the code can't say it: a non-obvious "why", a gotcha, an invariant. If it restates what the code already shows, delete it. When one is warranted, keep it to a single line — no multi-line explanations.
+Make the code say it: clear names, small functions, obvious structure. A comment is a fallback for what the code genuinely can't express — a non-obvious "why", a gotcha, an invariant — not a patch for unclear code. Never narrate the session (what you discovered, why a bug happened, what you changed); that belongs in chat or the commit. If a comment restates what the code already shows, delete it. When one is warranted, keep it to a single line.
