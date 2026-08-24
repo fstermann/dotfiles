@@ -81,7 +81,7 @@ type = "prompt"
   type = "claude"
   style = "plain"
   foreground = "p:model-fg"
-  template = "󰣖 {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} {{ .Env.CLAUDE_EFFORT }}{{ end }}{{ if .OutputStyle }}·{{ .OutputStyle.Name }}{{ end }}"
+  template = "󰣖 {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} {{ .Env.CLAUDE_EFFORT }}{{ end }}{{ if .OutputStyle }}  {{ .OutputStyle.Name }}{{ end }}"
 
   # Pill 2 — Session: context %, cost, lines
   [[blocks.segments]]
