@@ -21,6 +21,7 @@ Deterministic steps are scripts in `scripts/` (run from `$HOME/.claude/skills/pr
 ```bash
 S="$HOME/.claude/skills/pr-feedback/scripts"
 "$S/resolve-pr.sh" "$REF"     # $REF: number, URL, or omit for current branch's PR
+# Multi-repo workspace (cwd isn't the target repo): pass --repo owner/name with a PR number.
 ```
 
 Returns `{owner,repo,num,me,url,headRef,currentBranch,dirty}`. Then:

@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 # Resolve a PR ref (number, URL, or empty=current branch) to its coordinates.
 # Read-only. Prints JSON: {owner,repo,num,me,url,headRef,currentBranch,dirty}
+# Usage: resolve-pr.sh [REF] [--repo owner/name]
+#   --repo lets a multi-repo workspace resolve a PR when cwd isn't the target repo
+#   (pass a PR number/URL too — current-branch detection still needs the checkout).
 set -euo pipefail
-REF="${1:-}"
+REF=""; REPO=""
+while [ $# -gt 0 ]; do case "$1" in
+  --repo) REPO="${2:-}"; shift 2 ;;
+  *) REF="$1"; shift ;;
+esac; done
 
-info=$(gh pr view ${REF:+"$REF"} --json url,headRefName)
+if [ -n "$REPO" ]; then
+  info=$(gh pr view ${REF:+"$REF"} --repo "$REPO" --json url,headRefName)
+else
+  info=$(gh pr view ${REF:+"$REF"} --json url,headRefName)
+fi
 URL=$(echo "$info" | jq -r .url)
 HEAD=$(echo "$info" | jq -r .headRefName)
 read -r O R N <<<"$(echo "$URL" | sed -E 's#^https?://[^/]+/([^/]+)/([^/]+)/pull/([0-9]+).*#\1 \2 \3#')"
