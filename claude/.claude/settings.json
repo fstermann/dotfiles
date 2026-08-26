@@ -5,7 +5,7 @@
     "defaultMode": "auto"
   },
   "model": "claude-opus-4-8[1m]",
-  "outputStyle": "bluf",
+  "outputStyle": "BLUF",
   "hooks": {
     "PreToolUse": [
       {
