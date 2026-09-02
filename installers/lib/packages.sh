@@ -3,4 +3,4 @@
 # Sourced by install.sh, migrate.sh, and installers/{update,restow}.sh.
 
 # One package per tool — each mirrors the $HOME directory structure.
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
+STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude codex)

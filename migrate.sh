@@ -94,5 +94,5 @@ install_summary 0
 
 info "Repo: $DOTFILES_DIR"
 info "To restow:  dotfiles restow  (or: bash ~/.dotfiles/installers/restow.sh)"
-info "To unstow:  stow -d ~/.dotfiles -t \$HOME -D zsh git fzf oh-my-posh macos claude"
+info "To unstow:  stow -d ~/.dotfiles -t \$HOME -D zsh git fzf oh-my-posh macos claude codex"
 info "Old bare repo backup: $BARE_BACKUP (delete when satisfied)"

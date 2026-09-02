@@ -8,6 +8,28 @@ dotfiles() {
   esac
 }
 
+# Apply the dotfiles-managed Codex UI profile by default. An explicit profile
+# still wins, e.g. `codex --profile work`.
+codex() {
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      -p|--profile|--profile=*|-p?*) command codex "$@"; return ;;
+    esac
+  done
+
+  # Codex rejects --profile for administrative commands that do not start or
+  # interact with a runtime session.
+  case "${1:-}" in
+    agents|login|logout|plugin|mcp-server|app-server|remote-control|app|completion|update|doctor|features|help|apply|migrate-rollouts|cloud|exec-server)
+      command codex "$@"
+      return
+      ;;
+  esac
+
+  command codex --profile pure "$@"
+}
+
 # Source zsh plugins
 if [[ "$OSTYPE" == "darwin"* ]]; then
     ZSH_PLUGIN_PREFIX=$(brew --prefix)/share

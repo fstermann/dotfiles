@@ -8,7 +8,7 @@
 set -e
 
 DOTFILES_DIR="$HOME/.dotfiles"
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude)
+STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude codex)
 
 # Ensure tools installed outside system paths are discoverable
 export PATH="$HOME/.fzf/bin:$HOME/.local/bin:$PATH"
@@ -57,6 +57,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   _check_symlink "$HOME/.config/macos/Monokai Pro (Filter Octagon).terminal"
 fi
 _check_symlink "$HOME/.claude/settings.json"
+_check_symlink "$HOME/.codex/pure.config.toml"
 
 # ── Tools on PATH ────────────────────────────────────────────────────────────
 section "Tools"
@@ -115,6 +116,7 @@ _check_file "$HOME/.zshrc"
 _check_file "$HOME/.zprofile"
 _check_file "$HOME/.config/fzf/fzf.zsh"
 _check_file "$HOME/.config/zsh/oh-my-posh/oh-my-posh.zsh"
+_check_file "$HOME/.codex/pure.config.toml"
 
 # ── Local stubs ──────────────────────────────────────────────────────────────
 section "Local config"
