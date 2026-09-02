@@ -1,0 +1,13 @@
+# Pure-inspired Codex CLI status line.
+
+[tui]
+status_line = [
+  "model-with-reasoning",
+  "context-used",
+  "estimated-thread-cost",
+  "five-hour-limit",
+  "weekly-limit",
+  "git-branch",
+  "current-dir",
+]
+status_line_use_colors = true

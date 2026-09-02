@@ -105,6 +105,7 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 | `fzf` | `.config/fzf/` — fzf config, Monokai color scheme, preview script |
 | `oh-my-posh` | `.config/zsh/oh-my-posh/` — Pure prompt theme + fallback prompt |
 | `claude` | `.claude/` — Claude editor settings + statusline script |
+| `codex` | `.codex/pure.config.toml` — Pure-inspired Codex CLI status line profile |
 | `macos` | `.config/macos/` — Terminal.app Monokai Pro theme |
 
 ---
@@ -133,7 +134,7 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 
 ```sh
 # Stow all packages (idempotent — safe to re-run)
-stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos claude
+stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos claude codex
 
 # Stow a single package
 stow --no-folding -d ~/.dotfiles -t $HOME zsh
@@ -142,7 +143,16 @@ stow --no-folding -d ~/.dotfiles -t $HOME zsh
 stow -d ~/.dotfiles -t $HOME -D zsh
 
 # Simulate without making changes
-stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos claude
+stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos claude codex
+```
+
+The Zsh configuration selects the Pure-inspired profile for every Codex CLI
+session. You can also select it explicitly, or override it with another profile:
+
+```sh
+codex
+codex --profile pure
+codex --profile work
 ```
 
 ---
@@ -158,4 +168,3 @@ curl -fsSL https://raw.githubusercontent.com/fstermann/dotfiles/main/migrate.sh 
 ```
 
 This will back up the old bare repo, clone the restructured repo, and use `stow --adopt` to replace existing dotfiles with symlinks without losing any local changes.
-
