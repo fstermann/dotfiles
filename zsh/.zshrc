@@ -41,7 +41,7 @@ fi
 
 # Load completions
 FPATH=$ZSH_PLUGIN_PREFIX/zsh-completions:$FPATH
-autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit -i
 
 # fzf's completion binds Tab (^I); fzf-tab must bind it last, then the
 # widget-wrapping plugins load after fzf-tab.
