@@ -12,11 +12,11 @@ Deterministic steps are scripts in `scripts/` (run from `$HOME/.claude/skills/pr
 | Emoji | Meaning                                                    |
 | ----- | ---------------------------------------------------------- |
 | ✅    | Fixed in code (cite the commit) or question answered fully |
-| 💬    | Answered — no code change needed                           |
-| ⚠️    | Partial or not straightforward — explain why               |
+| 💬    | Answered, no code change needed                            |
+| ⚠️    | Partial or not straightforward, explain why                |
 | ❓    | Needs your input before I proceed                          |
 
-## Step 1 — Resolve the PR
+## Step 1: Resolve the PR
 
 ```bash
 S="$HOME/.claude/skills/pr-feedback/scripts"
@@ -29,19 +29,19 @@ Returns `{owner,repo,num,me,url,headRef,currentBranch,dirty}`. Then:
 - `dirty:true` with unrelated changes → stop; don't mix them into feedback commits.
 - `currentBranch != headRef` → `gh pr checkout <num>`.
 
-## Step 2 — Fetch the comments
+## Step 2: Fetch the comments
 
 ```bash
 "$S/fetch-comments.sh" <owner> <repo> <num> <me>
 ```
 
-Returns my unanswered comments as JSON: `[{id, source, path, line, body, diff_hunk, url, thread_id, review_id}]`. Replies are included, not just top-level comments — a follow-up I post inside a thread I already answered reopens it. Already-answered ones (a reply whose marker cites their id) and my own marker-replies are dropped.
+Returns my unanswered comments as JSON: `[{id, source, path, line, body, diff_hunk, url, thread_id, review_id}]`. Replies are included, not just top-level comments. A follow-up I post inside a thread I already answered reopens it. Already-answered ones (a reply whose marker cites their id) and my own marker-replies are dropped.
 
 - `source: review` → published inline; reply is a published thread reply.
 - `source: issue` → general conversation comment; reply is a new published conversation comment.
 - `source: pending` → my draft review (via GraphQL; carries `thread_id` + `review_id`); reply goes in as a **draft** and stays pending until I submit. Never submit my review for me.
 
-## Step 3 — Address each comment
+## Step 3: Address each comment
 
 Read the referenced code (`path` + `line`, `diff_hunk` for context), then pick one:
 
@@ -58,12 +58,12 @@ fix(review): <short summary>
 Addresses PR #<num> comment on <path>:<line>
 ```
 
-## Step 4 — Summarize
+## Step 4: Summarize
 
 Print the table, then list every ❓ and ⚠️ in full:
 
 ```
-PR #<num> — <title>
+PR #<num>: <title>
 
 ┌─────────────────────────────┬────┬───────────────────────────┐
 │ Comment (path:line)         │ St │ Action                    │
@@ -75,9 +75,9 @@ PR #<num> — <title>
 └─────────────────────────────┴────┴───────────────────────────┘
 ```
 
-Then proceed straight to Step 5 — no confirmation needed. Hold the reply for any ❓ item until I answer it; push and reply to the rest.
+Then proceed straight to Step 5, no confirmation needed. Hold the reply for any ❓ item until I answer it; push and reply to the rest.
 
-## Step 5 — Push and reply
+## Step 5: Push and reply
 
 ```bash
 git push
@@ -93,5 +93,5 @@ The script appends the marker. Pending replies stay pending (not public); the pu
 ## Notes
 
 - "My comments" = comments by the authenticated `gh` user (I usually author and self-review the PR).
-- The skill never resolves threads or submits reviews — only I do that.
+- The skill never resolves threads or submits reviews. Only I do that.
 - If I say don't push on a run, stop after the summary and commits.

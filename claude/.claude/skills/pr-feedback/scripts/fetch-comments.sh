@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fetch my top-level, unanswered comments on a PR from all sources, normalized.
-# Pending (draft) comments come via GraphQL — carries real line + thread/review
+# Pending (draft) comments come via GraphQL, carries real line + thread/review
 # ids so drafts can receive a (pending) reply. Already-answered comments
 # (a reply whose marker cites their id) are dropped.
 # Usage: fetch-comments.sh OWNER REPO NUM ME

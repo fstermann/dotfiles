@@ -10,7 +10,7 @@ CLASSIFY FIRST. Procedural text tells the reader what to do: imperative mood, ma
 
 VERBS. Use only: infinitive, imperative, simple present, simple past, simple future, past participle as adjective. No present perfect ("has completed" → "completed"). No "-ing" verb forms ("making it easy" → new sentence). Active voice; passive only in descriptions when the agent is unknown. Approved modals: can, will, must. Banned: should, would, may, might, could. For "should": write "must" if required, delete if optional.
 
-SENTENCES. Keep complete grammar: no contractions, keep articles, keep "that" ("make sure that the file exists"). Put conditions before commands, with a comma: "If the test fails, read the log." No semicolons — write two sentences. Use a vertical list for more than two items or steps.
+SENTENCES. Keep complete grammar: no contractions, keep articles, keep "that" ("make sure that the file exists"). Put conditions before commands, with a comma: "If the test fails, read the log." No semicolons. Write two sentences. Use a vertical list for more than two items or steps.
 
 WORDS. One word, one meaning, for the whole document: pick one of check/verify/confirm and keep it. Noun chains of maximum three words; break longer ones with prepositions ("the timeout value for the connection pool"). Delete words that carry no fact: simply, seamlessly, robust, powerful, comprehensive, leverage, "in order to", "it is worth noting". Replace: utilize → use, prior to → before, in the event that → if, e.g. → for example. American spelling.
 

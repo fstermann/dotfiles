@@ -3,7 +3,7 @@
 # Read-only. Prints JSON: {owner,repo,num,me,url,headRef,currentBranch,dirty}
 # Usage: resolve-pr.sh [REF] [--repo owner/name]
 #   --repo lets a multi-repo workspace resolve a PR when cwd isn't the target repo
-#   (pass a PR number/URL too — current-branch detection still needs the checkout).
+#   (pass a PR number/URL too; current-branch detection still needs the checkout).
 set -euo pipefail
 REF=""; REPO=""
 while [ $# -gt 0 ]; do case "$1" in
