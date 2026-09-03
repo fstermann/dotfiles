@@ -63,15 +63,6 @@ jobs:
             - name: Set up mock claude (stub Anthropic API + claude code)
               run: bash .demo/setup-claude-mock.sh
 
-            - name: DIAG completion state
-              run: |
-                  echo "=== zshrc compinit line ==="; grep -n compinit ~/.zshrc || true
-                  echo "=== global zshrc compinit ==="; grep -rn compinit /etc/zsh* /etc/zshrc 2>/dev/null || echo none
-                  echo "=== compaudit (insecure dirs/files) ==="; zsh -c 'autoload -Uz compaudit; compaudit' 2>&1 || echo "compaudit clean"
-                  echo "=== compinit -i then whence ==="; zsh -c 'autoload -Uz compinit; compinit -i; for f in _setup _complete _ignored _main_complete; do whence -v $f; done' 2>&1
-                  echo "=== plugin dir perms ==="; ls -ld ~/.config/zsh/plugins ~/.config/zsh/plugins/* /usr/local/share/zsh/site-functions 2>&1 || true
-                  exit 1
-
             - name: Record demo GIF
               run: vhs .demo/demo.tape
 
