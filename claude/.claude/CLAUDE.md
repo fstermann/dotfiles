@@ -63,3 +63,16 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ## 5. Self-Explanatory Code Over Comments
 
 Make the code say it: clear names, small functions, obvious structure. A comment is a fallback for what the code genuinely can't express — a non-obvious "why", a gotcha, an invariant — not a patch for unclear code. Never narrate the session (what you discovered, why a bug happened, what you changed); that belongs in chat or the commit. If a comment restates what the code already shows, delete it. When one is warranted, keep it to a single line.
+
+## 6. Prose Voice
+
+Write tersely. Prose is cognitive debt: strip every word that isn't load-bearing. Applies to everything you author, not just chat: docs, ADRs, PR descriptions, commit bodies.
+
+- Lead with the point. No preamble, no throat-clearing, no summary of what you're about to say.
+- No em dashes. Use a period or comma. Don't substitute en dashes or parenthetical dashes.
+- No AI vocabulary: delve, leverage, utilize, crucial, robust, seamless, underscore, showcase, foster, tapestry, pivotal, "landscape"/"realm"/"nexus" as metaphor. Use the plain word (utilize→use, leverage→use, facilitate→help).
+- No puffery (groundbreaking, vibrant, stunning) and no vague attribution ("experts say", "studies show") without a named source.
+- State a point once. Don't force the rule of three or the "not just X, but Y" frame.
+- Cut filler ("in order to"→"to", "due to the fact that"→"because", delete "it is important to note that") and hedging stacks ("could potentially possibly"→"may").
+- Sentence-case headings. Straight quotes, not curly. Don't bold every proper noun; a bold label plus a colon that restates the line is a tell.
+- Active voice, name the actor. Cut an adverb propping up a weak verb; pick the right verb or give the number.
