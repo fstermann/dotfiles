@@ -43,7 +43,7 @@ jobs:
 
                   # Install MesloLGS Nerd Font to user font dir
                   mkdir -p ~/.local/share/fonts
-                  oh-my-posh font install meslo --headless
+                  oh-my-posh font install meslo
                   fc-cache -f
 
             - name: Prepare dirty git state

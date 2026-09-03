@@ -41,8 +41,11 @@ fi
 
 # Load completions
 FPATH=$ZSH_PLUGIN_PREFIX/zsh-completions:$FPATH
-autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit -i
 
+# fzf's completion binds Tab (^I); fzf-tab must bind it last, then the
+# widget-wrapping plugins load after fzf-tab.
+source ~/.config/fzf/fzf.zsh
 source $ZSH_PLUGIN_PREFIX/fzf-tab/fzf-tab.zsh
 #source $ZSH_PLUGIN_PREFIX/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 source $ZSH_PLUGIN_PREFIX/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -50,7 +53,6 @@ source $ZSH_PLUGIN_PREFIX/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Source .config files
 source ~/.config/zsh/oh-my-posh/oh-my-posh.zsh
-source ~/.config/fzf/fzf.zsh
 
 
 # History
