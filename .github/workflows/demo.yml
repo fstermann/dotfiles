@@ -63,6 +63,15 @@ jobs:
             - name: Set up mock claude (stub Anthropic API + claude code)
               run: bash .demo/setup-claude-mock.sh
 
+            - name: DIAG completion state
+              shell: zsh -i {0}
+              run: |
+                  source ~/.zshrc 2>&1 | head -20 || true
+                  echo "=== zsh version ==="; echo $ZSH_VERSION
+                  echo "=== fpath ==="; print -l $fpath
+                  echo "=== whence ==="; for f in _main_complete _setup _complete _ignored; do whence -v $f; done
+                  echo "=== compinit dump ==="; ls -la ~/.zcompdump* 2>&1 || true
+
             - name: Record demo GIF
               run: vhs .demo/demo.tape
 
