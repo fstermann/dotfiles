@@ -4,3 +4,7 @@ __pycache__/
 
 # Machine-local restow skip list (per-machine, not tracked)
 .restow-ignore.local
+
+# Lux Edit and UI Review directories
+.visual-edit/
+.ui-review/
