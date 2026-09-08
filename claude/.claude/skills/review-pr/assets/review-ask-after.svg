@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="860" height="182" viewBox="0 0 860 182" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
-  <rect width="860" height="182" fill="#ffffff"/>
-  <rect x="1" y="1" width="858" height="180" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="208" viewBox="0 0 860 208" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect width="860" height="208" fill="#ffffff"/>
+  <rect x="1" y="1" width="858" height="206" rx="6" fill="#ffffff" stroke="#d0d7de"/>
 
   <rect x="2" y="2" width="856" height="30" fill="#f6f8fa"/>
   <circle cx="28" cy="17" r="11" fill="#a5d6a7"/>
@@ -10,14 +10,15 @@
   <rect x="700" y="8" width="104" height="18" rx="9" fill="#fff8c5" stroke="#eac54f"/>
   <text x="752" y="17" font-size="11" fill="#7a5c00" text-anchor="middle" dominant-baseline="central" font-weight="600">Pending · edited</text>
 
-  <!-- my original text -->
+  <!-- my original comment, kept verbatim: the note and the /ask line -->
   <text x="20" y="54" font-size="13.5" fill="#1f2328">Is this a race, or is the lock held across both reads?</text>
+  <text x="20" y="76" font-size="13.5" fill="#1f2328"><tspan fill="#0550ae" font-weight="600">/ask</tspan> check whether the mutex covers the second access too</text>
 
   <!-- the scratchpad Claude wrote back under my comment -->
-  <rect x="20" y="70" width="820" height="1" fill="#d8dee4"/>
-  <rect x="20" y="80" width="4" height="82" rx="2" fill="#8250df"/>
-  <text x="36" y="98" font-size="12.5" fill="#8250df" font-weight="600">answer from /ask</text>
-  <text x="36" y="120" font-size="13.5" fill="#1f2328">Confirmed: the mutex is released after the first read (line 86), so the</text>
-  <text x="36" y="138" font-size="13.5" fill="#1f2328">second access at line 88 is unguarded. Real race. Suggest widening the</text>
-  <text x="36" y="156" font-size="13.5" fill="#1f2328">lock to cover both, or snapshotting the value once.</text>
+  <rect x="20" y="92" width="820" height="1" fill="#d8dee4"/>
+  <rect x="20" y="102" width="4" height="86" rx="2" fill="#8250df"/>
+  <text x="36" y="120" font-size="12.5" fill="#8250df" font-weight="600">answer from /ask</text>
+  <text x="36" y="142" font-size="13.5" fill="#1f2328">Confirmed: the mutex is released after the first read (line 86), so the</text>
+  <text x="36" y="160" font-size="13.5" fill="#1f2328">second access at line 88 is unguarded. Real race. Suggest widening the</text>
+  <text x="36" y="178" font-size="13.5" fill="#1f2328">lock to cover both, or snapshotting the value once.</text>
 </svg>

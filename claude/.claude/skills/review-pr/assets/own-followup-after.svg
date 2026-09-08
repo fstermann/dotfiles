@@ -29,5 +29,5 @@
   <path d="M24 151 Q28 154.5 32 151" stroke="#4d4d4d" stroke-width="1.4" fill="none" stroke-linecap="round"/>
   <text x="50" y="153" font-size="13.5" fill="#1f2328" font-weight="600">fstermann<tspan font-weight="400" fill="#656d76">&#160;commented&#160;·&#160;edited</tspan></text>
   <text x="844" y="153" font-size="12" fill="#656d76" text-anchor="end">just now</text>
-  <text x="20" y="186" font-size="13.5" fill="#1f2328">Good catch, empty input now returns early. Done in <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#0550ae">d4e5f6</tspan>.</text>
+  <text x="20" y="186" font-size="13.5" fill="#1f2328">Also handled the empty input case: it now returns early. Done in <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#0550ae">d4e5f6</tspan>.</text>
 </svg>

@@ -29,7 +29,7 @@ Returns `{owner,repo,num,me,author,flow,url,headRef,currentBranch,dirty}`.
 In the Reviewing flow, and when responding to reviewers, I answer by rewriting a comment body (`edit-comment.sh`), not by posting marker replies. Your scratchpad goes in a fence so it's idempotent and strippable:
 
 ```
-<my original text>
+<my comment, verbatim, directive line and all>
 
 ---
 <!-- claude:start -->
@@ -37,7 +37,7 @@ In the Reviewing flow, and when responding to reviewers, I answer by rewriting a
 <!-- claude:end -->
 ```
 
-Re-running replaces the scratchpad (and its `---` divider), never stacks. `/reply` strips the fence entirely.
+Keep my comment above the fence exactly as I wrote it, including the `/ask` line, so the thread still reads as a conversation. Re-running replaces the scratchpad (and its `---` divider), never stacks. Only `/reply` strips the fence and the directive line, leaving the clean final.
 
 ### Directives (AIR)
 
@@ -91,10 +91,10 @@ Auto-fold, no confirmation. One comment per thread is the goal.
 - Research X → answer inline.
 - My comment is weak or wrong → say so; propose a sharper one or suggest dropping it.
 
-Write the scratchpad into the same comment via the fence. If `has_fence`, replace the existing scratchpad:
+Write the scratchpad into the same comment via the fence, keeping my comment above it verbatim (the `/ask` line included). If `has_fence`, replace the existing scratchpad:
 
 ```bash
-"$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <my text>\n\n---\n<!-- claude:start -->\n<scratchpad>\n<!-- claude:end -->
+"$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <my comment verbatim>\n\n---\n<!-- claude:start -->\n<scratchpad>\n<!-- claude:end -->
 ```
 
 **Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating on it: compose one clean reply to the PR author from my text + the scratchpad, and set the body to only that (no fence, no divider, no `/reply` line):
@@ -164,7 +164,7 @@ Hold the reply for any ❓ until I answer. The script appends the idempotency ma
 - `directive:"infer"` → an untagged follow-up I added to a thread I already tagged. Infer intent from my text: only a clarification → do the `reply` case; a change is needed → do the `implement` case. Either way, rewrite `<directive_node_id>` and stamp `<id>`.
 - `directive:null` → I never tagged this thread (or I'm talking to the reviewer). List it so I can triage; don't act.
 
-Keep replies very brief. These replace my directive text, so the reviewer sees only the clean reply.
+Keep replies very brief and factual: state what changed and where. The reply replaces my directive text, so don't refer back to the words you're overwriting, they're gone. Match the phrasing to who raised the point: an `infer` follow-up was mine, not the reviewer's, so state what was done ("Also handled the empty input case: ...") rather than thanking or crediting them ("Good catch").
 
 ---
 
