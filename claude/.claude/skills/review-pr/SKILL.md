@@ -49,7 +49,7 @@ I write these inline in a comment to tell you what to do. Long or short form; `f
 | `/implement [ctx]` | `/i` | Own PR | Change the code, then write my brief reply |
 | `/reply [ctx]` | `/r` | both | Produce the final reply (Reviewing: strip the scratchpad; Own PR: compose the reply to the reviewer) |
 
-`/ask` and `/implement` ask for work; `/reply` produces the final reply. Untagged comments are left alone.
+`/ask` and `/implement` ask for work; `/reply` produces the final reply. A comment I never tagged is left alone, but a follow-up I add to a thread I already tagged is picked up next run: Reviewing folds it into the parent and re-engages the `/ask`; Own PR infers intent (see Respond).
 
 ---
 
@@ -146,23 +146,23 @@ Hold the reply for any ❓ until I answer. The script appends the idempotency ma
 
 #### Respond: reviewers' comments, directive-driven
 
-`fetch-reviewer-comments.sh` returns one row per unresolved thread's top-level reviewer comment, with `directive` and `directive_node_id` from my latest comment in that thread. Act only on rows where I left a directive; list the rest, don't touch them.
+`fetch-reviewer-comments.sh` returns one row per unresolved thread's top-level reviewer comment, with `directive` and `directive_node_id` from my latest comment in that thread. Act only where `directive` is non-null; list the rest, don't touch them. Every rewrite passes the row's `id` as the third arg so the final carries the `claude:reply` marker and the next run skips it, no loop.
 
 - `directive:"implement"` (`/implement` / `/i`) → implement the reviewer's feedback, using my context. Commit as in Fix. Then rewrite my directive comment into a brief reply describing what was done:
 
   ```bash
   git push
-  "$S/edit-comment.sh" <directive_node_id> "Done in <sha>: <one line>."
+  "$S/edit-comment.sh" <directive_node_id> "Done in <sha>: <one line>." <id>
   ```
 
 - `directive:"reply"` (`/reply` / `/r`) → research or suggest as I asked, no code change, then rewrite my directive comment into a brief reply to the reviewer:
 
   ```bash
-  "$S/edit-comment.sh" <directive_node_id> "<brief reply>."
+  "$S/edit-comment.sh" <directive_node_id> "<brief reply>." <id>
   ```
 
-- `directive:null` → list the comment so I can triage. Don't act.
-- A question I asked the reviewer (my comment, no directive) → leave untouched.
+- `directive:"infer"` → an untagged follow-up I added to a thread I already tagged. Infer intent from my text: only a clarification → do the `reply` case; a change is needed → do the `implement` case. Either way, rewrite `<directive_node_id>` and stamp `<id>`.
+- `directive:null` → I never tagged this thread (or I'm talking to the reviewer). List it so I can triage; don't act.
 
 Keep replies very brief. These replace my directive text, so the reviewer sees only the clean reply.
 
