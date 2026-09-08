@@ -34,36 +34,34 @@ A comment you never tag is left alone. A follow-up you add to a thread you alrea
 
 ## Examples
 
-**Fix your own notes (your PR).** Leave comments on your own PR lines, then run `/review-pr`. Claude edits the clear ones and replies `✅ ... in <sha>`, answers from the code with `💬`, flags a real caveat with `⚠️`, and leaves anything needing your call as `❓`.
+### Implement a reviewer's suggestion (your PR)
 
-**Implement a reviewer's suggestion (your PR).** Reply to their comment:
+You reply to the comment with `/implement`. On the next `/review-pr` Claude edits the code, commits, pushes, and rewrites your reply in place, citing the sha.
 
-```
-/implement use a Set here instead of the array scan
-```
+<img src="assets/own-implement-before.svg" width="720" alt="Reviewer asks to avoid the O(n) scan; you reply /implement use a Set">
 
-Next `/review-pr`: Claude changes the code, commits, pushes, and rewrites your comment to `Done in a1b2c3: switched to a Set.`
+<sub><i>run</i> <code>/review-pr</code> ↓</sub>
 
-**Answer a reviewer, no code change (your PR).**
+<img src="assets/own-implement-after.svg" width="720" alt="Your reply is rewritten to: Done in a1b2c3, switched to a Set">
 
-```
-/reply explain why we retry twice
-```
+### Follow up without re-tagging (your PR)
 
-Claude researches and rewrites your comment into a short reply to the reviewer. No commit.
+In a thread you already tagged, just keep talking, no directive needed. Claude infers intent: a question gets answered, a needed change gets made. (A thread you never tagged is left for the reviewer.)
 
-**Follow up without re-tagging (your PR).** After the `/implement` above, you reply in the same thread, no directive:
+<img src="assets/own-followup-before.svg" width="720" alt="Below the resolved reply you add: ok but what about the empty input case?">
 
-```
-ok but what about the empty input case?
-```
+<sub><i>run</i> <code>/review-pr</code> ↓</sub>
 
-Next run: Claude infers a change is needed, implements it, and replies. In a thread you already tagged, a question gets answered and a change gets made, either way; a thread you never tagged is left for the reviewer.
+<img src="assets/own-followup-after.svg" width="720" alt="The follow-up is inferred as a change and rewritten: empty input now returns early, Done in d4e5f6">
 
-**Review someone else's PR.** `/review-pr 456`, ask Claude to review it, and it writes draft comments as one pending review. Sharpen one:
+### Review someone else's PR
 
-```
-/ask is this actually a race, or is the lock held here?
-```
+Claude drafts pending comments; you sharpen one with `/ask`. It writes its finding into a scratchpad under your comment. Everything stays **Pending** until you submit; `/reply` later turns the scratchpad into the clean comment.
 
-Claude checks the code and writes its finding into a scratchpad under your comment. Iterate, then finalize with `/reply`. Nothing is submitted; you review the batch and submit it yourself.
+<img src="assets/review-ask-before.svg" width="720" alt="Your pending comment asks if it is a race and tags /ask to check the mutex">
+
+<sub><i>run</i> <code>/review-pr</code> ↓</sub>
+
+<img src="assets/review-ask-after.svg" width="720" alt="Claude appends a scratchpad confirming the race and suggesting a fix, still Pending">
+
+Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ✅ / 💬 / ⚠️ / ❓ (see above).
