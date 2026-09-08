@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal dotfiles managed with **[GNU Stow](https://www.gnu.org/software/stow/)** — each tool's config lives in its own package directory and gets symlinked into `$HOME`.
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). Each tool's config lives in its own package directory, symlinked into `$HOME`.
 
 <p align="center">
   <img src=".demo/demo.gif" alt="Terminal demo" width="90%">
@@ -68,12 +68,12 @@ dotfiles <git …>  # Any git command on the dotfiles repo (e.g. dotfiles status
 
 ### `dotfiles doctor`
 
-Runs a health check to verify your installation is in good shape:
+Runs a health check on your installation:
 
-- **Symlinks** — Checks that all expected symlinks exist and point to the right targets
-- **Tools** — Verifies required tools are on `$PATH` (stow, zsh, fzf, bat, rg, oh-my-posh)
-- **Config files** — Validates expected configuration files are present
-- **Git identity** — Checks that `user.name` and `user.email` are configured
+- Symlinks exist and point to the right targets
+- Required tools are on `$PATH` (stow, zsh, fzf, bat, rg, oh-my-posh)
+- Expected config files are present
+- Git `user.name` and `user.email` are configured
 
 ### `dotfiles update`
 
@@ -85,10 +85,10 @@ Pulls the latest changes from the repo and:
 
 ### `dotfiles restow`
 
-Re-links all packages with `stow --restow`. Run it after adding new files to a package — it links the new files and prunes dead symlinks, and is idempotent on links that already exist. Accepts `--dry-run` (simulate) and `--quiet`.
+Re-links all packages with `stow --restow`. Run it after adding new files to a package. It links the new files, prunes dead symlinks, and is idempotent on links that already exist. Accepts `--dry-run` (simulate) and `--quiet`.
 
-- Any real (non-symlink) file blocking a target is moved to `~/.dotfiles-backup/` before linking.
-- **Machine-local skips** — to leave specific targets alone on one machine, list one basename regex per line in `~/.dotfiles/.restow-ignore.local` (gitignored, so it never affects other machines). Example — keep a hand-merged `~/.claude/settings.json` untouched:
+- Restow moves any real (non-symlink) file blocking a target to `~/.dotfiles-backup/` before linking.
+- To skip specific targets on one machine, list one basename regex per line in `~/.dotfiles/.restow-ignore.local`. It is gitignored, so it never affects other machines. For example, to keep a hand-merged `~/.claude/settings.json` untouched:
 
   ```sh
   echo 'settings\.json' > ~/.dotfiles/.restow-ignore.local
@@ -100,24 +100,24 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 
 | Package | Contents |
 |---|---|
-| `zsh` | `.zshrc`, `.zprofile` — shell config, history, plugin loading |
-| `git` | `.gitconfig`, `.config/git/` — config + helper scripts (`git pr`, `git remerge`) |
-| `fzf` | `.config/fzf/` — fzf config, Monokai color scheme, preview script |
-| `oh-my-posh` | `.config/zsh/oh-my-posh/` — Pure prompt theme + fallback prompt |
-| `claude` | `.claude/` — Claude editor settings + statusline script |
-| `codex` | `.codex/pure.config.toml` — Pure-inspired Codex CLI status line profile |
-| `macos` | `.config/macos/` — Terminal.app Monokai Pro theme |
+| `zsh` | `.zshrc`, `.zprofile`. Shell config, history, plugin loading |
+| `git` | `.gitconfig`, `.config/git/`. Config and helper scripts (`git pr`, `git remerge`) |
+| `fzf` | `.config/fzf/`. fzf config, Monokai color scheme, preview script |
+| `oh-my-posh` | `.config/zsh/oh-my-posh/`. Pure prompt theme and fallback prompt |
+| `claude` | `.claude/`. Claude editor settings and statusline script |
+| `codex` | `.codex/pure.config.toml`. Pure-inspired Codex CLI status line profile |
+| `macos` | `.config/macos/`. Terminal.app Monokai Pro theme |
 
 ---
 
 ## Key features
 
-- **Cross-platform** — Works on macOS and Linux (Debian/Ubuntu)
-- **Idempotent** — Safe to re-run install at any time
-- **Non-destructive** — Backs up conflicting files before stowing
-- **Local overrides** — `~/.zshrc.local` and `~/.gitconfig.local` for machine-specific config (not tracked)
-- **Fallback prompt** — Works without oh-my-posh installed (pure Zsh fallback)
-- **CI tested** — Dockerfile + GitHub Actions verify installation on fresh Linux
+- **Cross-platform.** Works on macOS and Linux (Debian/Ubuntu)
+- **Idempotent.** Safe to re-run install at any time
+- **Non-destructive.** Backs up conflicting files before stowing
+- **Local overrides.** `~/.zshrc.local` and `~/.gitconfig.local` for machine-specific config (not tracked)
+- **Fallback prompt.** Works without oh-my-posh installed (pure Zsh fallback)
+- **CI tested.** Dockerfile and GitHub Actions verify installation on fresh Linux
 
 ---
 
