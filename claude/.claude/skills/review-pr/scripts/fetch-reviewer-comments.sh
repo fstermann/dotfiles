@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Reviewer inline comments on my PR (Respond mode), one row per unresolved
-# thread's top-level comment authored by someone else, with my directive reply
-# (if any) attached. My directive reply is the comment Claude edits into the
-# final answer to the reviewer.
+# Reviewer inline comments on my PR (Own-PR flow), one row per unresolved
+# thread's top-level comment authored by someone else, with my directive comment
+# (if any) attached. My directive comment is what Claude edits into the final
+# reply to the reviewer.
 # Usage: fetch-reviewer-comments.sh OWNER REPO NUM ME
 # Prints JSON array of:
 #   {id, node_id, path, line, body, diff_hunk, url, thread_id, author,
 #    directive, directive_body, directive_id, directive_node_id}
-#   directive: "implement" | "answer" | null (parsed from my latest reply).
-#   directive_*: my reply carrying the directive (null when I left none).
+#   directive: "implement" | "reply" | null (parsed from my latest comment).
+#   directive_*: my comment carrying the directive (null when I left none).
 set -euo pipefail
 O=$1 R=$2 N=$3 ME=$4
 
@@ -29,7 +29,7 @@ echo "$threads" | jq --arg me "$ME" '
     | select(.isResolved|not)
     | .id as $tid
     | .comments.nodes as $cs
-    # my latest reply that carries a directive
+    # my latest comment that carries a directive
     | ( [ $cs[] | select(.author.login==$me and (.body|dir)!=null) ] | last ) as $d
     # top-level comment = first in thread, authored by someone else
     | ($cs[0]) as $top

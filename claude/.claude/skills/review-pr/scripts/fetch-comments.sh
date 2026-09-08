@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
-# Fetch my top-level, unanswered comments on a PR from all sources, normalized.
-# Pending (draft) comments come via GraphQL, carries real line + thread/review
-# ids so drafts can receive a (pending) reply. Already-answered comments
-# (a reply whose marker cites their id) are dropped.
+# Fetch my unanswered comments on a PR from all sources, normalized.
+# Pending comments come via GraphQL, carrying real line + thread/review ids so
+# they can receive a pending reply. Already-answered comments (a reply whose
+# marker cites their id) are dropped.
 # Usage: fetch-comments.sh OWNER REPO NUM ME
-# My comments (Fix mode uses all; Review mode uses source:pending). For reviewer
-# comments on my PR (Respond mode), use fetch-reviewer-comments.sh instead.
+# My comments (Own-PR flow uses all; Reviewing flow uses source:pending). For
+# reviewers' comments on my PR, use fetch-reviewer-comments.sh instead.
 # Prints JSON array of:
 #   {id, node_id, source:review|pending|issue, path, line, body, diff_hunk, url,
 #    thread_id, review_id, has_fence, directive}
 #   node_id: GraphQL id for edit-comment.sh / delete-comment.sh.
 #   has_fence: body already carries a <!-- claude:start --> block.
-#   directive: /answer or /implement parsed from the body, else null.
+#   directive: /ask, /implement, or /reply parsed from the body, else null.
 set -euo pipefail
 O=$1 R=$2 N=$3 ME=$4
-MARKER='claude-pr-feedback'
+MARKER='claude:reply'
 
 pub=$(gh api "repos/$O/$R/pulls/$N/comments" --paginate)
 iss=$(gh api "repos/$O/$R/issues/$N/comments" --paginate)
 
-# Pending drafts: reviewThreads gives real line numbers + the thread/review ids
+# Pending comments: reviewThreads gives real line numbers + the thread/review ids
 # needed to reply into my existing pending review.
 threads=$(gh api graphql -F owner="$O" -F repo="$R" -F num="$N" -f query='
   query($owner:String!,$repo:String!,$num:Int!){

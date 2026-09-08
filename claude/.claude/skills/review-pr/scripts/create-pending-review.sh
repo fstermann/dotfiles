@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create a PENDING review from a JSON array of draft comments on stdin.
+# Create a PENDING review from a JSON array of comments on stdin.
 # Each element: {path, line, body}; optional side (default RIGHT) and start_line.
 # No event is sent, so the review stays pending until I submit it myself.
 # Usage: echo '[{"path":"a.ts","line":10,"body":"..."}]' | create-pending-review.sh OWNER REPO NUM

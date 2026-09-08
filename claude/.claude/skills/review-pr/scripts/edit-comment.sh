@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Rewrite a review comment's body (pending or published) via GraphQL.
-# Used for scratchpad answers, folding replies, and /answer finalize.
+# Used for scratchpad answers, folding replies, and /reply finalize.
 # Usage: edit-comment.sh NODE_ID BODY
 #   NODE_ID: the comment's GraphQL node id (fetch-comments.sh field `node_id`).
 # Prints the comment URL.
