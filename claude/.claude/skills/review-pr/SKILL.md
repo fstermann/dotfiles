@@ -110,7 +110,7 @@ Append your answer as a new fenced turn at the end of the transcript, per the fe
 "$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <transcript so far>\n\n---\n<!-- claude:start -->\n❊ <answer>\n<!-- claude:end -->
 ```
 
-**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating: compose one clean comment to the PR author from the whole transcript, lead it with the `❊` glyph so the reviewer sees it was AI-drafted, and set the body to only that (no fences, no dividers, no `/reply` line):
+**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating and collapse the whole transcript into one clean comment, then set the body to only that (no fences, no dividers, no `/reply` line). The collapse deletes my questions, so write for what survives: a single comment on a code line. Fit it to that context instead of answering the last turn. If I opened the thread, it's a review remark about the code; if a colleague did, it answers them. Either way self-contained and led with the `❊` glyph:
 
 ```bash
 "$S/edit-comment.sh" <node_id> "❊ $FINAL"
