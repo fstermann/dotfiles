@@ -185,6 +185,8 @@ Keep replies very brief and factual: state what changed and where. The reply rep
 
 Print a table of what you did, then list every ○ and ◐ in full. In the Reviewing flow, list which comments are now finalized vs still mid-transcript. Report SHAs pushed, comments edited or replied to, and anything still needing me.
 
+End every round with links so I can jump straight there: the PR (`url` from `resolve-ref.sh`), then each comment you acted on as a markdown link on its `path:line`, using the row's `url`. This applies to the initial run and to every watcher wake (Step 5), so each round leaves a navigable trail.
+
 ## Step 5: Auto-watch (address my follow-ups without a re-invoke)
 
 After the run, keep catching my follow-ups on their own. Launch the watcher once with the Bash tool's `run_in_background` (`me` and `flow` come from `resolve-ref.sh`):
@@ -197,7 +199,8 @@ It polls every 60s with `check-work.sh` (deterministic, no judgment) and exits t
 
 1. The task output carries the actionable rows and its `flow`. Run only that Step 3 branch, on those rows only.
 2. Auto-push is allowed on `/implement` and on Fix.
-3. Relaunch the watcher (exactly one at a time) and stop.
+3. Summarize (Step 4), links included, so each wake leaves the same navigable trail as the initial run.
+4. Relaunch the watcher (exactly one at a time) and stop.
 
 Every glyph is posted (Step 3, Fix), so a `○` parks itself and never retriggers the gate; I answer it in the PR thread and that follow-up wakes you again.
 
