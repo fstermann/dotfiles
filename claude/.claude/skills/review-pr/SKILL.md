@@ -26,18 +26,30 @@ Returns `{owner,repo,num,me,author,flow,url,headRef,currentBranch,dirty}`.
 
 ### Fence
 
-In the Reviewing flow, and when responding to reviewers, I answer by rewriting a comment body (`edit-comment.sh`), not by posting marker replies. Your scratchpad goes in a fence so it's idempotent and strippable:
+In the Reviewing flow I answer by rewriting one comment body (`edit-comment.sh`) instead of posting separate replies, so the whole exchange lives in a single comment. That body is a running **transcript**: my turns and your turns alternate, each separated by a `---` divider, and each of your turns is wrapped in a fence so it's identifiable and strippable.
 
 ```
-<my comment, verbatim, directive line and all>
+<turn 1: my comment, verbatim>
 
 ---
 <!-- claude:start -->
-<your scratchpad>
+<turn 2: your answer>
+<!-- claude:end -->
+
+---
+<turn 3: my follow-up, verbatim>
+
+---
+<!-- claude:start -->
+<turn 4: your answer>
 <!-- claude:end -->
 ```
 
-Keep my comment above the fence exactly as I wrote it, including the `/ask` line, so the thread still reads as a conversation. Re-running replaces the scratchpad (and its `---` divider), never stacks. Only `/reply` strips the fence and the directive line, leaving the clean final.
+Rules:
+
+- **Append, never replace or summarize.** Every earlier turn stays byte-for-byte, mine and yours; that transcript is the history. Each run adds at most one new fenced turn.
+- **Answer only the last unanswered turn.** If the body already ends in your fenced answer, there's nothing to do (idempotent, no duplicate turns). Add a turn only when my text is the last block.
+- **My turns stay verbatim,** directive line and all. Only `/reply` collapses the transcript into one clean comment and strips the fences, dividers, and directive line.
 
 ### Directives (AIR)
 
@@ -45,11 +57,11 @@ I write these inline in a comment to tell you what to do. Long or short form; `f
 
 | Directive | Short | Flow | Action |
 | --------- | ----- | ---- | ------ |
-| `/ask [ctx]` | `/a` | Reviewing | Act: verify a claim, suggest, or research → scratchpad |
+| `/ask [ctx]` | `/a` | Reviewing | Answer: verify a claim, suggest, or research → a new transcript turn |
 | `/implement [ctx]` | `/i` | Own PR | Change the code, then write my brief reply |
-| `/reply [ctx]` | `/r` | both | Produce the final reply (Reviewing: strip the scratchpad; Own PR: compose the reply to the reviewer) |
+| `/reply [ctx]` | `/r` | both | Produce the final reply (Reviewing: collapse the transcript; Own PR: compose the reply to the reviewer) |
 
-`/ask` and `/implement` ask for work; `/reply` produces the final reply. A comment I never tagged is left alone, but a follow-up I add to a thread I already tagged is picked up next run: Reviewing folds it into the parent and re-engages the `/ask`; Own PR infers intent (see Respond).
+`/ask` and `/implement` ask for work; `/reply` produces the final reply. A comment I never tagged is left alone, but a follow-up I add to a thread I already tagged is picked up next run: Reviewing folds it in as the next transcript turn and answers it; Own PR infers intent (see Respond).
 
 ---
 
@@ -76,28 +88,28 @@ From here they're normal pending comments: I review your review, add my own, and
 
 Use the `source:"pending"` rows. Each carries `node_id`, `has_fence`, `directive`, `reply_to`. Act only on comments I tagged; leave the rest untouched.
 
-**Fold my replies first.** For any pending row with `reply_to` pointing at another of my pending comments (a separate reply I added), merge its text into that parent comment, then delete the reply:
+**Fold my follow-ups first.** If I replied again in the thread (a pending row whose `reply_to` points at another of my pending comments), append its text to that parent's transcript as the next "me" turn, preceded by a `---` divider, then delete the separate reply:
 
 ```bash
 "$S/delete-comment.sh" <reply_node_id>
 ```
 
-Auto-fold, no confirmation. One comment per thread is the goal.
+Auto-fold, no confirmation. One comment per thread is the goal: the parent holds the whole conversation.
 
-**Act on the ones I tagged `/ask` (`/a`).** For rows with `directive:"ask"`, read the code (`path`+`line`, `diff_hunk`) and do what I asked:
+**Answer the ones I tagged `/ask` (`/a`).** For rows with `directive:"ask"`, read the code (`path`+`line`, `diff_hunk`) and do what I asked:
 
 - Verify a claim I made → say whether it holds against the code.
 - Draft a concrete suggestion or code.
 - Research X → answer inline.
 - My comment is weak or wrong → say so; propose a sharper one or suggest dropping it.
 
-Write the scratchpad into the same comment via the fence, keeping my comment above it verbatim (the `/ask` line included). If `has_fence`, replace the existing scratchpad:
+Append your answer as a new fenced turn at the end of the transcript, per the fence rules: every earlier turn stays verbatim, and you answer only the last unanswered turn of mine (if the body already ends in a fenced answer, skip it).
 
 ```bash
-"$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <my comment verbatim>\n\n---\n<!-- claude:start -->\n<scratchpad>\n<!-- claude:end -->
+"$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <transcript so far>\n\n---\n<!-- claude:start -->\n<answer>\n<!-- claude:end -->
 ```
 
-**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating on it: compose one clean reply to the PR author from my text + the scratchpad, and set the body to only that (no fence, no divider, no `/reply` line):
+**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating: compose one clean comment to the PR author from the whole transcript, and set the body to only that (no fences, no dividers, no `/reply` line):
 
 ```bash
 "$S/edit-comment.sh" <node_id> "$FINAL"
@@ -170,7 +182,7 @@ Keep replies very brief and factual: state what changed and where. The reply rep
 
 ## Step 4: Summarize
 
-Print a table of what you did, then list every ❓ and ⚠️ in full. In the Reviewing flow, list which comments are now finalized vs still in scratchpad. Report SHAs pushed, comments edited or replied to, and anything still needing me.
+Print a table of what you did, then list every ❓ and ⚠️ in full. In the Reviewing flow, list which comments are now finalized vs still mid-transcript. Report SHAs pushed, comments edited or replied to, and anything still needing me.
 
 ## Notes
 
