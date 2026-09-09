@@ -189,7 +189,7 @@ Link the PR (`url` from `resolve-ref.sh`) on its own line, then print one table,
 | ------- | ------ |
 | [`path:line`](comment `url`) | ● what changed, with sha if pushed |
 
-The table is comments only, nothing about the watcher, relaunches, or session mechanics. Below it, spell out every ◐ and ○ in full (the row is one line; these need the detail), and in the Reviewing flow note which comments are finalized vs still mid-transcript. This applies to the initial run and to every watcher wake (Step 5).
+The table is comments only. Below it, spell out every ◐ and ○ in full (the row is one line; these need the detail), and in the Reviewing flow note which comments are finalized vs still mid-transcript. This applies to the initial run and to every watcher wake (Step 5).
 
 ## Step 5: Auto-watch (address my follow-ups without a re-invoke)
 
