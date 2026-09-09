@@ -14,10 +14,10 @@ while true; do
   sleep "$INTERVAL"
   out=$("$S/check-work.sh" "$O" "$R" "$N" "$ME" "$FLOW"); rc=$?
   case $rc in
-    0) echo "$out"; echo "review-pr watch: work found on $O/$R#$N"; exit 0 ;;
+    0) echo "$out"; echo "review-pr watch: work found on $O/$R#$N after $((SECONDS/60))m ($(date '+%H:%M:%S'))"; exit 0 ;;
     3) echo "review-pr watch: $O/$R#$N is closed; stopping."; exit 3 ;;
   esac
   if [ "$SECONDS" -ge "$MAX" ]; then
-    echo "review-pr watch: idle $((MAX/60))m on $O/$R#$N; paused."; exit 2
+    echo "review-pr watch: idle $((SECONDS/60))m on $O/$R#$N ($(date '+%H:%M:%S')); paused."; exit 2
   fi
 done
