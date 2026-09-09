@@ -44,7 +44,7 @@ Asking that question *is* the feasibility test. When the honest answer is risky,
 
 Keep every milestone shippable and green (deployable, tests passing, reversible). Decompose with expand-contract, branch by abstraction, strangler fig, characterization-tests-first, or feature flags. Pin legacy behavior in tests before touching it, and never combine a refactor with a behavior change in one milestone.
 
-**Flip to a roadmap:** reverse the chain into now→end-state, sequence it, mark each milestone's dependencies, and identify the critical path (longest chain of dependent milestones). **First moves:** turn the earliest milestones into concrete actions, prioritized by leverage and option-value: usually characterization tests, introducing a seam, or spiking the riskiest unknown.
+**Flip to a roadmap:** reverse the chain into now→end-state, sequence it, mark each milestone's dependencies, and identify the critical path (longest chain of dependent milestones). **First moves:** turn the earliest milestones into concrete actions, prioritized by impact and option-value: usually characterization tests, introducing a seam, or spiking the riskiest unknown.
 
 ## Output
 
@@ -57,7 +57,7 @@ Keep every milestone shippable and green (deployable, tests passing, reversible)
 ## Backward chain         critical path only: [end] ← [state] ← ... ← [today]
 ## Roadmap                M1 [shippable state], deps: none; M2 ..., deps: M1
                           Critical path: M1 → M3 → M6
-## First moves            [action], why high-leverage / no-regret
+## First moves            [action], why high-impact / no-regret
 ## Risks & checkpoints    [risk, classified], watch: [indicator], rollback: [Y], revisit when: [trigger]
 ```
 

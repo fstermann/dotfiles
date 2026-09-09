@@ -2,12 +2,12 @@
 # Post one reply to a comment, appending the idempotency marker (carries the id).
 # Prints the created reply's URL (and state, for pending).
 #
-#   post-reply.sh review  OWNER REPO NUM COMMENT_ID BODY   # published inline thread
-#   post-reply.sh issue   OWNER REPO NUM COMMENT_ID BODY   # published conversation
-#   post-reply.sh pending THREAD_ID REVIEW_ID COMMENT_ID BODY  # draft reply, stays pending
+#   post-comment.sh review  OWNER REPO NUM COMMENT_ID BODY   # published inline thread
+#   post-comment.sh issue   OWNER REPO NUM COMMENT_ID BODY   # published conversation
+#   post-comment.sh pending THREAD_ID REVIEW_ID COMMENT_ID BODY  # pending reply, stays pending
 set -euo pipefail
 KIND=$1
-mark() { printf '%s\n\n<!-- claude-pr-feedback id=%s -->' "$1" "$2"; }
+mark() { printf '%s\n\n<!-- claude:reply id=%s -->' "$1" "$2"; }
 
 case "$KIND" in
   review)
