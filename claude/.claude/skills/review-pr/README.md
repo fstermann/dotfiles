@@ -10,7 +10,13 @@ Work a GitHub PR's comments with Claude. You stay in control: Claude edits code,
 /review-pr <url>      # by URL
 ```
 
-Runs only when you invoke it, never on its own. In a multi-repo workspace, add `--repo owner/name` with a number.
+You start it; it never starts on its own. Once running, it watches for follow-ups (below). In a multi-repo workspace, add `--repo owner/name` with a number.
+
+## Keeps watching
+
+After the first pass it starts a background watcher, so follow-ups get addressed without re-invoking. It polls every 60s and wakes the session only when there's actionable work. Exactly one watcher runs at a time; it never submits a review or resolves a thread.
+
+Stops on: 30 min idle (paused, nothing posted; restart with `/review-pr`), the PR closing or merging, or `TaskStop`.
 
 ## Two flows, auto-detected by who authored the PR
 
@@ -74,4 +80,14 @@ On the next run Claude folds your follow-up into the comment and answers it, **a
 
 <img src="assets/review-ask-iter2.svg" width="720" alt="One comment holding the full transcript: my question, Claude's answer, my follow-up, Claude's answer, each separated by a rule">
 
-When you are done, `/reply` collapses the transcript into one clean comment (rules, fences, and the `/ask` line gone), kept under the `❊` mark so the reviewer knows it was AI-drafted, that you submit. Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ● / ❊ / ◐ / ○ (see above).
+When you are done, tag the last turn with `/reply` (`/r`):
+
+<img src="assets/review-ask-reply-before.svg" width="720" alt="You add a final comment to the thread tagged /reply to collapse the transcript">
+
+<sub><i>run</i> <code>/review-pr</code> ↓</sub>
+
+`/reply` collapses the whole transcript into one clean comment, rules, fences, and the `/ask` line gone, rewritten as a self-contained review remark fit to the code line. It's kept under the `❊` mark so the reviewer knows it was AI-drafted, and stays **Pending** until you submit.
+
+<img src="assets/review-ask-reply-after.svg" width="720" alt="One clean pending comment: the collapsed answer as a single review remark, no transcript, still Pending">
+
+Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ● / ❊ / ◐ / ○ (see above).

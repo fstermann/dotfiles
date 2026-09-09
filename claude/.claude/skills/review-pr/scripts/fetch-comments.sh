@@ -8,12 +8,14 @@
 # reviewers' comments on my PR, use fetch-reviewer-comments.sh instead.
 # Prints JSON array of:
 #   {id, node_id, source:review|pending|issue, path, line, body, diff_hunk, url,
-#    thread_id, review_id, has_fence, directive, reply_to}
+#    thread_id, review_id, has_fence, directive, reply_to, thread_engaged}
 #   node_id: GraphQL id for edit-comment.sh / delete-comment.sh.
 #   has_fence: body already carries a <!-- claude:start --> block.
 #   directive: /ask, /implement, or /reply parsed from the body, else null.
 #   reply_to: parent comment id this pending row folds into (thread order, see below),
 #     else null. Only meaningful for source:pending.
+#   thread_engaged: some comment in this thread carries a directive, so an untagged
+#     follow-up here still counts as work. Only meaningful for source:pending.
 set -euo pipefail
 O=$1 R=$2 N=$3 ME=$4
 MARKER='claude:reply'
@@ -41,11 +43,13 @@ pend=$(echo "$threads" | jq --arg me "$ME" '
     | .id as $tid
     | ( [ .comments.nodes[] | select(.state=="PENDING" and .author.login==$me) ] ) as $mine
     | ($mine[0].databaseId) as $parent
+    # Engaged = any of my comments here carries a directive; lets an untagged follow-up count.
+    | ( [ $mine[].body ] | any(test("(^|\\n)\\s*/(ask|implement|reply|a|i|r)\\b")) ) as $engaged
     | ($mine | to_entries[])
     | { id:.value.databaseId, node_id:.value.id, path:.value.path,
         line:(.value.line // .value.originalLine), body:.value.body,
         diff_hunk:.value.diffHunk, url:.value.url, thread_id:$tid,
-        review_id:.value.pullRequestReview.id,
+        review_id:.value.pullRequestReview.id, thread_engaged:$engaged,
         reply_to:(.value.replyTo.databaseId // (if .key==0 then null else $parent end)) } ]')
 
 # Payloads go in via --slurpfile (process substitution), not --argjson: a large PR's comment
@@ -74,7 +78,7 @@ jq -n --arg me "$ME" --arg marker "$MARKER" \
   + ( $pend
       | map(select((.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, node_id, source:"pending", path, line, body, diff_hunk, url, thread_id, review_id,
-             has_fence:(.body|fence), directive:(.body|dir), reply_to}) )
+             has_fence:(.body|fence), directive:(.body|dir), reply_to, thread_engaged}) )
   + ( $iss
       | map(select(.user.login==$me and (.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, node_id:.node_id, source:"issue", path:null, line:null, body, diff_hunk:"",

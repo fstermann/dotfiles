@@ -129,6 +129,14 @@ Route each comment by its author: my own → Fix, a reviewer's → Respond.
 
 #### Fix: my own comments
 
+**Fold my follow-ups first.** When a thread holds several of my comments (an opener plus a follow-up, which may itself carry a directive), it's one request: act on the latest, reply once, and delete the other unanswered ones so no sibling re-triggers the watcher:
+
+```bash
+"$S/delete-comment.sh" <sibling_node_id>
+```
+
+Auto-fold, no confirmation; the deleted comments were mine and pending.
+
 Status glyphs (monochrome, so they read as a quiet marker, not decoration):
 
 | Glyph | Meaning |
@@ -183,7 +191,11 @@ Keep replies very brief and factual: state what changed and where. The reply rep
 
 ## Step 4: Summarize
 
-Print a table of what you did, then list every ○ and ◐ in full. In the Reviewing flow, list which comments are now finalized vs still mid-transcript. Report SHAs pushed, comments edited or replied to, and anything still needing me.
+Link the PR (`url` from `resolve-ref.sh`) on its own line, then print one table, one row per comment you acted on, each with its glyph (● ❊ ◐ ○):
+
+| Comment | Action |
+| ------- | ------ |
+| [`path:line`](comment `url`) | ● what changed, with sha if pushed |
 
 ## Step 5: Auto-watch (address my follow-ups without a re-invoke)
 
@@ -197,7 +209,8 @@ It polls every 60s with `check-work.sh` (deterministic, no judgment) and exits t
 
 1. The task output carries the actionable rows and its `flow`. Run only that Step 3 branch, on those rows only.
 2. Auto-push is allowed on `/implement` and on Fix.
-3. Relaunch the watcher (exactly one at a time) and stop.
+3. Run the Step 4 summary (links included).
+4. Relaunch the watcher (exactly one at a time) and stop.
 
 Every glyph is posted (Step 3, Fix), so a `○` parks itself and never retriggers the gate; I answer it in the PR thread and that follow-up wakes you again.
 
