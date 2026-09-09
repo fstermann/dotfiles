@@ -32,7 +32,10 @@ if [ "$FLOW" = "reviewing" ]; then
           ) ] }')
 else
   reviewer=$("$S/fetch-reviewer-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.directive != null) ]')
-  mine=$("$S/fetch-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.source!="pending") ]')
+  # Published comments (any), plus pending ones I tagged with a directive: those are
+  # a self-review draft the manual Fix flow acts on, so the watcher must too. fetch
+  # already drops answered comments, so a directive gate keeps untagged drafts quiet.
+  mine=$("$S/fetch-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.source!="pending" or .directive!=null) ]')
   work=$(jq -n --argjson r "$reviewer" --argjson m "$mine" '{flow:"own", reviewer:$r, mine:$m}')
 fi
 
