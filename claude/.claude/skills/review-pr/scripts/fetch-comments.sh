@@ -8,10 +8,12 @@
 # reviewers' comments on my PR, use fetch-reviewer-comments.sh instead.
 # Prints JSON array of:
 #   {id, node_id, source:review|pending|issue, path, line, body, diff_hunk, url,
-#    thread_id, review_id, has_fence, directive}
+#    thread_id, review_id, has_fence, directive, reply_to}
 #   node_id: GraphQL id for edit-comment.sh / delete-comment.sh.
 #   has_fence: body already carries a <!-- claude:start --> block.
 #   directive: /ask, /implement, or /reply parsed from the body, else null.
+#   reply_to: parent comment id this pending row folds into (thread order, see below),
+#     else null. Only meaningful for source:pending.
 set -euo pipefail
 O=$1 R=$2 N=$3 ME=$4
 MARKER='claude:reply'
@@ -30,14 +32,21 @@ threads=$(gh api graphql -F owner="$O" -F repo="$R" -F num="$N" -f query='
       }}}}
     }}}' 2>/dev/null || echo '{}')
 
+# reply_to links a follow-up to the comment it folds into. GitHub only sets its own
+# replyTo when I use the Reply button; a fresh comment typed on the same line joins the
+# thread with replyTo null. So fall back to thread order: the first of my pending comments
+# in a thread is the parent, every later one folds into it.
 pend=$(echo "$threads" | jq --arg me "$ME" '
   [ (.data.repository.pullRequest.reviewThreads.nodes // [])[]
     | .id as $tid
-    | .comments.nodes[]
-    | select(.state=="PENDING" and .author.login==$me)
-    | { id:.databaseId, node_id:.id, path, line:(.line // .originalLine), body,
-        diff_hunk:.diffHunk, url, thread_id:$tid,
-        review_id:.pullRequestReview.id, reply_to:(.replyTo.databaseId // null) } ]')
+    | ( [ .comments.nodes[] | select(.state=="PENDING" and .author.login==$me) ] ) as $mine
+    | ($mine[0].databaseId) as $parent
+    | ($mine | to_entries[])
+    | { id:.value.databaseId, node_id:.value.id, path:.value.path,
+        line:(.value.line // .value.originalLine), body:.value.body,
+        diff_hunk:.value.diffHunk, url:.value.url, thread_id:$tid,
+        review_id:.value.pullRequestReview.id,
+        reply_to:(.value.replyTo.databaseId // (if .key==0 then null else $parent end)) } ]')
 
 # Payloads go in via --slurpfile (process substitution), not --argjson: a large PR's comment
 # blob would blow past ARG_MAX on the argv and fail with "Argument list too long". slurpfile
@@ -65,7 +74,7 @@ jq -n --arg me "$ME" --arg marker "$MARKER" \
   + ( $pend
       | map(select((.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, node_id, source:"pending", path, line, body, diff_hunk, url, thread_id, review_id,
-             has_fence:(.body|fence), directive:(.body|dir)}) )
+             has_fence:(.body|fence), directive:(.body|dir), reply_to}) )
   + ( $iss
       | map(select(.user.login==$me and (.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, node_id:.node_id, source:"issue", path:null, line:null, body, diff_hunk:"",

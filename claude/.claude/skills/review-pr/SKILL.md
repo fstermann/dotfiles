@@ -89,7 +89,7 @@ From here they're normal pending comments: I review your review, add my own, and
 
 Use the `source:"pending"` rows. Each carries `node_id`, `has_fence`, `directive`, `reply_to`. Act only on comments I tagged; leave the rest untouched.
 
-**Fold my follow-ups first.** If I replied again in the thread (a pending row whose `reply_to` points at another of my pending comments), append its text to that parent's transcript as the next "me" turn, preceded by a `---` divider, then delete the separate reply:
+**Fold my follow-ups first.** If I commented again in the thread (a pending row whose `reply_to` points at another of my pending comments, whether I used Reply or just typed a fresh comment on the line), append its text to that parent's transcript as the next "me" turn, preceded by a `---` divider, then delete the separate reply:
 
 ```bash
 "$S/delete-comment.sh" <reply_node_id>
