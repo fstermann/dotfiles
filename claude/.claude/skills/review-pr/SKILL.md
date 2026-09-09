@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: Invoke only via the /review-pr command, never automatically. Review a PR with me. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
+description: Invoke via the /review-pr command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments (auto-push) and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
 ---
 
 Review a PR with me. Resolve the ref, pick the flow from who authored the PR, then act on comments.
@@ -89,7 +89,7 @@ From here they're normal pending comments: I review your review, add my own, and
 
 Use the `source:"pending"` rows. Each carries `node_id`, `has_fence`, `directive`, `reply_to`. Act only on comments I tagged; leave the rest untouched.
 
-**Fold my follow-ups first.** If I replied again in the thread (a pending row whose `reply_to` points at another of my pending comments), append its text to that parent's transcript as the next "me" turn, preceded by a `---` divider, then delete the separate reply:
+**Fold my follow-ups first.** If I commented again in the thread (a pending row whose `reply_to` points at another of my pending comments, whether I used Reply or just typed a fresh comment on the line), append its text to that parent's transcript as the next "me" turn, preceded by a `---` divider, then delete the separate reply:
 
 ```bash
 "$S/delete-comment.sh" <reply_node_id>
@@ -155,7 +155,7 @@ git push
 "$S/post-comment.sh" pending <thread_id> <review_id> <comment_id> "● Addressed in <sha>."
 ```
 
-Hold the reply for any ○ until I answer. The script appends the idempotency marker.
+Post every glyph, ○ included, so I answer in the PR thread, not the session; my reply is a follow-up you pick up next run. Phrase a ○ as the question you need answered. The script appends the idempotency marker.
 
 #### Respond: reviewers' comments, directive-driven
 
@@ -184,6 +184,30 @@ Keep replies very brief and factual: state what changed and where. The reply rep
 ## Step 4: Summarize
 
 Print a table of what you did, then list every ○ and ◐ in full. In the Reviewing flow, list which comments are now finalized vs still mid-transcript. Report SHAs pushed, comments edited or replied to, and anything still needing me.
+
+## Step 5: Auto-watch (address my follow-ups without a re-invoke)
+
+After the run, keep catching my follow-ups on their own. Launch the watcher once with the Bash tool's `run_in_background` (`me` and `flow` come from `resolve-ref.sh`):
+
+```bash
+"$S/watch-comments.sh" <owner> <repo> <num> <me> <flow>
+```
+
+It polls every 60s with `check-work.sh` (deterministic, no judgment) and exits the moment there's work, which re-invokes this session. On that wake:
+
+1. The task output carries the actionable rows and its `flow`. Run only that Step 3 branch, on those rows only.
+2. Auto-push is allowed on `/implement` and on Fix.
+3. Relaunch the watcher (exactly one at a time) and stop.
+
+Every glyph is posted (Step 3, Fix), so a `○` parks itself and never retriggers the gate; I answer it in the PR thread and that follow-up wakes you again.
+
+The watcher stops itself in three cases; on any of them, report it and **don't** relaunch:
+
+- **Idle timeout** (exit 2, after 30 min quiet): tell me here in the session that the watch paused and I can restart it with `/review-pr`. Nothing is posted to the PR. The idle clock resets each time work is found, so it only fires on a real quiet stretch.
+- **PR closed or merged** (exit 3).
+- I stop it with `TaskStop`, or tell you to.
+
+Re-running `/review-pr` by hand spawns a second watcher, so stop the old one first. The watcher never submits a review or resolves a thread.
 
 ## Notes
 
