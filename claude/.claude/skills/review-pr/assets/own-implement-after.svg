@@ -20,5 +20,5 @@
   <path d="M24 107 Q28 110.5 32 107" stroke="#4d4d4d" stroke-width="1.4" fill="none" stroke-linecap="round"/>
   <text x="50" y="109" font-size="13.5" fill="#1f2328" font-weight="600">fstermann<tspan font-weight="400" fill="#656d76">&#160;commented&#160;·&#160;edited</tspan></text>
   <text x="844" y="109" font-size="12" fill="#656d76" text-anchor="end">just now</text>
-  <text x="20" y="142" font-size="13.5" fill="#1f2328">Done in <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#0550ae">a1b2c3</tspan>: switched to a Set, lookups are now O(1).</text>
+  <text x="20" y="142" font-size="13.5" fill="#1f2328">● Done in <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#0550ae">a1b2c3</tspan>: switched to a Set, lookups are now O(1).</text>
 </svg>

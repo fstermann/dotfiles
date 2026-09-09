@@ -15,7 +15,7 @@ Runs only when you invoke it, never on its own. In a multi-repo workspace, add `
 ## Two flows, auto-detected by who authored the PR
 
 **Your PR.** Each comment is handled by who wrote it:
-- Your own comments → Claude fixes the code (one commit each) and replies with a status emoji: ✅ fixed, 💬 answered, ⚠️ partial, ❓ needs your input.
+- Your own comments → Claude fixes the code (one commit each) and replies with a status glyph: ● fixed, ❊ answered, ◐ partial, ○ needs your input.
 - Reviewers' comments → Claude acts on the directive you left (below) and rewrites your directive into the clean reply the reviewer sees.
 
 **Someone else's PR.** Claude drafts a pending review where warranted, then sharpens and answers your pending comments in place. Everything stays pending; you read it and submit.
@@ -56,7 +56,7 @@ In a thread you already tagged, just keep talking, no directive needed. Claude i
 
 ### Review someone else's PR
 
-Claude drafts pending comments; you sharpen one with `/ask`. Your comment stays exactly as you wrote it, and Claude appends its answer below a horizontal rule. (The answer sits in a fence whose markers are invisible HTML comments, so on GitHub it just reads as a note under the rule.) Everything stays **Pending** until you submit.
+Claude drafts pending comments; you sharpen one with `/ask`. Your comment stays exactly as you wrote it, and Claude appends its answer below a horizontal rule, led by the `❊` glyph so you can tell its voice from yours. (The answer sits in a fence whose markers are invisible HTML comments, so on GitHub it just reads as a note under the rule.) Everything stays **Pending** until you submit.
 
 <img src="assets/review-ask-before.svg" width="720" alt="Your pending comment asks if it is a race and tags /ask to check the mutex">
 
@@ -74,4 +74,4 @@ On the next run Claude folds your follow-up into the comment and answers it, **a
 
 <img src="assets/review-ask-iter2.svg" width="720" alt="One comment holding the full transcript: my question, Claude's answer, my follow-up, Claude's answer, each separated by a rule">
 
-When you are done, `/reply` collapses the transcript into one clean comment (rules, fences, and the `/ask` line gone) that you submit. Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ✅ / 💬 / ⚠️ / ❓ (see above).
+When you are done, `/reply` collapses the transcript into one clean comment (rules, fences, and the `/ask` line gone), kept under the `❊` mark so the reviewer knows it was AI-drafted, that you submit. Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ● / ❊ / ◐ / ○ (see above).

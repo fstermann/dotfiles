@@ -15,11 +15,11 @@
   <text x="20" y="70" font-size="13.5" fill="#1f2328">/ask check whether the mutex covers the second access too</text>
   <rect x="20" y="82" width="820" height="1" fill="#d0d7de"/>
   <!-- turn 2: claude -->
-  <text x="20" y="102" font-size="13.5" fill="#1f2328">Confirmed: the mutex is released after line 86, so line 88 is unguarded, a real race.</text>
+  <text x="20" y="102" font-size="13.5" fill="#1f2328">❊ Confirmed: the mutex is released after line 86, so line 88 is unguarded, a real race.</text>
   <rect x="20" y="114" width="820" height="1" fill="#d0d7de"/>
   <!-- turn 3: me (folded-in follow-up) -->
   <text x="20" y="134" font-size="13.5" fill="#1f2328">and does the reset() at line 90 change the picture?</text>
   <rect x="20" y="146" width="820" height="1" fill="#d0d7de"/>
   <!-- turn 4: claude -->
-  <text x="20" y="166" font-size="13.5" fill="#1f2328">Yes, reset() at line 90 clears the flag mid-window, so snapshot under a single lock.</text>
+  <text x="20" y="166" font-size="13.5" fill="#1f2328">❊ Yes, reset() at line 90 clears the flag mid-window, so snapshot under a single lock.</text>
 </svg>

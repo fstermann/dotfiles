@@ -18,7 +18,7 @@
   <rect x="20" y="92" width="820" height="1" fill="#d0d7de"/>
 
   <!-- Claude's answer turn, rendered as a plain paragraph -->
-  <text x="20" y="116" font-size="13.5" fill="#1f2328">Confirmed: the mutex is released after the first read (line 86), so the second</text>
+  <text x="20" y="116" font-size="13.5" fill="#1f2328">❊ Confirmed: the mutex is released after the first read (line 86), so the second</text>
   <text x="20" y="134" font-size="13.5" fill="#1f2328">access at line 88 is unguarded. Real race. Suggest widening the lock to cover</text>
   <text x="20" y="152" font-size="13.5" fill="#1f2328">both, or snapshotting the value once.</text>
 </svg>

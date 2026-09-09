@@ -13,7 +13,7 @@
   <text x="20" y="53" font-size="13.5" fill="#1f2328">Is this a race, or is the lock held across both reads?</text>
   <text x="20" y="73" font-size="13.5" fill="#1f2328">/ask check whether the mutex covers the second access too</text>
   <rect x="20" y="87" width="820" height="1" fill="#d0d7de"/>
-  <text x="20" y="109" font-size="13.5" fill="#1f2328">Confirmed: the mutex is released after line 86, so line 88 is unguarded, a real race.</text>
+  <text x="20" y="109" font-size="13.5" fill="#1f2328">❊ Confirmed: the mutex is released after line 86, so line 88 is unguarded, a real race.</text>
 
   <!-- thread boundary between the two comments -->
   <rect x="2" y="128" width="856" height="1" fill="#d0d7de"/>
