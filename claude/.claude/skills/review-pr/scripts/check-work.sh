@@ -8,9 +8,14 @@ set -uo pipefail
 O=$1 R=$2 N=$3 ME=$4 FLOW=$5
 S="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Stop the moment the PR leaves active review.
-state=$(gh api "repos/$O/$R/pulls/$N" --jq '.state + " " + (.merged|tostring)' 2>/dev/null || echo "")
-[ "$state" = "open false" ] || exit 3
+# Stop the moment the PR leaves active review. A transient API failure must not
+# read as "closed" (that would kill the watch), so on error report no work and let
+# the loop poll again.
+if state=$(gh api "repos/$O/$R/pulls/$N" --jq '.state + " " + (.merged|tostring)' 2>/dev/null); then
+  [ "$state" = "open false" ] || exit 3
+else
+  exit 1
+fi
 
 if [ "$FLOW" = "reviewing" ]; then
   # A pending comment I tagged needs work when it awaits an answer, is a /reply
