@@ -185,7 +185,7 @@ Keep replies very brief and factual: state what changed and where. The reply rep
 
 Print a table of what you did, then list every ○ and ◐ in full. In the Reviewing flow, list which comments are now finalized vs still mid-transcript. Report SHAs pushed, comments edited or replied to, and anything still needing me.
 
-End every round with links so I can jump straight there: the PR (`url` from `resolve-ref.sh`), then each comment you acted on as a markdown link on its `path:line`, using the row's `url`. This applies to the initial run and to every watcher wake (Step 5), so each round leaves a navigable trail.
+End every round with links: the PR (`url` from `resolve-ref.sh`), then each comment you acted on as a markdown link on its `path:line`, using the row's `url`. This applies to the initial run and to every watcher wake (Step 5), so each round leaves a navigable trail.
 
 ## Step 5: Auto-watch (address my follow-ups without a re-invoke)
 
