@@ -43,9 +43,7 @@ pend=$(echo "$threads" | jq --arg me "$ME" '
     | .id as $tid
     | ( [ .comments.nodes[] | select(.state=="PENDING" and .author.login==$me) ] ) as $mine
     | ($mine[0].databaseId) as $parent
-    # A thread is engaged once any of my comments in it carries a directive, which lets a
-    # later untagged follow-up ("ok but why?") count as work while a never-tagged thread
-    # stays quiet.
+    # Engaged = any of my comments here carries a directive; lets an untagged follow-up count.
     | ( [ $mine[].body ] | any(test("(^|\\n)\\s*/(ask|implement|reply|a|i|r)\\b")) ) as $engaged
     | ($mine | to_entries[])
     | { id:.value.databaseId, node_id:.value.id, path:.value.path,
