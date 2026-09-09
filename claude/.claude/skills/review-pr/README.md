@@ -10,7 +10,13 @@ Work a GitHub PR's comments with Claude. You stay in control: Claude edits code,
 /review-pr <url>      # by URL
 ```
 
-Runs only when you invoke it, never on its own. In a multi-repo workspace, add `--repo owner/name` with a number.
+You start it; it never starts on its own. Once running, it watches for follow-ups (below). In a multi-repo workspace, add `--repo owner/name` with a number.
+
+## Keeps watching
+
+After the first pass it starts a background watcher, so follow-ups get addressed without re-invoking. It polls every 60s and wakes the session only when there's actionable work. Exactly one watcher runs at a time; it never submits a review or resolves a thread.
+
+Stops on: 30 min idle (paused, nothing posted; restart with `/review-pr`), the PR closing or merging, or `TaskStop`.
 
 ## Two flows, auto-detected by who authored the PR
 
