@@ -211,7 +211,7 @@ It polls every 60s with `check-work.sh` (deterministic, no judgment) and exits t
 
 1. The task output carries the actionable rows and its `flow`. Run only that Step 3 branch, on those rows only.
 2. Auto-push is allowed on `/implement` and on Fix.
-3. Run the Step 4 summary (links included), so each wake leaves the same navigable trail as the initial run.
+3. Run the Step 4 summary (links included).
 4. Relaunch the watcher (exactly one at a time) and stop.
 
 Every glyph is posted (Step 3, Fix), so a `○` parks itself and never retriggers the gate; I answer it in the PR thread and that follow-up wakes you again.
