@@ -32,9 +32,7 @@ if [ "$FLOW" = "reviewing" ]; then
           ) ] }')
 else
   reviewer=$("$S/fetch-reviewer-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.directive != null) ]')
-  # Published comments (any), plus pending ones in a thread I engaged with a directive:
-  # the tagged comment itself and any later untagged follow-up ("ok but why?"). fetch
-  # already drops answered comments, so a never-tagged draft thread stays quiet.
+  # Pending comments count only in a thread I tagged (thread_engaged); fetch drops answered ones.
   mine=$("$S/fetch-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.source!="pending" or .thread_engaged==true) ]')
   work=$(jq -n --argjson r "$reviewer" --argjson m "$mine" '{flow:"own", reviewer:$r, mine:$m}')
 fi
