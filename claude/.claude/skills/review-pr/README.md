@@ -80,4 +80,14 @@ On the next run Claude folds your follow-up into the comment and answers it, **a
 
 <img src="assets/review-ask-iter2.svg" width="720" alt="One comment holding the full transcript: my question, Claude's answer, my follow-up, Claude's answer, each separated by a rule">
 
-When you are done, `/reply` collapses the transcript into one clean comment (rules, fences, and the `/ask` line gone), kept under the `❊` mark so the reviewer knows it was AI-drafted, that you submit. Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ● / ❊ / ◐ / ○ (see above).
+When you are done, tag the last turn with `/reply` (`/r`):
+
+<img src="assets/review-ask-reply-before.svg" width="720" alt="You add a final comment to the thread tagged /reply to collapse the transcript">
+
+<sub><i>run</i> <code>/review-pr</code> ↓</sub>
+
+`/reply` collapses the whole transcript into one clean comment, rules, fences, and the `/ask` line gone, rewritten as a self-contained review remark fit to the code line. It's kept under the `❊` mark so the reviewer knows it was AI-drafted, and stays **Pending** until you submit.
+
+<img src="assets/review-ask-reply-after.svg" width="720" alt="One clean pending comment: the collapsed answer as a single review remark, no transcript, still Pending">
+
+Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ● / ❊ / ◐ / ○ (see above).
