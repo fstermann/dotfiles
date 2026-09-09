@@ -129,13 +129,13 @@ Route each comment by its author: my own → Fix, a reviewer's → Respond.
 
 #### Fix: my own comments
 
-**Fold my follow-ups first.** A thread can hold several of my comments: an opener plus follow-ups, and a follow-up may carry a directive with content ("ok looks good", then "/i actually do this"). Treat the whole thread as one request. Read every unanswered comment in it for context, act once on the latest (its directive, or infer intent when untagged), post one reply, and delete my other unanswered comments in the thread so no sibling re-triggers the watcher:
+**Fold my follow-ups first.** When a thread holds several of my comments (an opener plus a follow-up, which may itself carry a directive), it's one request: act on the latest, reply once, and delete the other unanswered ones so no sibling re-triggers the watcher:
 
 ```bash
 "$S/delete-comment.sh" <sibling_node_id>
 ```
 
-Auto-fold, no confirmation. The reply carries the outcome; the deleted comments were mine and pending.
+Auto-fold, no confirmation; the deleted comments were mine and pending.
 
 Status glyphs (monochrome, so they read as a quiet marker, not decoration):
 
