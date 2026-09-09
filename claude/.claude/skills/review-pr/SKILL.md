@@ -191,7 +191,7 @@ Keep replies very brief and factual: state what changed and where. The reply rep
 
 ## Step 4: Summarize
 
-Link the PR (`url` from `resolve-ref.sh`) on its own line, then print one table, one row per comment you acted on, whatever its glyph (● ❊ ◐ ○):
+Link the PR (`url` from `resolve-ref.sh`) on its own line, then print one table, one row per comment you acted on, each with its glyph (● ❊ ◐ ○):
 
 | Comment | Action |
 | ------- | ------ |
