@@ -11,5 +11,5 @@
   <text x="731" y="17" font-size="11" fill="#7a5c00" text-anchor="middle" dominant-baseline="central" font-weight="600">Pending</text>
   <text x="844" y="21" font-size="12" fill="#656d76" text-anchor="end">just now</text>
   <text x="20" y="54" font-size="13.5" fill="#1f2328">Is this a race, or is the lock held across both reads?</text>
-  <text x="20" y="76" font-size="13.5" fill="#1f2328"><tspan fill="#0550ae" font-weight="600">/ask</tspan> check whether the mutex covers the second access too</text>
+  <text x="20" y="76" font-size="13.5" fill="#1f2328">/ask check whether the mutex covers the second access too</text>
 </svg>

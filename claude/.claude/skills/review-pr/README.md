@@ -56,12 +56,16 @@ In a thread you already tagged, just keep talking, no directive needed. Claude i
 
 ### Review someone else's PR
 
-Claude drafts pending comments; you sharpen one with `/ask`. It writes its finding into a scratchpad under your comment. Everything stays **Pending** until you submit; `/reply` later turns the scratchpad into the clean comment.
+Claude drafts pending comments; you sharpen one with `/ask`. Your comment stays exactly as you wrote it, and Claude appends its finding below a horizontal rule. (The finding sits in a fence whose markers are invisible HTML comments, so on GitHub it just reads as a note under the rule.) Everything stays **Pending** until you submit.
 
 <img src="assets/review-ask-before.svg" width="720" alt="Your pending comment asks if it is a race and tags /ask to check the mutex">
 
 <sub><i>run</i> <code>/review-pr</code> ↓</sub>
 
-<img src="assets/review-ask-after.svg" width="720" alt="Claude appends a scratchpad confirming the race and suggesting a fix, still Pending">
+<img src="assets/review-ask-after.svg" width="720" alt="Your comment kept verbatim, then a rule, then Claude's finding as a plain paragraph, still Pending">
 
-Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ✅ / 💬 / ⚠️ / ❓ (see above).
+Push back in the thread, or just re-run. Claude folds your new line into the comment and **replaces** the finding in place, it never stacks:
+
+<img src="assets/review-ask-iter2.svg" width="720" alt="Your follow-up line is folded in above the rule and the finding is regenerated to address it">
+
+When you are done, `/reply` strips the rule and the `/ask` line, leaving the clean comment you submit. Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ✅ / 💬 / ⚠️ / ❓ (see above).

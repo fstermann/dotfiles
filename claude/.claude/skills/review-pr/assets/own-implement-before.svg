@@ -20,5 +20,5 @@
   <path d="M24 107 Q28 110.5 32 107" stroke="#4d4d4d" stroke-width="1.4" fill="none" stroke-linecap="round"/>
   <text x="50" y="109" font-size="13.5" fill="#1f2328" font-weight="600">fstermann<tspan font-weight="400" fill="#656d76">&#160;commented</tspan></text>
   <text x="844" y="109" font-size="12" fill="#656d76" text-anchor="end">just now</text>
-  <text x="20" y="142" font-size="13.5" fill="#1f2328"><tspan fill="#0550ae" font-weight="600">/implement</tspan> use a Set here instead of the array scan</text>
+  <text x="20" y="142" font-size="13.5" fill="#1f2328">/implement use a Set here instead of the array scan</text>
 </svg>

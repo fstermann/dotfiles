@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="860" height="176" viewBox="0 0 860 176" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
-  <rect width="860" height="176" fill="#ffffff"/>
-  <rect x="1" y="1" width="858" height="174" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="198" viewBox="0 0 860 198" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect width="860" height="198" fill="#ffffff"/>
+  <rect x="1" y="1" width="858" height="196" rx="6" fill="#ffffff" stroke="#d0d7de"/>
 
   <rect x="2" y="2" width="856" height="30" fill="#f6f8fa"/>
   <circle cx="28" cy="17" r="11" fill="#a5d6a7"/>
@@ -10,15 +10,15 @@
   <rect x="700" y="8" width="104" height="18" rx="9" fill="#fff8c5" stroke="#eac54f"/>
   <text x="752" y="17" font-size="11" fill="#7a5c00" text-anchor="middle" dominant-baseline="central" font-weight="600">Pending · edited</text>
 
-  <!-- my comment, verbatim -->
+  <!-- my comment, now with the follow-up folded in above the rule -->
   <text x="20" y="54" font-size="13.5" fill="#1f2328">Is this a race, or is the lock held across both reads?</text>
   <text x="20" y="76" font-size="13.5" fill="#1f2328">/ask check whether the mutex covers the second access too</text>
+  <text x="20" y="98" font-size="13.5" fill="#1f2328">and does the reset() at line 90 change the picture?</text>
 
-  <!-- the divider renders as a horizontal rule; the fence markers are invisible -->
-  <rect x="20" y="92" width="820" height="1" fill="#d0d7de"/>
+  <rect x="20" y="114" width="820" height="1" fill="#d0d7de"/>
 
-  <!-- scratchpad, rendered as a plain paragraph -->
-  <text x="20" y="116" font-size="13.5" fill="#1f2328">Confirmed: the mutex is released after the first read (line 86), so the second</text>
-  <text x="20" y="134" font-size="13.5" fill="#1f2328">access at line 88 is unguarded. Real race. Suggest widening the lock to cover</text>
-  <text x="20" y="152" font-size="13.5" fill="#1f2328">both, or snapshotting the value once.</text>
+  <!-- scratchpad replaced in place, now addressing the new point -->
+  <text x="20" y="138" font-size="13.5" fill="#1f2328">Still a race, and reset() at line 90 clears the flag mid-window, widening it</text>
+  <text x="20" y="156" font-size="13.5" fill="#1f2328">further. Snapshot the value under a single lock and branch on the snapshot</text>
+  <text x="20" y="174" font-size="13.5" fill="#1f2328">rather than re-reading.</text>
 </svg>
