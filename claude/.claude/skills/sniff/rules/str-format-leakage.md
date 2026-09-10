@@ -2,13 +2,13 @@
 id: str-format-leakage
 name: Format leakage
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: prac
 message: Incidental style in examples inferred as a rule.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: log-universal-quantifier
 name: Unenforceable universal
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: ISO
 message: always/never attached to something that cannot be guaranteed. In the spec pack this is an error.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

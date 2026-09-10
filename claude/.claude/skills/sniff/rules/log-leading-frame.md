@@ -2,17 +2,17 @@
 id: log-leading-frame
 name: Leading framing
 family: logical
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: Framing that pushes agreement over assessment.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(confirm that|you.?ll agree|as we all know|as we know|obviously|of course,|as you can see|clearly,)\b'
     confidence: medium
     hook_safe: false
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

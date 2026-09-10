@@ -2,14 +2,17 @@
 id: lex-superlative
 name: Superlative
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: ISO
 message: Superlative sets an unbounded, unreachable target.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(optimal|ideal|fastest|cleanest|simplest|smartest|strongest|world-class|top-notch|best-in-class)\b'
+    confidence: medium
+    hook_safe: false
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

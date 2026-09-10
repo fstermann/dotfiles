@@ -2,13 +2,13 @@
 id: lex-term-drift
 name: Terminology drift
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: arg
 evidence: RE
 message: Several terms used for one concept; the reader infers a distinction that isn't there.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

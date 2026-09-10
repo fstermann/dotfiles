@@ -2,13 +2,13 @@
 id: ref-missing-actor
 name: Missing trigger or actor
 family: referential
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: An instruction with no stated agent or trigger. In the spec pack this is an error.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

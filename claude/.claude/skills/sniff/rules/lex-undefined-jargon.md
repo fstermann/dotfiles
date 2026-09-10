@@ -2,13 +2,13 @@
 id: lex-undefined-jargon
 name: Undefined jargon
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: arg
 evidence: ISO
 message: A domain term or acronym used before it is expanded.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: prag-unstated-audience
 name: Unstated audience
 family: pragmatic
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: Output quality depends on a reader profile the prompt never gives.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

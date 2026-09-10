@@ -2,13 +2,13 @@
 id: log-stale-directive
 name: Stale directive
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: References a tool, file or step that no longer exists.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,17 +2,17 @@
 id: ref-scope-ambiguity
 name: Coordination scope ambiguity
 family: referential
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: Modifier attachment across and/or is undecidable.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(and|or) [a-z]+ (and|or) [a-z]+\b'
     confidence: medium
     hook_safe: false
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: prag-register-mismatch
 name: Register mismatch
 family: pragmatic
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: An instruction register implying an output register nobody asked for.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

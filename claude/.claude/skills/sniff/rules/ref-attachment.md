@@ -2,13 +2,13 @@
 id: ref-attachment
 name: Attachment ambiguity
 family: referential
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: A modifier attachable to two heads.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

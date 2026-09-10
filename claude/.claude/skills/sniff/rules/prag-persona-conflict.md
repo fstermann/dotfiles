@@ -2,13 +2,13 @@
 id: prag-persona-conflict
 name: Persona conflicts with task
 family: pragmatic
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: An assigned persona that conflicts with the task.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: log-no-priority
 name: Unstated priority
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: LLM
 message: Two constraints that can conflict at runtime with no tie-breaker.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

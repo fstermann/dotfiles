@@ -2,17 +2,17 @@
 id: ref-incomplete
 name: Incomplete reference
 family: referential
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: A reference with no resolvable target.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(the (section|table|figure|file|diagram|list|steps?) (above|below)|as (previously|described above|mentioned above)|see (above|below)|the attached|the aforementioned)\b'
     confidence: medium
     hook_safe: false
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: ref-passive-actor
 name: Actor-eliding passive
 family: referential
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: Passive voice that drops the actor.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

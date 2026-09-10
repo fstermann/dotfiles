@@ -2,13 +2,13 @@
 id: str-example-contradicts-rule
 name: Example contradicts instruction
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: prac
 message: A few-shot example that violates a stated rule; the example wins.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

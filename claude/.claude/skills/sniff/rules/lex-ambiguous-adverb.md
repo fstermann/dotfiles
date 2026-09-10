@@ -2,18 +2,21 @@
 id: lex-ambiguous-adverb
 name: Ambiguous adverb
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: ISO
 message: Manner adverb with no measurable criterion.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(quickly|properly|carefully|appropriately|reasonably|efficiently|gracefully|adequately)\b'
     confidence: high
     hook_safe: true
     precision: 1.00   # PURE spec corpus, n=30, 2026-09-09
     n: 30
+  - kind: llm
+    confidence: medium
+    hook_safe: false
 ---
 
 An adverb that names a quality of execution without a threshold. "Handle errors gracefully" gives

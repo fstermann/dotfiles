@@ -2,13 +2,13 @@
 id: prag-curse-of-knowledge
 name: Assumed context
 family: pragmatic
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: The author's unstated background is load-bearing for the task.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

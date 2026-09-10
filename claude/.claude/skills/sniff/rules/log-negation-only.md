@@ -2,13 +2,13 @@
 id: log-negation-only
 name: Negation without positive target
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: LLM
 message: A prohibition that names no goal and keeps the banned content in context.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

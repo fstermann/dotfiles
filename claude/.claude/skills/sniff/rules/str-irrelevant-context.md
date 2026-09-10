@@ -2,13 +2,13 @@
 id: str-irrelevant-context
 name: Irrelevant context
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: Background that does not bear on the task; distracts the model.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

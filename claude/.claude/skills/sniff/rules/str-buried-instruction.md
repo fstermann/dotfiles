@@ -2,13 +2,13 @@
 id: str-buried-instruction
 name: Buried instruction
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: A critical directive placed mid-document in a long prompt.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: log-constraint-overload
 name: Constraint overload
 family: logical
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: So many simultaneous constraints that the all-satisfied rate collapses.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

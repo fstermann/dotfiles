@@ -2,13 +2,13 @@
 id: lex-overloaded-term
 name: Overloaded term
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: One term standing for two distinct concepts.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

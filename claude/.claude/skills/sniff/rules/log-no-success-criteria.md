@@ -2,13 +2,13 @@
 id: log-no-success-criteria
 name: No success criteria
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: RE
 message: A task with no statement of what a correct output looks like.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: str-instruction-data-mixing
 name: Undelimited data
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: auto
 evidence: LLM
 message: Pasted content not fenced off from instructions; injection surface.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

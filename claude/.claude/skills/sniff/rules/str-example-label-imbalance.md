@@ -2,13 +2,13 @@
 id: str-example-label-imbalance
 name: Few-shot label imbalance
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: A skewed label distribution across few-shot examples; majority-label bias.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

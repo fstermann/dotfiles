@@ -2,13 +2,13 @@
 id: lex-connotation
 name: Connotation load
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: A word importing a register the task never asked for.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

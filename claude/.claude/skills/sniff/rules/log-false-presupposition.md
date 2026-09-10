@@ -2,13 +2,13 @@
 id: log-false-presupposition
 name: False presupposition
 family: logical
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: The instruction presupposes a fact not established; invites confabulation.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

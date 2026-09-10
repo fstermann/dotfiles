@@ -2,13 +2,13 @@
 id: log-contradiction
 name: Contradictory constraints
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: LLM
 message: Two constraints in one instruction that cannot both hold.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,13 +2,13 @@
 id: str-premise-order
 name: Premise order mismatch
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: manual
 evidence: LLM
 message: Facts ordered against the required reasoning chain.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

@@ -2,17 +2,17 @@
 id: lex-comparative
 name: Comparative without baseline
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: ISO
 message: Comparative with no stated reference point.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(faster|slower|better|worse|cheaper|easier|harder|quicker|lighter|simpler|stronger|smaller|larger|bigger)\b'
     confidence: low
     hook_safe: false
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

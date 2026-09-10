@@ -2,13 +2,13 @@
 id: str-example-recency
 name: Few-shot label ordering
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: auto
 evidence: LLM
 message: Examples ordered so the last label dominates.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

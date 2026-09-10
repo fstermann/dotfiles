@@ -2,13 +2,13 @@
 id: str-inconsistent-delimiters
 name: Inconsistent formatting scheme
 family: structural
-pack: prompt
+applies_to: [prompt]
 severity: warning
 fix: auto
 evidence: LLM
 message: Mixed separator and heading conventions within one prompt.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

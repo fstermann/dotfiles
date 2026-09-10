@@ -2,13 +2,13 @@
 id: log-unspecified-output
 name: Unspecified output contract
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: No format, schema or length contract where a consumer expects one.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

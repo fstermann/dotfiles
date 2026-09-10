@@ -2,17 +2,17 @@
 id: ref-vague-pronoun
 name: Vague pronoun
 family: referential
-pack: core
+applies_to: [core]
 severity: warning
 fix: arg
 evidence: RE
 message: Sentence-initial pronoun with an ambiguous or distant antecedent.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '(^|[.!?]"?[[:space:]]+)(This|That|It|These|Those)[[:space:]]+(is|are|was|were|will|would|should|shall|can|could|may|might|means|makes|does|did|has|have|gives|breaks|causes|requires|needs|allows|refers|happens|leads)\b'
     confidence: medium
     hook_safe: false
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

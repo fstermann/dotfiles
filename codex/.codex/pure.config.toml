@@ -11,3 +11,6 @@ status_line = [
   "current-dir",
 ]
 status_line_use_colors = true
+
+[tui.model_availability_nux]
+gpt-6-astra = 4

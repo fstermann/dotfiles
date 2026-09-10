@@ -2,15 +2,18 @@
 id: lex-politeness-padding
 name: Politeness padding
 family: lexical
-pack: core
+applies_to: [core]
 severity: suggestion
 fix: auto
 evidence: prac
 message: Filler politeness adds tokens and no constraint.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: "\\b(I'?d (really )?appreciate|if you could,? please|would you mind|I was wondering if|it would be great if|if it'?s not too much trouble|please kindly)\\b"
     confidence: high
+    hook_safe: false
+  - kind: llm
+    confidence: medium
     hook_safe: false
 ---
 

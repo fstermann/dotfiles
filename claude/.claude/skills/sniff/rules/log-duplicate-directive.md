@@ -2,13 +2,13 @@
 id: log-duplicate-directive
 name: Restated directive
 family: logical
-pack: core
+applies_to: [core]
 severity: warning
 fix: manual
 evidence: prac
 message: The same rule stated twice; the copies drift on edit.
 sniffers:
-  - kind: model
+  - kind: llm
     confidence: medium
     hook_safe: false
 ---

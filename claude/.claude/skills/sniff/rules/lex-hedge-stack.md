@@ -2,15 +2,18 @@
 id: lex-hedge-stack
 name: Hedging stack
 family: lexical
-pack: core
+applies_to: [core]
 severity: warning
 fix: auto
 evidence: prac
 message: Stacked hedges signal optionality you probably did not intend.
 sniffers:
-  - kind: deterministic
+  - kind: vale
     pattern: '\b(could|can|may|might|would)[[:space:]]+(potentially|possibly|perhaps|probably|maybe)\b|\b(potentially|possibly|perhaps|probably|maybe)[[:space:]]+(potentially|possibly|perhaps|probably|maybe)\b'
     confidence: high
+    hook_safe: false
+  - kind: llm
+    confidence: medium
     hook_safe: false
 ---
 
