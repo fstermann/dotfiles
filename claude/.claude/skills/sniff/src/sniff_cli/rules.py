@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-from .models import Rule, Sniffer, SniffError
+from sniff_cli.models import Rule, Sniffer, SniffError
 
 SEVERITIES = {"suggestion", "warning", "error"}
 SNIFFER_KINDS = {"llm", "vale", "ruff"}

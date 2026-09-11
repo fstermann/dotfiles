@@ -13,13 +13,13 @@ import typer
 from rich.console import Console
 from rich.text import Text
 
-from . import __version__
-from .adapters import run_adapters
-from .config import ConfigContext, load_config
-from .discovery import discover_inputs
-from .models import Finding, Rule, SniffError
-from .report import ReportFinding, parse_report_findings, render_report
-from .rules import effective_severity, load_rules, selected_rules
+from sniff_cli import __version__
+from sniff_cli.adapters import run_adapters
+from sniff_cli.config import ConfigContext, load_config
+from sniff_cli.discovery import discover_inputs
+from sniff_cli.models import Finding, Rule, SniffError
+from sniff_cli.report import ReportFinding, parse_report_findings, render_report
+from sniff_cli.rules import effective_severity, load_rules, selected_rules
 
 SEVERITY_RANK = {"suggestion": 0, "warning": 1, "error": 2}
 ASSISTANT_ENV_VARS = (
