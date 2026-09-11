@@ -5,6 +5,7 @@
     "defaultMode": "auto"
   },
   "model": "claude-opus-4-8[1m]",
+  "outputStyle": "BLUF",
   "hooks": {
     "PreToolUse": [
       {
@@ -58,19 +59,7 @@
     "command": "bash ~/.claude/statusline-command.sh",
     "padding": 0
   },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    }
-  },
-  "outputStyle": "BLUF",
   "effortLevel": "medium",
   "theme": "dark",
-  "skipAutoPermissionPrompt": true,
-  "enabledPlugins": {
-    "codex@openai-codex": true
-  }
+  "skipAutoPermissionPrompt": true
 }
