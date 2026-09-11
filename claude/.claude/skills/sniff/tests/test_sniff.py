@@ -13,12 +13,13 @@ from pathlib import Path
 from unittest.mock import patch
 
 from sniff_cli.adapters import run_ruff, run_vale
-from sniff_cli.cli import _parser, _print_findings, _report_format
+from sniff_cli.cli import _print_findings, _report_format, app
 from sniff_cli.config import _merge, load_config
 from sniff_cli.discovery import discover_inputs
 from sniff_cli.models import Finding, Rule, Sniffer, SniffError
 from sniff_cli.report import parse_report_findings, render_report
 from sniff_cli.rules import effective_severity, load_rules, selected_rules
+from typer.testing import CliRunner
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 
@@ -270,8 +271,16 @@ class DiscoveryTests(unittest.TestCase):
 
 class ReportTests(unittest.TestCase):
     def test_report_format_defaults_to_auto(self) -> None:
-        args = _parser().parse_args(["report"])
-        self.assertEqual("auto", args.format)
+        result = CliRunner().invoke(app, ["report"], input="")
+        self.assertEqual(0, result.exit_code)
+        self.assertEqual("sniff: no confirmed findings\n", result.stdout)
+
+    def test_help_uses_typer_commands(self) -> None:
+        result = CliRunner().invoke(app, ["--help"], color=False)
+        self.assertEqual(0, result.exit_code)
+        self.assertIn("check", result.stdout)
+        self.assertIn("rules", result.stdout)
+        self.assertIn("report", result.stdout)
 
     def test_auto_report_format_detects_assistant_environments(self) -> None:
         self.assertEqual("markdown", _report_format("auto", {"CLAUDECODE": "1"}))
@@ -399,6 +408,25 @@ class ReportTests(unittest.TestCase):
 
             self.assertIn("· via LLM\n\n    │", rendered)
             self.assertIn("^^^^^^^^^^^^^^^^^^\n\n　　└──", rendered)
+
+    def test_terminal_report_color_can_be_forced(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            (root / "prompt.md").write_text("Must always apply.\n", encoding="utf-8")
+            findings = parse_report_findings(
+                [
+                    '{"path":"prompt.md","line":1,"column":1,'
+                    '"end_line":1,"end_column":19,'
+                    '"rule":"log-universal-quantifier","code":"LOG010",'
+                    '"severity":"error","source":"llm only",'
+                    '"span":"Must always apply.","message":"Unbounded."}'
+                ]
+            )
+
+            rendered = render_report(findings, root, markdown=False, ansi=True)
+
+            self.assertIn("\x1b[", rendered)
+            self.assertIn("[ERROR LOG010]", rendered)
 
     def test_multiline_diagnosis_uses_a_hanging_indent(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

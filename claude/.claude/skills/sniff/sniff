@@ -11,7 +11,7 @@ if command -v uv >/dev/null 2>&1; then
   exec uv run --quiet --project "$ROOT" sniff "$@"
 fi
 
-if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+if ! python3 -c 'import rich, typer, yaml' >/dev/null 2>&1; then
   echo "sniff: error: install uv or install this package's dependencies first" >&2
   exit 2
 fi

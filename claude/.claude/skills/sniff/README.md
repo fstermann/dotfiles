@@ -57,7 +57,8 @@ The skill's LLM workflow also uses these commands:
 
 `rules` emits the applicable semantic guidance. `report` reads confirmed JSONL findings on stdin
 and renders terminal or Markdown output. Its default format is Markdown in Claude Code and Codex,
-and terminal output elsewhere. Run `./sniff <command> --help` for all options.
+and colorized terminal output elsewhere. Use `--color auto|always|never` on `check` and `report`;
+automatic mode emits color only to a terminal. Run `./sniff <command> --help` for all options.
 
 Exit status is `0` below the configured failure threshold, `1` when the threshold is reached, and
 `2` for invalid input, configuration, or detector failure. The default threshold is `error`.

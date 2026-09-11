@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import json
 import re
+from io import StringIO
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
+
+from rich.console import Console
+from rich.text import Text
 
 from .models import SniffError
 
@@ -297,11 +301,7 @@ def _italic(value: str) -> str:
     return value.replace("*", "\\*").replace("_", "\\_")
 
 
-def _ansi(value: str, code: str, enabled: bool) -> str:
-    return f"\033[{code}m{value}\033[0m" if enabled else value
-
-
-def _render_message(message: str, *, markdown: bool, ansi: bool) -> list[str]:
+def _render_message(message: str, *, markdown: bool) -> list[str]:
     lines = [
         value
         for paragraph in message.split("\n")
@@ -310,9 +310,76 @@ def _render_message(message: str, *, markdown: bool, ansi: bool) -> list[str]:
     rendered: list[str] = []
     for index, line in enumerate(lines):
         prefix = f"{INDENT}└── " if index == 0 else f"{INDENT}    "
-        styled = f"*{_italic(line)}*" if markdown else _ansi(line, "3", ansi)
+        styled = f"*{_italic(line)}*" if markdown else line
         rendered.append(prefix + styled)
     return rendered
+
+
+def _terminal_report(
+    findings: list[ReportFinding],
+    project_root: Path,
+    *,
+    subject: str,
+    color: bool,
+) -> str:
+    stream = StringIO()
+    console = Console(
+        file=stream,
+        force_terminal=color,
+        no_color=not color,
+        color_system="standard" if color else None,
+        width=120,
+    )
+    output = Text()
+    output.append(" ___ _  _ ___ ___ ___\n", style="bold cyan")
+    output.append("/ __| \\| |_ _| __| __|\n", style="bold cyan")
+    output.append("\\__ \\ .` || || _|| _|\n", style="bold cyan")
+    output.append("|___/_|\\_|___|_| |_|\n\n", style="bold cyan")
+    subject_word = subject if len(findings) == 1 else f"{subject}s"
+    file_count = len({finding.path for finding in findings})
+    file_word = "file" if file_count == 1 else "files"
+    output.append(
+        f"{len(findings)} {subject_word} across {file_count} {file_word}\n",
+        style="bold",
+    )
+
+    grouped: dict[tuple[str, int], list[ReportFinding]] = {}
+    for finding in findings:
+        grouped.setdefault((finding.path, finding.line), []).append(finding)
+    for (path, line), items in grouped.items():
+        items.sort(key=lambda item: (item.line, item.column))
+        output.append("\n")
+        output.append(
+            _location(path, line, project_root, markdown=False),
+            style="bold cyan underline",
+        )
+        output.append("\n")
+        for index, finding in enumerate(items):
+            if index:
+                output.append("\n")
+            marker = "└── " if finding.severity == "error" else INDENT
+            provenance = PROVENANCE_LABELS[finding.source]
+            severity_style = {
+                "error": "bold red",
+                "warning": "bold yellow",
+                "suggestion": "bold cyan",
+            }[finding.severity]
+            output.append(marker)
+            output.append(
+                f"[{finding.severity.upper()} {finding.code}] {finding.rule}",
+                style=severity_style,
+            )
+            output.append(" · ")
+            output.append(f"via {provenance}\n\n", style="dim italic")
+            for excerpt_line in _render_excerpt(finding, project_root):
+                style = severity_style if "^" in excerpt_line else "dim"
+                output.append(excerpt_line + "\n", style=style)
+            output.append("\n")
+            for message_line in _render_message(finding.message, markdown=False):
+                output.append(message_line + "\n", style="italic")
+
+    console.print(output, end="", soft_wrap=True)
+    return stream.getvalue().rstrip("\n")
 
 
 def render_report(
@@ -326,6 +393,10 @@ def render_report(
     if not findings:
         qualifier = "confirmed " if subject == "finding" else ""
         return f"sniff: no {qualifier}{subject}s"
+    if not markdown:
+        return _terminal_report(
+            findings, project_root, subject=subject, color=ansi
+        )
     grouped: dict[tuple[str, int], list[ReportFinding]] = {}
     for finding in findings:
         grouped.setdefault((finding.path, finding.line), []).append(finding)
@@ -360,21 +431,7 @@ def render_report(
                         *_render_excerpt(finding, project_root),
                         "```",
                         "",
-                        *_render_message(finding.message, markdown=True, ansi=False),
-                    ]
-                )
-            else:
-                heading = (
-                    f"{marker}{_ansi(label, '1', ansi)} · "
-                    f"{_ansi(f'via {provenance}', '2;3', ansi)}"
-                )
-                output.extend(
-                    [
-                        heading,
-                        "",
-                        *_render_excerpt(finding, project_root),
-                        "",
-                        *_render_message(finding.message, markdown=False, ansi=ansi),
+                        *_render_message(finding.message, markdown=True),
                     ]
                 )
     return "\n".join(output)

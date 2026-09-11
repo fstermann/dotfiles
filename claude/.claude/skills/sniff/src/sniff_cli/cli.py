@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import sys
@@ -8,8 +7,13 @@ import tempfile
 from collections import Counter
 from collections.abc import Mapping
 from dataclasses import replace
+from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
+
+import typer
+from rich.console import Console
+from rich.text import Text
 
 from . import __version__
 from .adapters import run_adapters
@@ -27,6 +31,39 @@ ASSISTANT_ENV_VARS = (
 )
 
 
+class CheckFormat(str, Enum):
+    human = "human"
+    report = "report"
+    json = "json"
+    jsonl = "jsonl"
+
+
+class RulesFormat(str, Enum):
+    llm = "llm"
+    json = "json"
+    jsonl = "jsonl"
+
+
+class ReportFormat(str, Enum):
+    auto = "auto"
+    terminal = "terminal"
+    markdown = "markdown"
+
+
+class ColorMode(str, Enum):
+    auto = "auto"
+    always = "always"
+    never = "never"
+
+
+app = typer.Typer(
+    help="Find ambiguous, contradictory, and unverifiable writing.",
+    no_args_is_help=True,
+    pretty_exceptions_enable=False,
+    rich_markup_mode="rich",
+)
+
+
 def _skill_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
@@ -39,11 +76,13 @@ def _start_path(raw_paths: list[str] | None, target: str | None = None) -> Path:
 
 
 def _context(
-    args: argparse.Namespace, raw_paths: list[str] | None = None
+    config: str | None,
+    raw_paths: list[str] | None = None,
+    target: str | None = None,
 ) -> ConfigContext:
-    explicit = Path(args.config) if args.config else None
+    explicit = Path(config) if config else None
     return load_config(
-        _skill_root(), _start_path(raw_paths, getattr(args, "target", None)), explicit
+        _skill_root(), _start_path(raw_paths, target), explicit
     )
 
 
@@ -77,6 +116,7 @@ def _print_findings(
     output_format: str,
     project_root: Path | None = None,
     stdin_source: str | None = None,
+    color: bool = False,
 ) -> None:
     if output_format in {"json", "jsonl"}:
         for finding in findings:
@@ -107,37 +147,60 @@ def _print_findings(
                 root,
                 subject="candidate",
                 markdown=False,
-                ansi=sys.stdout.isatty(),
+                ansi=color,
             )
         )
         return
+    console = Console(
+        file=sys.stdout,
+        force_terminal=color,
+        no_color=not color,
+        color_system="standard" if color else None,
+    )
     for finding in findings:
-        print(
-            f"{finding.path}:{finding.line}:{finding.column}  "
-            f"[{finding.severity} {finding.code}]  {finding.rule}  "
-            f"({finding.detector} candidate)"
+        severity_style = {
+            "error": "bold red",
+            "warning": "bold yellow",
+            "suggestion": "bold cyan",
+        }[finding.severity]
+        console.print(
+            Text.assemble(
+                (f"{finding.path}:{finding.line}:{finding.column}", "bold cyan"),
+                "  ",
+                (f"[{finding.severity} {finding.code}]", severity_style),
+                f"  {finding.rule}  ",
+                (f"({finding.detector} candidate)", "dim italic"),
+            )
         )
-        print(f'  span:   "{finding.span}"')
-        print(f"  why:    {finding.message}")
+        console.print(Text.assemble(("  span:   ", "dim"), f'"{finding.span}"'))
+        console.print(Text.assemble(("  why:    ", "dim"), finding.message))
 
 
-def _check(args: argparse.Namespace) -> int:
-    if args.paths.count("-") > 1 or ("-" in args.paths and len(args.paths) > 1):
+def _check(
+    paths_arg: list[str],
+    profile_arg: str | None,
+    config_arg: str | None,
+    output_format: str,
+    fail_on: str | None,
+    fix: bool,
+    color: bool,
+) -> int:
+    if paths_arg.count("-") > 1 or ("-" in paths_arg and len(paths_arg) > 1):
         raise SniffError("stdin ('-') cannot be combined with other inputs")
-    if args.fix and "-" in args.paths:
+    if fix and "-" in paths_arg:
         raise SniffError("--fix cannot modify stdin")
 
-    context = _context(args, args.paths)
-    profile_name, profile = _profile(context.data, args.profile)
+    context = _context(config_arg, paths_arg)
+    profile_name, profile = _profile(context.data, profile_arg)
     rules = selected_rules(load_rules(context.rule_dirs), context.data, profile_name)
     if not rules:
         print("sniff: 0 rules selected", file=sys.stderr)
         return 0
-    paths = discover_inputs(args.paths, profile, context.project_root)
+    paths = discover_inputs(paths_arg, profile, context.project_root)
     stdin_path: Path | None = None
 
     with tempfile.TemporaryDirectory(prefix="sniff-stdin-") as temp:
-        if "-" in args.paths:
+        if "-" in paths_arg:
             suffix = ".py" if profile_name == "code" else ".md"
             stdin_path = Path(temp) / f"stdin{suffix}"
             stdin_path.write_text(sys.stdin.read(), encoding="utf-8")
@@ -149,7 +212,7 @@ def _check(args: argparse.Namespace) -> int:
 
         before = run_adapters(paths, rules, context.data, profile_name)
         findings = before
-        if args.fix:
+        if fix:
             run_adapters(paths, rules, context.data, profile_name, fix=True)
             findings = run_adapters(paths, rules, context.data, profile_name)
             identity = lambda item: (item.path, item.rule, item.detector, item.span)
@@ -164,9 +227,15 @@ def _check(args: argparse.Namespace) -> int:
         stdin_source = (
             stdin_path.read_text(encoding="utf-8") if stdin_path is not None else None
         )
-        _print_findings(displayed, args.format, context.project_root, stdin_source)
+        _print_findings(
+            displayed,
+            output_format,
+            context.project_root,
+            stdin_source,
+            color,
+        )
 
-    threshold = args.fail_on or str(context.data.get("fail_on", "error"))
+    threshold = fail_on or str(context.data.get("fail_on", "error"))
     if threshold not in SEVERITY_RANK:
         raise SniffError(f"invalid failure level {threshold!r}")
     return int(
@@ -187,9 +256,14 @@ def _rule_payload(rule: Rule, config: dict[str, Any], profile: str) -> dict[str,
     }
 
 
-def _rules(args: argparse.Namespace) -> int:
-    context = _context(args)
-    profile_name, _ = _profile(context.data, args.profile)
+def _rules(
+    profile_arg: str | None,
+    target: str | None,
+    config_arg: str | None,
+    output_format: str,
+) -> int:
+    context = _context(config_arg, target=target)
+    profile_name, _ = _profile(context.data, profile_arg)
     rules = [
         rule
         for rule in selected_rules(
@@ -197,7 +271,7 @@ def _rules(args: argparse.Namespace) -> int:
         )
         if rule.sniffers_of("llm")
     ]
-    if args.format in {"json", "jsonl"}:
+    if output_format in {"json", "jsonl"}:
         for rule in rules:
             print(
                 json.dumps(
@@ -226,70 +300,138 @@ def _report_format(
     return "terminal"
 
 
-def _report(args: argparse.Namespace) -> int:
-    project_root = Path(args.project_root).expanduser().resolve()
+def _report(project_root_arg: str, requested_format: str, color: bool) -> int:
+    project_root = Path(project_root_arg).expanduser().resolve()
     findings = parse_report_findings(sys.stdin)
-    output_format = _report_format(args.format)
+    output_format = _report_format(requested_format)
     print(
         render_report(
             findings,
             project_root,
             markdown=output_format == "markdown",
-            ansi=output_format == "terminal" and sys.stdout.isatty(),
+            ansi=output_format == "terminal" and color,
         )
     )
     return 0
 
 
-def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="sniff")
-    parser.add_argument("--version", action="version", version=f"sniff {__version__}")
-    subparsers = parser.add_subparsers(dest="command", required=True)
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"sniff {__version__}")
+        raise typer.Exit()
 
-    check = subparsers.add_parser(
-        "check", help="run registered deterministic detectors"
-    )
-    check.add_argument("paths", nargs="+", help="files, directories, or '-' for stdin")
-    check.add_argument("--profile", help="built-in or project-defined profile")
-    check.add_argument("--config", help="explicit project configuration")
-    check.add_argument(
-        "--format", choices=("human", "report", "json", "jsonl"), default="human"
-    )
-    check.add_argument("--fail-on", choices=("suggestion", "warning", "error"))
-    check.add_argument(
-        "--fix", action="store_true", help="apply safe deterministic fixes and recheck"
-    )
-    check.set_defaults(handler=_check)
 
-    rules = subparsers.add_parser("rules", help="emit applicable LLM rule guidance")
-    rules.add_argument("--profile", help="built-in or project-defined profile")
-    rules.add_argument("--target", help="target used for project config discovery")
-    rules.add_argument("--config", help="explicit project configuration")
-    rules.add_argument("--format", choices=("llm", "json", "jsonl"), default="llm")
-    rules.set_defaults(handler=_rules)
+def _color_enabled(mode: ColorMode) -> bool:
+    if mode is ColorMode.always:
+        return True
+    if mode is ColorMode.never:
+        return False
+    if "NO_COLOR" in os.environ or os.environ.get("TERM") in {"dumb", "unknown"}:
+        return False
+    return sys.stdout.isatty()
 
-    report = subparsers.add_parser(
-        "report", help="render adjudicated JSONL findings"
+
+@app.callback()
+def root(
+    version: Annotated[
+        bool | None,
+        typer.Option("--version", callback=_version_callback, is_eager=True),
+    ] = None,
+) -> None:
+    """Find ambiguous, contradictory, and unverifiable writing."""
+
+
+@app.command()
+def check(
+    paths: Annotated[list[str], typer.Argument(help="Files, directories, or '-' for stdin.")],
+    profile: Annotated[
+        str | None, typer.Option(help="Built-in or project-defined profile.")
+    ] = None,
+    config: Annotated[
+        str | None, typer.Option(help="Explicit project configuration.")
+    ] = None,
+    output_format: Annotated[
+        CheckFormat, typer.Option("--format", help="Output format.")
+    ] = CheckFormat.human,
+    fail_on: Annotated[
+        str | None,
+        typer.Option(help="Fail at suggestion, warning, or error severity."),
+    ] = None,
+    fix: Annotated[
+        bool, typer.Option(help="Apply safe deterministic fixes and recheck.")
+    ] = False,
+    color: Annotated[
+        ColorMode, typer.Option(help="Colorize terminal output.")
+    ] = ColorMode.auto,
+) -> None:
+    """Run registered deterministic detectors."""
+    if fail_on is not None and fail_on not in SEVERITY_RANK:
+        raise typer.BadParameter(
+            "choose suggestion, warning, or error", param_hint="--fail-on"
+        )
+    raise typer.Exit(
+        _check(
+            paths,
+            profile,
+            config,
+            output_format.value,
+            fail_on,
+            fix,
+            _color_enabled(color),
+        )
     )
-    report.add_argument(
-        "--project-root",
-        default=".",
-        help="base directory for relative paths and clickable locations",
+
+
+@app.command()
+def rules(
+    profile: Annotated[
+        str | None, typer.Option(help="Built-in or project-defined profile.")
+    ] = None,
+    target: Annotated[
+        str | None, typer.Option(help="Target used for project config discovery.")
+    ] = None,
+    config: Annotated[
+        str | None, typer.Option(help="Explicit project configuration.")
+    ] = None,
+    output_format: Annotated[
+        RulesFormat, typer.Option("--format", help="Output format.")
+    ] = RulesFormat.llm,
+) -> None:
+    """Emit applicable LLM rule guidance."""
+    raise typer.Exit(_rules(profile, target, config, output_format.value))
+
+
+@app.command()
+def report(
+    project_root: Annotated[
+        str,
+        typer.Option(
+            help="Base directory for relative paths and clickable locations."
+        ),
+    ] = ".",
+    output_format: Annotated[
+        ReportFormat,
+        typer.Option(
+            "--format",
+            help="Infer the host, or render for a terminal or Markdown host.",
+        ),
+    ] = ReportFormat.auto,
+    color: Annotated[
+        ColorMode, typer.Option(help="Colorize terminal output.")
+    ] = ColorMode.auto,
+) -> None:
+    """Render adjudicated JSONL findings."""
+    raise typer.Exit(
+        _report(project_root, output_format.value, _color_enabled(color))
     )
-    report.add_argument(
-        "--format",
-        choices=("auto", "terminal", "markdown"),
-        default="auto",
-        help="infer the host, or render explicitly for a terminal or Markdown host",
-    )
-    report.set_defaults(handler=_report)
-    return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     try:
-        args = _parser().parse_args(argv)
-        return int(args.handler(args))
+        app(args=argv, prog_name="sniff")
     except SniffError as exc:
-        print(f"sniff: error: {exc}", file=sys.stderr)
+        Console(stderr=True).print(f"[bold red]sniff: error:[/bold red] {exc}")
         return 2
+    except SystemExit as exc:
+        return int(exc.code or 0)
+    return 0
