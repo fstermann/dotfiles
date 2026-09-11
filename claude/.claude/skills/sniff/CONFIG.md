@@ -54,6 +54,6 @@ but never changes their effective severity.
 ## Custom rules
 
 Place personal rules in `$XDG_CONFIG_HOME/sniff/rules/` and repository rules in
-`.sniff/rules/`. They use the rule schema documented in `SKILL.md`. A project rule extends the
+`.sniff/rules/`. They use the rule schema documented in `AGENTS.md`. A project rule extends the
 registry; it cannot silently replace a bundled or personal rule. Duplicate IDs fail with both file
 paths in the error.
