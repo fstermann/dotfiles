@@ -18,6 +18,7 @@ class Sniffer:
 @dataclass(frozen=True)
 class Rule:
     id: str
+    code: str
     name: str
     family: str
     applies_to: tuple[str, ...]
@@ -42,6 +43,7 @@ class Finding:
     end_line: int
     end_column: int
     rule: str
+    code: str
     severity: str
     detector: str
     span: str
@@ -55,6 +57,7 @@ class Finding:
             "end_line": self.end_line,
             "end_column": self.end_column,
             "rule": self.rule,
+            "code": self.code,
             "severity": self.severity,
             "detector": self.detector,
             "span": self.span,

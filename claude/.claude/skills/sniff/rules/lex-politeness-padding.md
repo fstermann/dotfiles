@@ -1,5 +1,6 @@
 ---
 id: lex-politeness-padding
+code: LEX008
 name: Politeness padding
 family: lexical
 applies_to: [core]

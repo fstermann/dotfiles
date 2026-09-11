@@ -1,5 +1,6 @@
 ---
 id: prag-unstated-audience
+code: PRG004
 name: Unstated audience
 family: pragmatic
 applies_to: [core]

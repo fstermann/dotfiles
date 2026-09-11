@@ -1,5 +1,6 @@
 ---
 id: prag-register-mismatch
+code: PRG003
 name: Register mismatch
 family: pragmatic
 applies_to: [core]

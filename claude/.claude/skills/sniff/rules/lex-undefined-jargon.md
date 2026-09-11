@@ -1,5 +1,6 @@
 ---
 id: lex-undefined-jargon
+code: LEX012
 name: Undefined jargon
 family: lexical
 applies_to: [core]

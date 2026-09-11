@@ -1,5 +1,6 @@
 ---
 id: lex-open-ended
+code: LEX006
 name: Open-ended enumeration
 family: lexical
 applies_to: [core]

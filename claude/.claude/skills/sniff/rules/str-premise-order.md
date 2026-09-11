@@ -1,5 +1,6 @@
 ---
 id: str-premise-order
+code: STR009
 name: Premise order mismatch
 family: structural
 applies_to: [prompt]

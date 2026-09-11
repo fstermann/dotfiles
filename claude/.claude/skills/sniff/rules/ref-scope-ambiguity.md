@@ -1,5 +1,6 @@
 ---
 id: ref-scope-ambiguity
+code: REF005
 name: Coordination scope ambiguity
 family: referential
 applies_to: [core]

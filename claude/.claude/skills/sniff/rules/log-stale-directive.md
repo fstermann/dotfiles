@@ -1,5 +1,6 @@
 ---
 id: log-stale-directive
+code: LOG009
 name: Stale directive
 family: logical
 applies_to: [core]

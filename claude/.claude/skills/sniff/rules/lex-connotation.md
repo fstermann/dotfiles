@@ -1,5 +1,6 @@
 ---
 id: lex-connotation
+code: LEX003
 name: Connotation load
 family: lexical
 applies_to: [core]

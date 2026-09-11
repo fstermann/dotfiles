@@ -1,5 +1,6 @@
 ---
 id: log-false-presupposition
+code: LOG004
 name: False presupposition
 family: logical
 applies_to: [prompt]

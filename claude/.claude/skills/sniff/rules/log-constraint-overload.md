@@ -1,5 +1,6 @@
 ---
 id: log-constraint-overload
+code: LOG001
 name: Constraint overload
 family: logical
 applies_to: [prompt]

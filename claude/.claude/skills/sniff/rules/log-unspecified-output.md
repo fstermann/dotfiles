@@ -1,5 +1,6 @@
 ---
 id: log-unspecified-output
+code: LOG011
 name: Unspecified output contract
 family: logical
 applies_to: [core]

@@ -12,6 +12,7 @@ from .models import Rule, Sniffer, SniffError
 SEVERITIES = {"suggestion", "warning", "error"}
 SNIFFER_KINDS = {"llm", "vale", "ruff"}
 RULE_ID = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)+$")
+RULE_CODE = re.compile(r"^[A-Z]{3}[0-9]{3}$")
 
 
 def _read_rule(path: Path) -> Rule:
@@ -34,6 +35,10 @@ def _read_rule(path: Path) -> Rule:
         raise SniffError(f"{path}: invalid rule id {rule_id!r}")
     if rule_id != path.stem:
         raise SniffError(f"{path}: id must equal filename stem")
+
+    code = data.get("code")
+    if not isinstance(code, str) or not RULE_CODE.fullmatch(code):
+        raise SniffError(f"{path}: invalid rule code {code!r}; expected ABC123")
 
     applies_to = data.get("applies_to")
     if (
@@ -73,6 +78,7 @@ def _read_rule(path: Path) -> Rule:
 
     return Rule(
         id=rule_id,
+        code=code,
         name=data["name"],
         family=data["family"],
         applies_to=tuple(applies_to),
@@ -89,6 +95,7 @@ def _read_rule(path: Path) -> Rule:
 
 def load_rules(directories: Iterable[Path]) -> dict[str, Rule]:
     loaded: dict[str, Rule] = {}
+    codes: dict[str, Rule] = {}
     for directory in directories:
         if not directory.is_dir():
             continue
@@ -98,7 +105,12 @@ def load_rules(directories: Iterable[Path]) -> dict[str, Rule]:
                 raise SniffError(
                     f"duplicate rule id {rule.id!r}: {loaded[rule.id].path} and {path}"
                 )
+            if rule.code in codes:
+                raise SniffError(
+                    f"duplicate rule code {rule.code!r}: {codes[rule.code].path} and {path}"
+                )
             loaded[rule.id] = rule
+            codes[rule.code] = rule
     return loaded
 
 

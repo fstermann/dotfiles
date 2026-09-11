@@ -92,6 +92,7 @@ def _print_findings(
                 end_line=finding.end_line,
                 end_column=finding.end_column,
                 rule=finding.rule,
+                code=finding.code,
                 severity=finding.severity,
                 source=f"{finding.detector} candidate",
                 span=finding.span,
@@ -113,7 +114,8 @@ def _print_findings(
     for finding in findings:
         print(
             f"{finding.path}:{finding.line}:{finding.column}  "
-            f"[{finding.severity}]  {finding.rule}  ({finding.detector} candidate)"
+            f"[{finding.severity} {finding.code}]  {finding.rule}  "
+            f"({finding.detector} candidate)"
         )
         print(f'  span:   "{finding.span}"')
         print(f"  why:    {finding.message}")
@@ -178,6 +180,7 @@ def _check(args: argparse.Namespace) -> int:
 def _rule_payload(rule: Rule, config: dict[str, Any], profile: str) -> dict[str, Any]:
     return {
         "id": rule.id,
+        "code": rule.code,
         "severity": effective_severity(rule, config, profile),
         "message": rule.message,
         "guidance": rule.body,
@@ -204,7 +207,7 @@ def _rules(args: argparse.Namespace) -> int:
         return 0
     for rule in rules:
         severity = effective_severity(rule, context.data, profile_name)
-        print(f"### {rule.id} [{severity}]")
+        print(f"### {rule.code} {rule.id} [{severity}]")
         print(rule.message)
         print()
         print(rule.body)

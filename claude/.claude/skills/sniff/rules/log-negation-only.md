@@ -1,5 +1,6 @@
 ---
 id: log-negation-only
+code: LOG006
 name: Negation without positive target
 family: logical
 applies_to: [core]

@@ -1,5 +1,6 @@
 ---
 id: log-duplicate-directive
+code: LOG003
 name: Restated directive
 family: logical
 applies_to: [core]

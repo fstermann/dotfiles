@@ -1,5 +1,6 @@
 ---
 id: str-instruction-data-mixing
+code: STR007
 name: Undelimited data
 family: structural
 applies_to: [prompt]

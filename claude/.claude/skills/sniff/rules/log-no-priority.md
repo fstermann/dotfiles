@@ -1,5 +1,6 @@
 ---
 id: log-no-priority
+code: LOG007
 name: Unstated priority
 family: logical
 applies_to: [core]

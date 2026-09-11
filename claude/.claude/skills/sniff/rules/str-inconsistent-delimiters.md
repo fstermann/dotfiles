@@ -1,5 +1,6 @@
 ---
 id: str-inconsistent-delimiters
+code: STR006
 name: Inconsistent formatting scheme
 family: structural
 applies_to: [prompt]

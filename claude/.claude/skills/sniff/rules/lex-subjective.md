@@ -1,5 +1,6 @@
 ---
 id: lex-subjective
+code: LEX009
 name: Subjective language
 family: lexical
 applies_to: [core]

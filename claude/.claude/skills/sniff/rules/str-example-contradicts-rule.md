@@ -1,5 +1,6 @@
 ---
 id: str-example-contradicts-rule
+code: STR002
 name: Example contradicts instruction
 family: structural
 applies_to: [prompt]

@@ -1,5 +1,6 @@
 ---
 id: log-no-success-criteria
+code: LOG008
 name: No success criteria
 family: logical
 applies_to: [core]

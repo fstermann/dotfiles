@@ -1,5 +1,6 @@
 ---
 id: lex-superlative
+code: LEX010
 name: Superlative
 family: lexical
 applies_to: [core]

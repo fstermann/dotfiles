@@ -1,5 +1,6 @@
 ---
 id: prag-curse-of-knowledge
+code: PRG001
 name: Assumed context
 family: pragmatic
 applies_to: [core]

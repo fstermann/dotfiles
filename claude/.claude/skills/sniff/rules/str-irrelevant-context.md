@@ -1,5 +1,6 @@
 ---
 id: str-irrelevant-context
+code: STR008
 name: Irrelevant context
 family: structural
 applies_to: [prompt]

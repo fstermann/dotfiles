@@ -1,5 +1,6 @@
 ---
 id: lex-term-drift
+code: LEX011
 name: Terminology drift
 family: lexical
 applies_to: [core]

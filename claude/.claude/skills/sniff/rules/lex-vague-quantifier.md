@@ -1,5 +1,6 @@
 ---
 id: lex-vague-quantifier
+code: LEX013
 name: Vague quantifier
 family: lexical
 applies_to: [core]

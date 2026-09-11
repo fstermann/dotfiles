@@ -1,5 +1,6 @@
 ---
 id: lex-hedge-stack
+code: LEX004
 name: Hedging stack
 family: lexical
 applies_to: [core]

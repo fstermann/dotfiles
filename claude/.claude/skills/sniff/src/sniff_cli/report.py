@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -21,6 +22,7 @@ CONFIRMED_SOURCES = {
     "ruff -> llm confirmed",
     "llm only",
 }
+RULE_CODE = re.compile(r"^[A-Z]{3}[0-9]{3}$")
 
 
 @dataclass(frozen=True)
@@ -31,6 +33,7 @@ class ReportFinding:
     end_line: int
     end_column: int
     rule: str
+    code: str
     severity: str
     source: str
     span: str
@@ -87,6 +90,9 @@ def parse_report_findings(lines: Iterable[str]) -> list[ReportFinding]:
         source_text = payload.get("source_text")
         if source_text is not None and not isinstance(source_text, str):
             raise SniffError("report finding has invalid 'source_text'")
+        code = _string(payload, "code")
+        if not RULE_CODE.fullmatch(code):
+            raise SniffError(f"report finding has invalid rule code {code!r}")
         findings.append(
             ReportFinding(
                 path=_string(payload, "path"),
@@ -95,6 +101,7 @@ def parse_report_findings(lines: Iterable[str]) -> list[ReportFinding]:
                 end_line=end_line,
                 end_column=end_column,
                 rule=_string(payload, "rule"),
+                code=code,
                 severity=severity,
                 source=source,
                 span=span,
@@ -343,7 +350,7 @@ def render_report(
                 output.append("")
             marker = "└── " if finding.severity == "error" else INDENT
             provenance = PROVENANCE_LABELS[finding.source]
-            label = f"[{finding.severity.upper()}] {finding.rule}"
+            label = f"[{finding.severity.upper()} {finding.code}] {finding.rule}"
             if markdown:
                 output.extend(
                     [

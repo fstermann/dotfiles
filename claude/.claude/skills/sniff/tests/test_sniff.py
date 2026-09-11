@@ -32,6 +32,7 @@ def executable(path: Path, content: str) -> Path:
 def sample_rule(kind: str, options: dict[str, object]) -> Rule:
     return Rule(
         id=f"test-{kind}",
+        code="TST001",
         name="Test",
         family="test",
         applies_to=("core",),
@@ -51,6 +52,7 @@ class RuleTests(unittest.TestCase):
             13, sum(bool(rule.sniffers_of("vale")) for rule in rules.values())
         )
         self.assertTrue(all(rule.sniffers_of("llm") for rule in rules.values()))
+        self.assertEqual("LOG010", rules["log-universal-quantifier"].code)
 
     def test_profiles_and_spec_severity(self) -> None:
         context = load_config(SKILL_ROOT, SKILL_ROOT)
@@ -85,6 +87,17 @@ class RuleTests(unittest.TestCase):
                 source.read_text(encoding="utf-8"), encoding="utf-8"
             )
             with self.assertRaisesRegex(SniffError, "duplicate rule id"):
+                load_rules([SKILL_ROOT / "rules", custom])
+
+    def test_duplicate_rule_codes_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            custom = Path(temp)
+            source = SKILL_ROOT / "rules" / "lex-open-ended.md"
+            content = source.read_text(encoding="utf-8").replace(
+                "id: lex-open-ended", "id: custom-open-ended", 1
+            )
+            (custom / "custom-open-ended.md").write_text(content, encoding="utf-8")
+            with self.assertRaisesRegex(SniffError, "duplicate rule code"):
                 load_rules([SKILL_ROOT / "rules", custom])
 
 
@@ -290,6 +303,7 @@ class ReportTests(unittest.TestCase):
                 end_line=1,
                 end_column=19,
                 rule="log-universal-quantifier",
+                code="LOG010",
                 severity="error",
                 detector="vale",
                 span="Must always apply.",
@@ -302,6 +316,7 @@ class ReportTests(unittest.TestCase):
                 end_line=3,
                 end_column=18,
                 rule="lex-hedge-stack",
+                code="LEX004",
                 severity="warning",
                 detector="vale",
                 span="Could potentially",
@@ -333,12 +348,14 @@ class ReportTests(unittest.TestCase):
                 [
                     '{"path":"prompt.md","line":2,"column":33,'
                     '"end_line":2,"end_column":50,'
-                    '"rule":"log-universal-quantifier","severity":"error",'
+                    '"rule":"log-universal-quantifier","code":"LOG010",'
+                    '"severity":"error",'
                     '"source":"llm only","span":"Must always apply.",'
                     '"message":"The scope is unbounded."}',
                     '{"path":"prompt.md","line":2,"column":33,'
                     '"end_line":3,"end_column":31,'
-                    '"rule":"log-contradiction","severity":"warning",'
+                    '"rule":"log-contradiction","code":"LOG002",'
+                    '"severity":"warning",'
                     '"source":"vale -> llm confirmed","span":"Must always apply.",'
                     '"message":"The directives conflict."}',
                 ]
@@ -347,15 +364,16 @@ class ReportTests(unittest.TestCase):
             self.assertIn("2 findings across 1 file", rendered)
             self.assertIn(f"](<{target}:2>)", rendered)
             self.assertIn(
-                "└── **[ERROR] log-universal-quantifier** · *via LLM*", rendered
+                "└── **[ERROR LOG010] log-universal-quantifier** · *via LLM*",
+                rendered,
             )
             self.assertIn(
-                "\u3000\u3000**[WARNING] log-contradiction** · *via Vale → LLM*",
+                "\u3000\u3000**[WARNING LOG002] log-contradiction** · *via Vale → LLM*",
                 rendered,
             )
             self.assertLess(
-                rendered.index("[ERROR] log-universal-quantifier"),
-                rendered.index("[WARNING] log-contradiction"),
+                rendered.index("[ERROR LOG010] log-universal-quantifier"),
+                rendered.index("[WARNING LOG002] log-contradiction"),
             )
             self.assertIn("│ › 2 │ Cut AI tells", rendered)
             self.assertIn("│   3 │ disable-model-invocation: true", rendered)
@@ -370,7 +388,8 @@ class ReportTests(unittest.TestCase):
                 [
                     '{"path":"prompt.md","line":1,"column":1,'
                     '"end_line":1,"end_column":19,'
-                    '"rule":"log-universal-quantifier","severity":"warning",'
+                    '"rule":"log-universal-quantifier","code":"LOG010",'
+                    '"severity":"warning",'
                     '"source":"llm only","span":"Must always apply.",'
                     '"message":"The scope is unbounded."}'
                 ]
@@ -394,7 +413,8 @@ class ReportTests(unittest.TestCase):
                 [
                     '{"path":"prompt.md","line":1,"column":1,'
                     '"end_line":1,"end_column":19,'
-                    '"rule":"log-universal-quantifier","severity":"warning",'
+                    '"rule":"log-universal-quantifier","code":"LOG010",'
+                    '"severity":"warning",'
                     '"source":"llm only","span":"Must always apply.",'
                     f'"message":{json.dumps(message)}}}'
                 ]
@@ -413,7 +433,8 @@ class ReportTests(unittest.TestCase):
     def test_report_rejects_unconfirmed_provenance(self) -> None:
         payload = (
             '{"path":"prompt.md","line":1,"column":1,'
-            '"rule":"test","severity":"warning","source":"vale candidate",'
+            '"rule":"test","code":"TST001","severity":"warning",'
+            '"source":"vale candidate",'
             '"span":"text","message":"message"}'
         )
         with self.assertRaisesRegex(SniffError, "invalid source"):

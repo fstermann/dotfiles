@@ -1,5 +1,6 @@
 ---
 id: lex-loophole
+code: LEX005
 name: Loophole or escape clause
 family: lexical
 applies_to: [core]

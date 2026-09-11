@@ -1,5 +1,6 @@
 ---
 id: ref-incomplete
+code: REF002
 name: Incomplete reference
 family: referential
 applies_to: [core]

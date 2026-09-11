@@ -1,5 +1,6 @@
 ---
 id: log-contradiction
+code: LOG002
 name: Contradictory constraints
 family: logical
 applies_to: [core]

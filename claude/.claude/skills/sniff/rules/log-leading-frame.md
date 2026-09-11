@@ -1,5 +1,6 @@
 ---
 id: log-leading-frame
+code: LOG005
 name: Leading framing
 family: logical
 applies_to: [prompt]

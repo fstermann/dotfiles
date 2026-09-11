@@ -1,5 +1,6 @@
 ---
 id: prag-persona-conflict
+code: PRG002
 name: Persona conflicts with task
 family: pragmatic
 applies_to: [core]

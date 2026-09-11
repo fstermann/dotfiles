@@ -1,5 +1,6 @@
 ---
 id: lex-ambiguous-adverb
+code: LEX001
 name: Ambiguous adverb
 family: lexical
 applies_to: [core]

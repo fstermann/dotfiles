@@ -1,5 +1,6 @@
 ---
 id: ref-passive-actor
+code: REF004
 name: Actor-eliding passive
 family: referential
 applies_to: [core]

@@ -1,5 +1,6 @@
 ---
 id: ref-attachment
+code: REF001
 name: Attachment ambiguity
 family: referential
 applies_to: [core]

@@ -1,5 +1,6 @@
 ---
 id: log-universal-quantifier
+code: LOG010
 name: Unenforceable universal
 family: logical
 applies_to: [core]

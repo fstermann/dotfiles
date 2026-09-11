@@ -1,5 +1,6 @@
 ---
 id: ref-missing-actor
+code: REF003
 name: Missing trigger or actor
 family: referential
 applies_to: [core]

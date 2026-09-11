@@ -1,5 +1,6 @@
 ---
 id: str-example-label-imbalance
+code: STR003
 name: Few-shot label imbalance
 family: structural
 applies_to: [prompt]

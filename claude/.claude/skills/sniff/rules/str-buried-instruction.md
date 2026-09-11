@@ -1,5 +1,6 @@
 ---
 id: str-buried-instruction
+code: STR001
 name: Buried instruction
 family: structural
 applies_to: [prompt]

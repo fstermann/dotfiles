@@ -1,5 +1,6 @@
 ---
 id: str-example-recency
+code: STR004
 name: Few-shot label ordering
 family: structural
 applies_to: [prompt]

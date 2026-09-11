@@ -52,10 +52,10 @@ The bundled CLI lives beside this file.
    ./sniff report --project-root <project-root>
    ```
 
-   Each object requires `path`, `line`, `column`, `end_line`, `end_column`, `rule`, `severity`,
-   `span`, `message`, and `source`. Set `source` to `vale -> llm confirmed`,
-   `ruff -> llm confirmed`, or `llm only`. Include the complete input as `source_text` for stdin or
-   inaccessible paths. Do not persist this JSONL.
+   Each object requires `path`, `line`, `column`, `end_line`, `end_column`, `rule`, `code`,
+   `severity`, `span`, `message`, and `source`. Preserve the rule's emitted `code`. Set `source` to
+   `vale -> llm confirmed`, `ruff -> llm confirmed`, or `llm only`. Include the complete input as
+   `source_text` for stdin or inaccessible paths. Do not persist this JSONL.
 
 Return the renderer's output without reconstructing or restyling it. If a detector fails, report
 the incomplete coverage.

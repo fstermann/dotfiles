@@ -1,5 +1,6 @@
 ---
 id: str-format-leakage
+code: STR005
 name: Format leakage
 family: structural
 applies_to: [prompt]

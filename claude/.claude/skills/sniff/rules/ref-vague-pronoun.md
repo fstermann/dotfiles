@@ -1,5 +1,6 @@
 ---
 id: ref-vague-pronoun
+code: REF006
 name: Vague pronoun
 family: referential
 applies_to: [core]

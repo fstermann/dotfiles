@@ -1,5 +1,6 @@
 ---
 id: lex-overloaded-term
+code: LEX007
 name: Overloaded term
 family: lexical
 applies_to: [core]

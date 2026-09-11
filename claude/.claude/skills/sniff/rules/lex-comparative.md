@@ -1,5 +1,6 @@
 ---
 id: lex-comparative
+code: LEX002
 name: Comparative without baseline
 family: lexical
 applies_to: [core]
