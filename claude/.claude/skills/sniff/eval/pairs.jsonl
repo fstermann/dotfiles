@@ -1,0 +1,12 @@
+{"id": "neg-1", "smell": "log-negation-only", "task": "Explain what a hash map is.", "smelly": "Don't be verbose.", "fixed": "Answer in one sentence."}
+{"id": "neg-2", "smell": "log-negation-only", "task": "Describe the purpose of a load balancer.", "smelly": "Don't ramble.", "fixed": "Answer in two sentences."}
+{"id": "neg-3", "smell": "log-negation-only", "task": "Explain why indexes speed up queries.", "smelly": "Don't over-explain.", "fixed": "Answer in two sentences."}
+{"id": "neg-4", "smell": "log-negation-only", "task": "Summarize what TLS provides.", "smelly": "Keep it short, don't waffle.", "fixed": "Answer in one sentence."}
+{"id": "neg-5", "smell": "log-negation-only", "task": "Explain what a race condition is.", "smelly": "Don't be long-winded.", "fixed": "Answer in two sentences."}
+{"id": "neg-6", "smell": "log-negation-only", "task": "Describe what a compiler does.", "smelly": "Don't go on.", "fixed": "Answer in one sentence."}
+{"id": "con-1", "smell": "log-contradiction", "task": "Explain the CAP theorem.", "smelly": "Write a detailed but concise explanation.", "fixed": "Write a three-sentence explanation."}
+{"id": "con-2", "smell": "log-contradiction", "task": "Explain how garbage collection works.", "smelly": "Be thorough yet brief.", "fixed": "Write a three-sentence explanation."}
+{"id": "con-3", "smell": "log-contradiction", "task": "Describe the actor model of concurrency.", "smelly": "Give a complete but short overview.", "fixed": "Write a three-sentence overview."}
+{"id": "con-4", "smell": "log-contradiction", "task": "Explain what eventual consistency means.", "smelly": "Cover everything, keep it terse.", "fixed": "Write a three-sentence explanation."}
+{"id": "con-5", "smell": "log-contradiction", "task": "Explain the difference between TCP and UDP.", "smelly": "Be exhaustive but succinct.", "fixed": "Write a three-sentence explanation."}
+{"id": "con-6", "smell": "log-contradiction", "task": "Describe what a mutex is.", "smelly": "Be comprehensive but very short.", "fixed": "Write a three-sentence explanation."}

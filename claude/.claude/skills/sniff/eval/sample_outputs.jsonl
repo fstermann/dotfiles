@@ -1,0 +1,24 @@
+{"id": "neg", "smell": "log-negation-only", "variant": "smelly", "text": "word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "smelly", "text": "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "smelly", "text": "word word word word word word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "smelly", "text": "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "smelly", "text": "word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "smelly", "text": "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "fixed", "text": "word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "fixed", "text": "word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "fixed", "text": "word word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "fixed", "text": "word word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "fixed", "text": "word word word word word word word word word"}
+{"id": "neg", "smell": "log-negation-only", "variant": "fixed", "text": "word word word word word word word word word word"}
+{"id": "con", "smell": "log-contradiction", "variant": "smelly", "text": "Sentence. Sentence. Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "smelly", "text": "Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "smelly", "text": "Sentence. Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "smelly", "text": "Sentence. Sentence. Sentence. Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "smelly", "text": "Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "smelly", "text": "Sentence. Sentence. Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "fixed", "text": "Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "fixed", "text": "Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "fixed", "text": "Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "fixed", "text": "Sentence. Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "fixed", "text": "Sentence. Sentence."}
+{"id": "con", "smell": "log-contradiction", "variant": "fixed", "text": "Sentence. Sentence. Sentence."}

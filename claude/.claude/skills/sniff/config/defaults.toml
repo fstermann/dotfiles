@@ -1,0 +1,40 @@
+version = 1
+default_profile = "document"
+fail_on = "error"
+
+[profiles.document]
+tags = ["core", "document"]
+include = ["*.md", "**/*.md", "*.markdown", "**/*.markdown", "*.mdx", "**/*.mdx", "*.txt", "**/*.txt", "*.rst", "**/*.rst", "*.rest", "**/*.rest", "*.adoc", "**/*.adoc", "*.asciidoc", "**/*.asciidoc", "*.html", "**/*.html", "*.htm", "**/*.htm", "*.org", "**/*.org", "*.qmd", "**/*.qmd", "*.typ", "**/*.typ"]
+exclude = [".sniff/**", "**/.sniff/**"]
+
+[profiles.prompt]
+tags = ["core", "prompt"]
+include = ["*.md", "**/*.md", "*.markdown", "**/*.markdown", "*.mdx", "**/*.mdx", "*.txt", "**/*.txt"]
+exclude = [".sniff/**", "**/.sniff/**"]
+
+[profiles.spec]
+tags = ["core", "spec"]
+include = ["*.md", "**/*.md", "*.markdown", "**/*.markdown", "*.mdx", "**/*.mdx", "*.txt", "**/*.txt", "*.rst", "**/*.rst", "*.rest", "**/*.rest", "*.adoc", "**/*.adoc", "*.asciidoc", "**/*.asciidoc"]
+exclude = [".sniff/**", "**/.sniff/**"]
+
+[profiles.spec.severity]
+ref-missing-actor = "error"
+log-universal-quantifier = "error"
+
+[profiles.code]
+tags = ["core", "code"]
+include = ["*.py", "**/*.py", "*.pyi", "**/*.pyi", "*.js", "**/*.js", "*.jsx", "**/*.jsx", "*.ts", "**/*.ts", "*.tsx", "**/*.tsx", "*.go", "**/*.go", "*.rs", "**/*.rs", "*.java", "**/*.java", "*.c", "**/*.c", "*.h", "**/*.h", "*.cc", "**/*.cc", "*.cpp", "**/*.cpp", "*.cs", "**/*.cs", "*.rb", "**/*.rb", "*.php", "**/*.php", "*.swift", "**/*.swift", "*.kt", "**/*.kt", "*.kts", "**/*.kts", "*.scala", "**/*.scala", "*.sh", "**/*.sh", "*.bash", "**/*.bash", "*.zsh", "**/*.zsh", "*.lua", "**/*.lua"]
+exclude = [".sniff/**", "**/.sniff/**"]
+
+[profiles.all]
+tags = ["*"]
+include = ["*"]
+exclude = [".sniff/**", "**/.sniff/**"]
+
+[adapters.vale]
+enabled = true
+executable = "vale"
+
+[adapters.ruff]
+enabled = true
+executable = "ruff"
