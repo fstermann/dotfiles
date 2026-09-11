@@ -4,7 +4,7 @@
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
-Verify checkable facts (versions, prices, thresholds, tool/API behaviour) with a tool before stating them, or say you don't know. Never estimate what has an exact value.
+Verify checkable facts (versions, prices, thresholds, tool/API behaviour) with a tool before stating them, or say you don't know. Never estimate what has an exact value. A status recalled from memory (PR state, whether work was done/tested) is not verification, confirm with gh/logs before asserting.
 
 Before implementing:
 - State your assumptions explicitly. If uncertain, ask.
