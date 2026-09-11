@@ -294,6 +294,20 @@ def _ansi(value: str, code: str, enabled: bool) -> str:
     return f"\033[{code}m{value}\033[0m" if enabled else value
 
 
+def _render_message(message: str, *, markdown: bool, ansi: bool) -> list[str]:
+    lines = [
+        value
+        for paragraph in message.split("\n")
+        for _, value in _wrapped(paragraph)
+    ]
+    rendered: list[str] = []
+    for index, line in enumerate(lines):
+        prefix = f"{INDENT}└── " if index == 0 else f"{INDENT}    "
+        styled = f"*{_italic(line)}*" if markdown else _ansi(line, "3", ansi)
+        rendered.append(prefix + styled)
+    return rendered
+
+
 def render_report(
     findings: list[ReportFinding],
     project_root: Path,
@@ -339,7 +353,7 @@ def render_report(
                         *_render_excerpt(finding, project_root),
                         "```",
                         "",
-                        f"{INDENT}└── *{_italic(finding.message)}*",
+                        *_render_message(finding.message, markdown=True, ansi=False),
                     ]
                 )
             else:
@@ -353,7 +367,7 @@ def render_report(
                         "",
                         *_render_excerpt(finding, project_root),
                         "",
-                        f"{INDENT}└── {_ansi(finding.message, '3', ansi)}",
+                        *_render_message(finding.message, markdown=False, ansi=ansi),
                     ]
                 )
     return "\n".join(output)

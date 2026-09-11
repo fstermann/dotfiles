@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import json
 import os
 import stat
 import subprocess
@@ -379,6 +380,35 @@ class ReportTests(unittest.TestCase):
 
             self.assertIn("· via LLM\n\n    │", rendered)
             self.assertIn("^^^^^^^^^^^^^^^^^^\n\n　　└──", rendered)
+
+    def test_multiline_diagnosis_uses_a_hanging_indent(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            (root / "prompt.md").write_text("Must always apply.\n", encoding="utf-8")
+            message = (
+                "The allowed degree of editing is not defined, so aggregators can "
+                "make materially different changes while claiming to clean the "
+                "reports lightly."
+            )
+            findings = parse_report_findings(
+                [
+                    '{"path":"prompt.md","line":1,"column":1,'
+                    '"end_line":1,"end_column":19,'
+                    '"rule":"log-universal-quantifier","severity":"warning",'
+                    '"source":"llm only","span":"Must always apply.",'
+                    f'"message":{json.dumps(message)}}}'
+                ]
+            )
+
+            rendered = render_report(findings, root, markdown=False)
+
+            diagnosis = rendered.split("\n\n")[-1].splitlines()
+            self.assertGreater(len(diagnosis), 1)
+            self.assertTrue(diagnosis[0].startswith("　　└── The"))
+            self.assertTrue(diagnosis[1].startswith("　　    "))
+            self.assertEqual(
+                diagnosis[0].index("The"), diagnosis[1].index("materially")
+            )
 
     def test_report_rejects_unconfirmed_provenance(self) -> None:
         payload = (
