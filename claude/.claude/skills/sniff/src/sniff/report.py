@@ -8,7 +8,7 @@ from typing import Iterable
 from rich.console import Console
 from rich.text import Text
 
-from sniff_cli.models import SniffError
+from sniff.models import SniffError
 
 SOURCE_WIDTH = 76
 INDENT = "\u3000\u3000"

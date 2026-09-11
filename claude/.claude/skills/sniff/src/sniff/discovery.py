@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
-from sniff_cli.models import SniffError
+from sniff.models import SniffError
 
 IGNORED_DIRS = {".git", ".hg", ".svn", ".sniff", ".venv", "node_modules"}
 

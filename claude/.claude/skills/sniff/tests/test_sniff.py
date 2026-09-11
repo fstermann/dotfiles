@@ -10,13 +10,13 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
-from sniff_cli.adapters import run_ruff, run_vale
-from sniff_cli.cli import _print_findings, _report_format, app
-from sniff_cli.config import _merge, load_config
-from sniff_cli.discovery import discover_inputs
-from sniff_cli.models import Finding, Rule, Sniffer, SniffError
-from sniff_cli.report import parse_report_findings, render_report
-from sniff_cli.rules import effective_severity, load_rules, selected_rules
+from sniff.adapters import run_ruff, run_vale
+from sniff.cli import _print_findings, _report_format, app
+from sniff.config import _merge, load_config
+from sniff.discovery import discover_inputs
+from sniff.models import Finding, Rule, Sniffer, SniffError
+from sniff.report import parse_report_findings, render_report
+from sniff.rules import effective_severity, load_rules, selected_rules
 from typer.testing import CliRunner
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]

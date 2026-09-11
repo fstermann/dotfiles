@@ -17,4 +17,4 @@ if ! python3 -c 'import rich, typer, yaml' >/dev/null 2>&1; then
 fi
 
 export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
-exec python3 -m sniff_cli "$@"
+exec python3 -m sniff "$@"

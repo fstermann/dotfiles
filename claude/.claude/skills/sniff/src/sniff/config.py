@@ -6,7 +6,7 @@ from typing import Any
 
 import tomllib
 
-from sniff_cli.models import SniffError
+from sniff.models import SniffError
 
 SEVERITIES = {"suggestion", "warning", "error"}
 

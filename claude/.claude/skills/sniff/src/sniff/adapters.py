@@ -8,8 +8,8 @@ from typing import Any
 
 import yaml
 
-from sniff_cli.models import Finding, Rule, SniffError
-from sniff_cli.rules import effective_severity
+from sniff.models import Finding, Rule, SniffError
+from sniff.rules import effective_severity
 
 BATCH_SIZE = 200
 

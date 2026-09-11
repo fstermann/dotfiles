@@ -17,7 +17,7 @@ candidates, `rules` emits the semantic rule bundle, and `report` renders confirm
 - Every selected LLM rule is evaluated, including rules that also have a deterministic detector.
 - The rule registry and layered configuration own severity; the LLM never changes it.
 - `--fix` applies only detector-declared safe fixes. It never applies unsafe or LLM-authored edits.
-- The report renderer owns presentation. Change formatting in `src/sniff_cli/report.py` and its
+- The report renderer owns presentation. Change formatting in `src/sniff/report.py` and its
   tests, not in `SKILL.md`.
 - Detector failures are errors, not silently reduced coverage.
 
