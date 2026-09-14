@@ -1,6 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "includeCoAuthoredBy": false,
+  "extraKnownMarketplaces": {
+    "sniff": {
+      "source": {
+        "source": "github",
+        "repo": "fstermann/sniff"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "sniff@sniff": true
+  },
   "permissions": {
     "defaultMode": "auto"
   },
@@ -23,6 +34,15 @@
           {
             "type": "command",
             "command": "~/.claude/notify.sh \"Plan ready for review in $(basename $PWD)\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/sniff-comment-prose.sh"
           }
         ]
       }
