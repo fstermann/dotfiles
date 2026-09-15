@@ -135,7 +135,7 @@ Route each comment by its author: my own → Fix, a reviewer's → Respond.
 "$S/delete-comment.sh" <sibling_node_id>
 ```
 
-Auto-fold, no confirmation; the deleted comments were mine and pending.
+Auto-fold, no confirmation; the deleted comments were mine and pending. Never delete a reply carrying a `claude:reply id=<X>` marker; that un-answers comment X and loops the watcher. If you must delete it, first copy the `claude:reply id=<X>` marker onto the reply you keep.
 
 Status glyphs (monochrome, so they read as a quiet marker, not decoration):
 
