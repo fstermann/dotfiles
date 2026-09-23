@@ -227,5 +227,6 @@ Re-running `/review-pr` by hand spawns a second watcher, so stop the old one fir
 - "My comments" / "me" = the authenticated `gh` user.
 - On my own PR, my comments (Fix) and reviewers' comments (Respond) both appear; route each by its author.
 - `edit-comment.sh` and `delete-comment.sh` work on pending and published comments; they never submit the review.
+- `edit-comment.sh` / `delete-comment.sh` take the base64 `node_id`; `post-comment.sh` takes the numeric `id` (databaseId). Passing a `node_id` to `post-comment.sh` writes a marker the watcher can't match, so it loops on an already-answered comment; the script rejects a non-numeric id.
 - Folding deletes my own pending replies (auto). Everything else that removes my content waits for me.
 - If I say don't push on a run, stop after the summary and commits.
