@@ -1,5 +1,5 @@
 # Source: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/pure.omp.json
-# Docs: https://ohmyposh.dev/docs/segments/cli/claude
+# Docs: https://ohmyposh.dev/docs/segments/agents/claude
 "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
 console_title_template = "{{if .Root}}(Admin){{end}} {{.PWD}}"
 version = 4
@@ -81,14 +81,20 @@ type = "prompt"
   type = "claude"
   style = "plain"
   foreground = "p:model-fg"
-  template = "󰣖 {{ .Model.DisplayName }}{{ if .Env.CLAUDE_EFFORT }} {{ .Env.CLAUDE_EFFORT }}{{ end }}{{ if .OutputStyle }} 󱠓 {{ .OutputStyle.Name }}{{ end }}"
+  template = "󰣖 {{ .Model.DisplayName }}{{ if .Effort }} {{ .Effort.Level }}{{ end }}{{ if .OutputStyle }} 󱠓 {{ .OutputStyle.Name }}{{ end }}"
 
-  # Pill 2 — Session: context %, cost, lines
+  # Pill 2 — Session: context %, cost, lines, cache, worktree, PR
   [[blocks.segments]]
   type = "claude"
   style = "plain"
   foreground = "p:session-fg"
-  template = " <p:gray>·</> 󰻞 {{ .TokenUsagePercent.String }}% <p:yellow>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}"
+  template = """
+ <p:gray>·</> 󰻞 {{ .TokenUsagePercent.String }}% <p:yellow>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
+{{ if .PromptCache }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640 {{ else if lt .PromptCacheExpiresIn.Seconds 120.0 }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
+{{ if .Worktree }} \U000F062C {{ .Worktree.Name }}{{ end }}\
+{{ if .PR }} <{{ if eq .PR.ReviewState "approved" }}p:green{{ else if eq .PR.ReviewState "pending" }}p:yellow{{ else if eq .PR.ReviewState "changes_requested" }}p:red{{ else }}p:gray{{ end }}>\
+{{ if contains "gitlab" .PR.URL }}\U000F0BA0 {{ url (print "!" .PR.Number) .PR.URL }}{{ else }}\U000F02A4 {{ url (print "#" .PR.Number) .PR.URL }}{{ end }}</>{{ end }}\
+"""
 
   # Pill 3 — 5-hour rate limit
   [[blocks.segments]]
@@ -100,7 +106,7 @@ type = "prompt"
      {{ .FiveHourUsage.String }}% \
 {{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
 {{ if gt $fhDelta 5 }}<p:red>\U000F0907</>{{ else if lt $fhDelta -5 }}<p:green>\U000F1677</>{{ else }}<p:gray>≈</>{{ end }} \
-{{ secondsRound (mul (div (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix) 60) 60) }}\
+{{ secondsRound (mul (div (int .FiveHourResetsIn.Seconds) 60) 60) }}\
 {{ end }}\
 """
 
@@ -114,7 +120,7 @@ type = "prompt"
     󰨳 {{ .SevenDayUsage.String }}% \
 {{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
 {{ if gt $wkDelta 5 }}<p:red>\U000F0907</>{{ else if lt $wkDelta -5 }}<p:green>\U000F1677</>{{ else }}<p:gray>≈</>{{ end }} \
-{{ secondsRound (mul (div (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix) 60) 60) }}\
+{{ secondsRound (mul (div (int .SevenDayResetsIn.Seconds) 60) 60) }}\
 {{ end }}\
 """
 
