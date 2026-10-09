@@ -90,7 +90,7 @@ type = "prompt"
   foreground = "p:session-fg"
   template = """
  <p:gray>·</> 󰻞 {{ .TokenUsagePercent.String }}% <p:yellow>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
-{{ if .PromptCache }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640 {{ else if lt .PromptCacheExpiresIn.Seconds 120.0 }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
+{{ if and .PromptCache .PromptCache.CachingObserved }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640 {{ else }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
 {{ if .Worktree }} \U000F062C {{ .Worktree.Name }}{{ end }}\
 {{ if .PR }} <{{ if eq .PR.ReviewState "approved" }}p:green{{ else if eq .PR.ReviewState "pending" }}p:yellow{{ else if eq .PR.ReviewState "changes_requested" }}p:red{{ else }}p:gray{{ end }}>\
 {{ if contains "gitlab" .PR.URL }}\U000F0BA0 {{ url (print "!" .PR.Number) .PR.URL }}{{ else }}\U000F02A4 {{ url (print "#" .PR.Number) .PR.URL }}{{ end }}</>{{ end }}\
