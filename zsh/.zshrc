@@ -30,6 +30,21 @@ codex() {
   command codex --profile pure "$@"
 }
 
+# Pick a Claude config dir by folder from CLAUDE_CONFIG_DIR_MAP (see README).
+# Mapped folders drop the custom endpoint so that dir's /login applies.
+claude() {
+  local entry folder
+  for entry in ${(s.:.)CLAUDE_CONFIG_DIR_MAP}; do
+    folder=${entry%%=*}
+    if [[ $PWD == "$folder" || $PWD == "$folder"/* ]]; then
+      env -u ANTHROPIC_BASE_URL -u ANTHROPIC_AUTH_TOKEN \
+        CLAUDE_CONFIG_DIR="${entry#*=}" command claude "$@"
+      return
+    fi
+  done
+  command claude "$@"
+}
+
 # Source zsh plugins
 if [[ "$OSTYPE" == "darwin"* ]]; then
     ZSH_PLUGIN_PREFIX=$(brew --prefix)/share

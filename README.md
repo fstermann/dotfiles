@@ -94,6 +94,14 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
   echo 'settings\.json' > ~/.dotfiles/.restow-ignore.local
   ```
 
+- To run separate Claude accounts (e.g. work and personal), map folders to config dirs in `~/.zshrc.local`. Entries are `folder=config_dir`, colon-separated, first match wins. Several folders can share one config dir:
+
+  ```sh
+  export CLAUDE_CONFIG_DIR_MAP="$HOME/personal=$HOME/.claude-personal:$HOME/side=$HOME/.claude-personal"
+  ```
+
+  Restow links the `claude` package into each config dir, so they share settings, skills and hooks. The `claude` shell function sets `CLAUDE_CONFIG_DIR` when started inside a mapped folder (or a subfolder) and unsets `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN`, so that dir's own login applies. Sessions and history stay in that config dir. Run `/login` once per new config dir.
+
 ---
 
 ## Packages

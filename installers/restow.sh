@@ -11,6 +11,9 @@
 # to leave specific targets alone on THIS machine (e.g. a hand-merged
 # ~/.claude/settings.json). Lines starting with # are ignored. The file is
 # gitignored, so skips never leak to other machines.
+#
+# Extra Claude config dirs: each config dir named in CLAUDE_CONFIG_DIR_MAP
+# (see README) also gets the claude package linked in. Unset means none.
 
 set -e
 
@@ -88,6 +91,26 @@ else
   step "Restow packages" \
     stow "${_stow_flags[@]}" "${STOW_PACKAGES[@]}" || (( _errors++ )) || true
 fi
+
+# Opt-in extra Claude config dirs, from CLAUDE_CONFIG_DIR_MAP in ~/.zshrc.local
+_alt_dirs=()
+while IFS= read -r _alt_dir; do
+  [[ -n "$_alt_dir" ]] && _alt_dirs+=("$_alt_dir")
+done < <(tr : '\n' <<< "${CLAUDE_CONFIG_DIR_MAP:-}" | sed -n 's/^[^=]*=//p' | sort -u)
+
+for _alt_dir in "${_alt_dirs[@]}"; do
+  _alt_flags=(--no-folding --restow "${IGNORE_ARGS[@]}" -d "$DOTFILES_DIR/claude" -t "$_alt_dir")
+  if (( DRY_RUN )) && [[ ! -d "$_alt_dir" ]]; then
+    info "Would create ${_alt_dir/#$HOME/~} and link claude into it"
+  elif (( DRY_RUN )); then
+    step "Simulate restow claude into ${_alt_dir/#$HOME/~}" \
+      stow "${_alt_flags[@]}" --simulate -v .claude || (( _errors++ )) || true
+  else
+    mkdir -p "$_alt_dir"
+    step "Restow claude into ${_alt_dir/#$HOME/~}" \
+      stow "${_alt_flags[@]}" .claude || (( _errors++ )) || true
+  fi
+done
 
 [[ $QUIET -eq 0 ]] && install_summary "$_errors"
 
