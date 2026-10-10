@@ -18,6 +18,8 @@ CYAN=$'\033[36m'
 : "${INSTALL_LOG:=$(mktemp /tmp/dotfiles-install-XXXXXX)}"
 export INSTALL_LOG
 
+_UI_ASKPASS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/askpass.sh"
+
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 # Print a styled section header
@@ -44,6 +46,7 @@ step() {
   local BOX_H=5
   local tmpout; tmpout=$(mktemp)
   local stop_flag; stop_flag=$(mktemp)
+  local pause_flag; pause_flag=$(mktemp)
   local TOTAL=$(( BOX_H + 3 ))  # spinner + top border + BOX_H lines + bottom border
 
   # Responsive width capped at 120, minimum 60
@@ -66,9 +69,16 @@ step() {
 
   # Background: redraw with latest tail of output until stop flag is set
   (
-    local frame=0 _i _line
+    local frame=0 _i _line _redraw_in_place=1
     while [[ ! -s "$stop_flag" ]]; do
-      printf "\033[%dA\r" "$TOTAL"
+      # askpass.sh holds the terminal; draw a fresh box below its prompt afterwards
+      if [[ -s "$pause_flag" ]]; then
+        _redraw_in_place=0
+        sleep 0.12
+        continue
+      fi
+      (( _redraw_in_place )) && printf "\033[%dA\r" "$TOTAL"
+      _redraw_in_place=1
       printf "  ${CYAN}%s${RESET}  %s\033[K\n" "${spinner_frames[$((frame % 10))]}" "$label"
       printf "    ${DIM}┌─ output %s${RESET}\n" "$sep"
       _i=0
@@ -91,12 +101,17 @@ step() {
 
   # Run command, capture output — || to stay safe under set -e
   local exit_code=0
-  "$@" >"$tmpout" 2>&1 || exit_code=$?
+  # ui.sh may run from a downloaded copy on fresh installs, without askpass.sh next to it
+  if [[ -x "$_UI_ASKPASS" ]]; then
+    SUDO_ASKPASS="$_UI_ASKPASS" STEP_PAUSE_FLAG="$pause_flag" "$@" >"$tmpout" 2>&1 || exit_code=$?
+  else
+    "$@" >"$tmpout" 2>&1 || exit_code=$?
+  fi
 
   # Signal spinner to stop cleanly (between iterations) then wait for it
   printf 'done' > "$stop_flag"
   wait "$spin_pid" 2>/dev/null || true
-  rm -f "$stop_flag"
+  rm -f "$stop_flag" "$pause_flag"
 
   # Append full output to install log
   { echo "── step: $label ──"; cat "$tmpout"; echo ""; } >> "$INSTALL_LOG"
