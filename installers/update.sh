@@ -54,11 +54,12 @@ else
     step "Update fzf" \
       bash -c 'cd "$HOME/.fzf" && git pull --ff-only && ./install --bin' || (( _errors++ ))
   fi
-fi
 
-if command -v oh-my-posh &>/dev/null; then
-  step "Update oh-my-posh" \
-    oh-my-posh upgrade || (( _errors++ ))
+  # --force: without it, major version upgrades are only announced, not installed
+  if command -v oh-my-posh &>/dev/null; then
+    step "Update oh-my-posh" \
+      oh-my-posh upgrade --force || (( _errors++ ))
+  fi
 fi
 
 # ── Summary ──────────────────────────────────────────────────────────────────
