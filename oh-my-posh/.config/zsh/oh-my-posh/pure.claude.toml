@@ -11,12 +11,17 @@ blue         = "#81a1c1"
 cyan         = "#88c0d0"
 pink         = "#ffafd7"
 yellow       = "#ebcb8b"
+orange       = "#d08770"
 gray         = "#6c6c6c"
 
 model-fg       = "#c4b8f5"
 session-fg     = "#c2d8f6"
 rate5h-fg      = "#dfd6b3"
 rate7d-fg      = "#b9e0cf"
+
+[var]
+ContextWarnPercent  = 20
+ContextAlertPercent = 30
 
 [[blocks]]
 alignment = "left"
@@ -89,7 +94,7 @@ type = "prompt"
   style = "plain"
   foreground = "p:session-fg"
   template = """
- <p:gray>·</> 󰻞 {{ .TokenUsagePercent.String }}% <p:yellow>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
+ <p:gray>·</> {{ $ctx := int .TokenUsagePercent }}{{ if ge $ctx .Var.ContextAlertPercent }}<p:red>\U000F0B7A {{ $ctx }}%</>{{ else if ge $ctx .Var.ContextWarnPercent }}<p:orange>\U000F0B7B {{ $ctx }}%</>{{ else }}\U000F0EDE {{ $ctx }}%{{ end }} <p:yellow>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
 {{ if and .PromptCache .PromptCache.CachingObserved }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640 {{ else }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
 {{ if .Worktree }} \U000F062C {{ .Worktree.Name }}{{ end }}\
 {{ if .PR }} <{{ if eq .PR.ReviewState "approved" }}p:green{{ else if eq .PR.ReviewState "pending" }}p:yellow{{ else if eq .PR.ReviewState "changes_requested" }}p:red{{ else }}p:gray{{ end }}>\
