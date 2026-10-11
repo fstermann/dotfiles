@@ -94,7 +94,7 @@ type = "prompt"
   style = "plain"
   foreground = "p:session-fg"
   template = """
- <p:gray>·</> {{ $ctx := int .TokenUsagePercent }}{{ if ge $ctx .Var.ContextAlertPercent }}<p:red>\U000F0B7A {{ $ctx }}%</>{{ else if ge $ctx .Var.ContextWarnPercent }}<p:orange>\U000F0B7B {{ $ctx }}%</>{{ else }}\U000F0EDE {{ $ctx }}%{{ end }} <p:yellow>{{ .FormattedCost }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
+ <p:gray>·</> {{ $ctx := int .TokenUsagePercent }}{{ if ge $ctx .Var.ContextAlertPercent }}<p:red>\U000F0B7A {{ $ctx }}%</>{{ else if ge $ctx .Var.ContextWarnPercent }}<p:orange>\U000F0B7B {{ $ctx }}%</>{{ else }}\U000F0EDE {{ $ctx }}%{{ end }} <p:yellow>${{ if .Cost }}{{ printf "%.2f" .Cost.TotalCostUSD }}{{ else }}0.00{{ end }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
 {{ if and .PromptCache .PromptCache.CachingObserved }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640 {{ else }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
 {{ if .Worktree }} \U000F062C {{ .Worktree.Name }}{{ end }}\
 {{ if .PR }} <{{ if eq .PR.ReviewState "approved" }}p:green{{ else if eq .PR.ReviewState "pending" }}p:yellow{{ else if eq .PR.ReviewState "changes_requested" }}p:red{{ else }}p:gray{{ end }}>\
@@ -107,7 +107,7 @@ type = "prompt"
   style = "plain"
   foreground = "p:rate5h-fg"
   template = """
-{{ if and .RateLimits .RateLimits.FiveHour.UsedPercentage }} <p:gray>·</> \
+{{ if and .RateLimits .RateLimits.FiveHour .RateLimits.FiveHour.UsedPercentage }} <p:gray>·</> \
      {{ .FiveHourUsage.String }}% \
 {{ $fhDelta := sub (.RateLimits.FiveHour.UsedPercentage | int) (div (mul (sub 18000 (sub (.RateLimits.FiveHour.ResetsAt | int64) now.Unix)) 100) 18000) }}\
 {{ if gt $fhDelta 5 }}<p:red>\U000F0907</>{{ else if lt $fhDelta -5 }}<p:green>\U000F1677</>{{ else }}<p:gray>≈</>{{ end }} \
@@ -121,7 +121,7 @@ type = "prompt"
   style = "plain"
   foreground = "p:rate7d-fg"
   template = """
-{{ if and .RateLimits .RateLimits.SevenDay.UsedPercentage }} <p:gray>·</> \
+{{ if and .RateLimits .RateLimits.SevenDay .RateLimits.SevenDay.UsedPercentage }} <p:gray>·</> \
     󰨳 {{ .SevenDayUsage.String }}% \
 {{ $wkDelta := sub (.RateLimits.SevenDay.UsedPercentage | int) (div (mul (sub 604800 (sub (.RateLimits.SevenDay.ResetsAt | int64) now.Unix)) 100) 604800) }}\
 {{ if gt $wkDelta 5 }}<p:red>\U000F0907</>{{ else if lt $wkDelta -5 }}<p:green>\U000F1677</>{{ else }}<p:gray>≈</>{{ end }} \
