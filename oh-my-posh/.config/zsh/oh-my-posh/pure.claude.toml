@@ -95,7 +95,7 @@ type = "prompt"
   foreground = "p:session-fg"
   template = """
  <p:gray>·</> {{ $ctx := int .TokenUsagePercent }}{{ if ge $ctx .Var.ContextAlertPercent }}<p:red>\U000F0B7A {{ $ctx }}%</>{{ else if ge $ctx .Var.ContextWarnPercent }}<p:orange>\U000F0B7B {{ $ctx }}%</>{{ else }}\U000F0EDE {{ $ctx }}%{{ end }} <p:yellow>${{ if .Cost }}{{ printf "%.2f" .Cost.TotalCostUSD }}{{ else }}0.00{{ end }}</>{{ if and .Cost (or .Cost.TotalLinesAdded .Cost.TotalLinesRemoved) }} <p:green>+{{ .Cost.TotalLinesAdded }}</> <p:red>-{{ .Cost.TotalLinesRemoved }}</>{{ end }}\
-{{ if and .PromptCache .PromptCache.CachingObserved }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640 {{ else }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
+{{ if and .PromptCache .PromptCache.CachingObserved }}{{ if or (not .PromptCache.Warm) (le .PromptCacheExpiresIn.Seconds 0.0) }} \U000F1640{{ if .PromptCache.RecacheTokensIfCold }} {{ div (int .PromptCache.RecacheTokensIfCold) 1000 }}K{{ end }}{{ else }} \U000F163F {{ add (div (int .PromptCacheExpiresIn.Seconds) 60) 1 }}m{{ end }}{{ end }}\
 {{ if .Worktree }} \U000F062C {{ .Worktree.Name }}{{ end }}\
 {{ if .PR }} <{{ if eq .PR.ReviewState "approved" }}p:green{{ else if eq .PR.ReviewState "pending" }}p:yellow{{ else if eq .PR.ReviewState "changes_requested" }}p:red{{ else }}p:gray{{ end }}>\
 {{ if contains "gitlab" .PR.URL }}\U000F0BA0 {{ url (print "!" .PR.Number) .PR.URL }}{{ else }}\U000F02A4 {{ url (print "#" .PR.Number) .PR.URL }}{{ end }}</>{{ end }}\
