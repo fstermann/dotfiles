@@ -1,16 +1,16 @@
 ---
-name: review-pr
-description: Invoke via the /review-pr command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments (auto-push) and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
+name: pair-review
+description: Invoke via the /pair-review command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments (auto-push) and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
 ---
 
 Review a PR with me. Resolve the ref, pick the flow from who authored the PR, then act on comments.
 
-Deterministic steps are scripts in `scripts/` (run from `$HOME/.claude/skills/review-pr/scripts`); judgment steps are prose. Never submit a review or resolve a thread; only I do that.
+Deterministic steps are scripts in `scripts/` (run from `$HOME/.claude/skills/pair-review/scripts`); judgment steps are prose. Never submit a review or resolve a thread; only I do that.
 
 ## Step 1: Resolve the ref and pick the flow
 
 ```bash
-S="$HOME/.claude/skills/review-pr/scripts"
+S="$HOME/.claude/skills/pair-review/scripts"
 "$S/resolve-ref.sh" "$REF"     # $REF: number, URL, or omit for current branch's PR
 # Multi-repo workspace (cwd isn't the target repo): pass --repo owner/name with a PR number.
 ```
@@ -216,11 +216,11 @@ Every glyph is posted (Step 3, Fix), so a `○` parks itself and never retrigger
 
 The watcher stops itself in three cases; on any of them, report it and **don't** relaunch:
 
-- **Idle timeout** (exit 2, after 30 min quiet): tell me here in the session that the watch paused and I can restart it with `/review-pr`. Nothing is posted to the PR. The idle clock resets each time work is found, so it only fires on a real quiet stretch.
+- **Idle timeout** (exit 2, after 30 min quiet): tell me here in the session that the watch paused and I can restart it with `/pair-review`. Nothing is posted to the PR. The idle clock resets each time work is found, so it only fires on a real quiet stretch.
 - **PR closed or merged** (exit 3).
 - I stop it with `TaskStop`, or tell you to.
 
-Re-running `/review-pr` by hand spawns a second watcher, so stop the old one first. The watcher never submits a review or resolves a thread.
+Re-running `/pair-review` by hand spawns a second watcher, so stop the old one first. The watcher never submits a review or resolves a thread.
 
 ## Notes
 
