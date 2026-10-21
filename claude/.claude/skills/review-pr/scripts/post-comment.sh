@@ -15,7 +15,7 @@ mark() {
   case $2 in
     ''|*[!0-9]*) echo "post-comment: comment id '$2' is not numeric (pass the row's databaseId 'id', not 'node_id')" >&2; exit 1 ;;
   esac
-  printf '%s\n\n<!-- claude:reply id=%s -->' "$1" "$2"
+  printf '%s\n\n<!-- claude:reply id=%s -->' "$(printf '%s' "$1" | "$(dirname "$0")/color-glyphs.sh")" "$2"
 }
 
 case "$KIND" in

@@ -9,6 +9,7 @@
 # Prints the comment URL.
 set -euo pipefail
 ID=$1 BODY=$2 MARK_ID="${3:-}"
+BODY="$(printf '%s' "$BODY" | "$(dirname "$0")/color-glyphs.sh")"
 [ -n "$MARK_ID" ] && BODY="$(printf '%s\n\n<!-- claude:reply id=%s -->' "$BODY" "$MARK_ID")"
 gh api graphql -f id="$ID" -f body="$BODY" -f query='
   mutation($id:ID!,$body:String!){
