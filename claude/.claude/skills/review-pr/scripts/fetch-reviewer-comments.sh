@@ -27,7 +27,7 @@ threads=$(gh api graphql -F owner="$O" -F repo="$R" -F num="$N" -f query='
 
 echo "$threads" | jq --arg me "$ME" '
   def dir:
-    (capture("(^|\\n)\\s*/(?<d>ask|implement|reply|a|i|r)\\b").d // null) as $d
+    (capture("(^|\\s)/(?<d>ask|implement|reply|a|i|r)(?![\\w/-])").d // null) as $d
     | if $d==null then null else ({a:"ask",i:"implement",r:"reply"}[$d] // $d) end;
   def marked: ((. // "") | contains("claude:reply"));
   [ (.data.repository.pullRequest.reviewThreads.nodes // [])[]

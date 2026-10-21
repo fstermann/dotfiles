@@ -49,12 +49,12 @@ Rules:
 
 - **Append, never replace or summarize.** Every earlier turn stays byte-for-byte, mine and yours; that transcript is the history. Each run adds at most one new fenced turn.
 - **Answer only the last unanswered turn.** If the body already ends in your fenced answer, there's nothing to do (idempotent, no duplicate turns). Add a turn only when my text is the last block.
-- **My turns stay verbatim,** directive line and all. Only `/reply` collapses the transcript into one clean comment and strips the fences, dividers, and directive line.
+- **My turns stay verbatim,** directive and all. Only `/reply` collapses the transcript into one clean comment and strips the fences, dividers, and directive.
 - **Your turns lead with `❊`,** the answered glyph, so a reader spots your voice in the transcript even though the fence markers are invisible.
 
 ### Directives (AIR)
 
-I write these inline in a comment to tell you what to do. Long or short form; `fetch-*` normalizes to the long name in the `directive` field.
+I write these anywhere in a comment, after a space or line break, to tell you what to do. Long or short form; `fetch-*` normalizes to the long name in the `directive` field.
 
 | Directive | Short | Flow | Action |
 | --------- | ----- | ---- | ------ |
@@ -110,7 +110,7 @@ Append your answer as a new fenced turn at the end of the transcript, per the fe
 "$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <transcript so far>\n\n---\n<!-- claude:start -->\n❊ <answer>\n<!-- claude:end -->
 ```
 
-**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating and collapse the whole transcript into one clean comment, then set the body to only that (no fences, no dividers, no `/reply` line). The collapse deletes my questions, so write for what survives: a single comment on a code line. Fit it to that context instead of answering the last turn. If I opened the thread, it's a review remark about the code; if a colleague did, it answers them. Either way self-contained and led with the `❊` glyph:
+**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating and collapse the whole transcript into one clean comment, then set the body to only that (no fences, no dividers, no `/reply` directive). The collapse deletes my questions, so write for what survives: a single comment on a code line. Fit it to that context instead of answering the last turn. If I opened the thread, it's a review remark about the code; if a colleague did, it answers them. Either way self-contained and led with the `❊` glyph:
 
 ```bash
 "$S/edit-comment.sh" <node_id> "❊ $FINAL"
