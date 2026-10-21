@@ -42,7 +42,7 @@ Does not qualify:
 
 Prefer the smallest destination that works: a CLAUDE.md rule is paid for on every request in every project; a skill only when triggered. Procedural findings belong in a skill.
 
-Global config lives in the dotfiles repo, never in `~/.claude` directly. Those paths are symlinks. New scripts there need a symlink too (`ln -s ../.dotfiles/claude/.claude/<file> ~/.claude/<file>`).
+Global config lives in the dotfiles repo, never in `~/.claude` directly. Those paths are symlinks. After adding a file there, run `bash ~/.dotfiles/installers/restow.sh` to link it into every Claude config dir.
 
 ## Session mode
 
