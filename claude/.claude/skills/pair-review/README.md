@@ -1,6 +1,8 @@
 # pair-review
 
-Work a GitHub PR's comments with Claude. You stay in control: Claude edits code, drafts comments, and writes replies, but never submits a review or resolves a thread. You do that.
+Review PRs with Claude from inside GitHub comments. You lead: you write the comments, tag the ones Claude should act on, and submit. Claude edits code, drafts answers, and writes replies, but never submits a review or resolves a thread.
+
+Most useful when you review someone else's PR, or answer a review of your own. A [slide deck](assets/presentation.html) walks through it (download and open in a browser).
 
 ## Run it
 
@@ -21,14 +23,14 @@ Stops on: 30 min idle (paused, nothing posted; restart with `/pair-review`), the
 ## Two flows, auto-detected by who authored the PR
 
 **Your PR.** Each comment is handled by who wrote it:
-- Your own comments → Claude fixes the code (one commit each) and replies with a status glyph: ● fixed, ❊ answered, ◐ partial, ○ needs your input.
+- Your own comments → Claude fixes the code (one commit each) and replies with a status glyph: ❊ answered, ● fixed, ◐ partly done, ○ needs your input. The posting scripts color the glyphs.
 - Reviewers' comments → Claude acts on the directive you left (below) and rewrites your directive into the clean reply the reviewer sees.
 
 **Someone else's PR.** Claude drafts a pending review where warranted, then sharpens and answers your pending comments in place. Everything stays pending; you read it and submit.
 
 ## Directives (AIR)
 
-Write one inline in a comment to tell Claude what to do. Long or short form.
+Write one anywhere in a comment, after a space or on its own line, to tell Claude what to do. Long or short form.
 
 | Directive | Short | Where | Does |
 | --------- | ----- | ----- | ---- |
@@ -40,54 +42,114 @@ A comment you never tag is left alone. A follow-up you add to a thread you alrea
 
 ## Examples
 
-### Implement a reviewer's suggestion (your PR)
-
-You reply to the comment with `/implement`. On the next `/pair-review` Claude edits the code, commits, pushes, and rewrites your reply in place, citing the sha.
-
-<img src="assets/own-implement-before.svg" width="720" alt="Reviewer asks to avoid the O(n) scan; you reply /implement use a Set">
-
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
-
-<img src="assets/own-implement-after.svg" width="720" alt="Your reply is rewritten to: Done in a1b2c3, switched to a Set">
-
-### Follow up without re-tagging (your PR)
-
-In a thread you already tagged, just keep talking, no directive needed. Claude infers intent: a question gets answered, a needed change gets made. (A thread you never tagged is left for the reviewer.)
-
-<img src="assets/own-followup-before.svg" width="720" alt="Below the resolved reply you add: ok but what about the empty input case?">
-
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
-
-<img src="assets/own-followup-after.svg" width="720" alt="The follow-up is inferred as a change and rewritten: empty input now returns early, Done in d4e5f6">
-
 ### Review someone else's PR
 
-Claude drafts pending comments; you sharpen one with `/ask`. Your comment stays exactly as you wrote it, and Claude appends its answer below a horizontal rule, led by the `❊` glyph so you can tell its voice from yours. (The answer sits in a fence whose markers are invisible HTML comments, so on GitHub it just reads as a note under the rule.) Everything stays **Pending** until you submit.
+You spot something odd and tag your pending comment with `/ask`. Claude answers below a horizontal rule, led by `❊`, and your words stay exactly as you wrote them. Everything stays **Pending** until you submit.
 
-<img src="assets/review-ask-before.svg" width="720" alt="Your pending comment asks if it is a race and tags /ask to check the mutex">
-
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
-
-<img src="assets/review-ask-after.svg" width="720" alt="Your comment kept verbatim, then a rule, then Claude's answer as a plain paragraph, still Pending">
-
-Keep the conversation going by replying again in the thread, as a normal comment:
-
-<img src="assets/review-ask-followup.svg" width="720" alt="A second comment in the thread: your follow-up question, still separate and Pending">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-before-dark.png">
+  <img src="assets/review-ask-before-light.png" width="720" alt="Your pending comment asks whether the price can go negative and tags /ask">
+</picture>
 
 <sub><i>run</i> <code>/pair-review</code> ↓</sub>
 
-On the next run Claude folds your follow-up into the comment and answers it, **appending** to the transcript. Nothing is replaced or summarized: the whole back-and-forth stays, me → Claude → me → Claude, each turn split by a rule.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-after-dark.png">
+  <img src="assets/review-ask-after-light.png" width="720" alt="Your comment kept verbatim, then a rule, then Claude's answer: apply_discount(100, 120) returns -20.0">
+</picture>
 
-<img src="assets/review-ask-iter2.svg" width="720" alt="One comment holding the full transcript: my question, Claude's answer, my follow-up, Claude's answer, each separated by a rule">
+Keep going with a normal reply in the thread:
 
-When you are done, tag the last turn with `/reply` (`/r`):
-
-<img src="assets/review-ask-reply-before.svg" width="720" alt="You add a final comment to the thread tagged /reply to collapse the transcript">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-followup-dark.png">
+  <img src="assets/review-ask-followup-light.png" width="720" alt="A separate pending reply: does the checkout form already block that?">
+</picture>
 
 <sub><i>run</i> <code>/pair-review</code> ↓</sub>
 
-`/reply` collapses the whole transcript into one clean comment, rules, fences, and the `/ask` line gone, rewritten as a self-contained review remark fit to the code line. It's kept under the `❊` mark so the reviewer knows it was AI-drafted, and stays **Pending** until you submit.
+Claude folds the follow-up into the same comment and answers it. Nothing is replaced or summarized: the whole back-and-forth stays, you → Claude → you → Claude.
 
-<img src="assets/review-ask-reply-after.svg" width="720" alt="One clean pending comment: the collapsed answer as a single review remark, no transcript, still Pending">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-iter2-dark.png">
+  <img src="assets/review-ask-iter2-light.png" width="720" alt="One comment holding the full transcript, each turn split by a rule">
+</picture>
 
-Other directives work the same way: `/reply` on your PR answers a reviewer with no code change, and your own review notes get fixed and marked ● / ❊ / ◐ / ○ (see above).
+When you're done, reply `/reply` (`/r`):
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-reply-before-dark.png">
+  <img src="assets/review-ask-reply-before-light.png" width="720" alt="A final pending reply tagged /reply">
+</picture>
+
+<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+
+Claude collapses the transcript into one clean review comment, still marked `❊` so the author knows Claude drafted it, and still **Pending**.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-reply-after-dark.png">
+  <img src="assets/review-ask-reply-after-light.png" width="720" alt="One clean pending comment: a discount above 100% makes the price negative, could we cap it?">
+</picture>
+
+### Answer a review of your PR
+
+A reviewer asks for a change. Reply with `/implement` (`/i`) and a hint of how:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-implement-before-dark.png">
+  <img src="assets/own-implement-before-light.png" width="720" alt="Sam asks for dates in the reader's format; you reply /i use the user's locale">
+</picture>
+
+<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+
+Claude changes the code, commits, pushes, and rewrites your reply into the answer the reviewer reads, citing the commit.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-implement-after-dark.png">
+  <img src="assets/own-implement-after-light.png" width="720" alt="The commit is pushed and your reply now reads: Done in a1b2c3d, dates follow the user's locale">
+</picture>
+
+In a thread you already tagged, just keep talking. Claude infers whether you asked a question or want a change:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-followup-before-dark.png">
+  <img src="assets/own-followup-before-light.png" width="720" alt="Under the done reply you add: what about users without a locale set?">
+</picture>
+
+<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-followup-after-dark.png">
+  <img src="assets/own-followup-after-light.png" width="720" alt="The follow-up is rewritten: also handled users without a locale, in b4c5d6e">
+</picture>
+
+To answer without changing code, use `/reply` (`/r`) with your reason in shorthand:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-reply-before-dark.png">
+  <img src="assets/own-reply-before-light.png" width="720" alt="Sam asks about caching the total; you reply /r orders have like 3 items, not worth it">
+</picture>
+
+<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-reply-after-dark.png">
+  <img src="assets/own-reply-after-light.png" width="720" alt="Your shorthand becomes a full answer: orders hold only a handful of items">
+</picture>
+
+### Notes on your own PR
+
+Your own comments need no tag. Before asking for review, leave notes on your diff:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-notes-before-dark.png">
+  <img src="assets/own-notes-before-light.png" width="720" alt="Four notes to yourself on lines 8 to 11">
+</picture>
+
+<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+
+Each note gets a reply with a status glyph: ❊ answered, ● fixed with a commit, ◐ partly done with the reason, ○ a question back to you. Answer a ○ in the thread and the watcher picks it up.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/own-notes-after-dark.png">
+  <img src="assets/own-notes-after-light.png" width="720" alt="Four replies: answered, fixed, partly done, needs your input">
+</picture>
