@@ -44,7 +44,7 @@ pend=$(echo "$threads" | jq --arg me "$ME" '
     | ( [ .comments.nodes[] | select(.state=="PENDING" and .author.login==$me) ] ) as $mine
     | ($mine[0].databaseId) as $parent
     # Engaged = any of my comments here carries a directive; lets an untagged follow-up count.
-    | ( [ $mine[].body ] | any(test("(^|\\n)\\s*/(ask|implement|reply|a|i|r)\\b")) ) as $engaged
+    | ( [ $mine[].body ] | any(test("(^|\\s)/(ask|implement|reply|a|i|r)(?![\\w/-])")) ) as $engaged
     | ($mine | to_entries[])
     | { id:.value.databaseId, node_id:.value.id, path:.value.path,
         line:(.value.line // .value.originalLine), body:.value.body,
@@ -60,7 +60,7 @@ jq -n --arg me "$ME" --arg marker "$MARKER" \
       --slurpfile iss <(printf '%s' "$iss") \
       --slurpfile pend <(printf '%s' "$pend") '
   def dir:
-    (capture("(^|\\n)\\s*/(?<d>ask|implement|reply|a|i|r)\\b").d // null) as $d
+    (capture("(^|\\s)/(?<d>ask|implement|reply|a|i|r)(?![\\w/-])").d // null) as $d
     | if $d==null then null else ({a:"ask",i:"implement",r:"reply"}[$d] // $d) end;
   def fence: (contains("claude:start"));
   ($pub[0]) as $pub | ($iss[0]) as $iss | ($pend[0]) as $pend

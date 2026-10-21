@@ -1,16 +1,16 @@
 ---
-name: review-pr
-description: Invoke via the /review-pr command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments (auto-push) and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
+name: pair-review
+description: Invoke via the /pair-review command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments (auto-push) and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
 ---
 
 Review a PR with me. Resolve the ref, pick the flow from who authored the PR, then act on comments.
 
-Deterministic steps are scripts in `scripts/` (run from `$HOME/.claude/skills/review-pr/scripts`); judgment steps are prose. Never submit a review or resolve a thread; only I do that.
+Deterministic steps are scripts in `scripts/` (run from `$HOME/.claude/skills/pair-review/scripts`); judgment steps are prose. Never submit a review or resolve a thread; only I do that.
 
 ## Step 1: Resolve the ref and pick the flow
 
 ```bash
-S="$HOME/.claude/skills/review-pr/scripts"
+S="$HOME/.claude/skills/pair-review/scripts"
 "$S/resolve-ref.sh" "$REF"     # $REF: number, URL, or omit for current branch's PR
 # Multi-repo workspace (cwd isn't the target repo): pass --repo owner/name with a PR number.
 ```
@@ -49,12 +49,12 @@ Rules:
 
 - **Append, never replace or summarize.** Every earlier turn stays byte-for-byte, mine and yours; that transcript is the history. Each run adds at most one new fenced turn.
 - **Answer only the last unanswered turn.** If the body already ends in your fenced answer, there's nothing to do (idempotent, no duplicate turns). Add a turn only when my text is the last block.
-- **My turns stay verbatim,** directive line and all. Only `/reply` collapses the transcript into one clean comment and strips the fences, dividers, and directive line.
+- **My turns stay verbatim,** directive and all. Only `/reply` collapses the transcript into one clean comment and strips the fences, dividers, and directive.
 - **Your turns lead with `❊`,** the answered glyph, so a reader spots your voice in the transcript even though the fence markers are invisible.
 
 ### Directives (AIR)
 
-I write these inline in a comment to tell you what to do. Long or short form; `fetch-*` normalizes to the long name in the `directive` field.
+I write these anywhere in a comment, after a space or line break, to tell you what to do. Long or short form; `fetch-*` normalizes to the long name in the `directive` field.
 
 | Directive | Short | Flow | Action |
 | --------- | ----- | ---- | ------ |
@@ -110,7 +110,7 @@ Append your answer as a new fenced turn at the end of the transcript, per the fe
 "$S/edit-comment.sh" <node_id> "$BODY"   # BODY = <transcript so far>\n\n---\n<!-- claude:start -->\n❊ <answer>\n<!-- claude:end -->
 ```
 
-**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating and collapse the whole transcript into one clean comment, then set the body to only that (no fences, no dividers, no `/reply` line). The collapse deletes my questions, so write for what survives: a single comment on a code line. Fit it to that context instead of answering the last turn. If I opened the thread, it's a review remark about the code; if a colleague did, it answers them. Either way self-contained and led with the `❊` glyph:
+**Finalize with `/reply` (`/r`).** When a comment's `directive` is `reply`, stop iterating and collapse the whole transcript into one clean comment, then set the body to only that (no fences, no dividers, no `/reply` directive). The collapse deletes my questions, so write for what survives: a single comment on a code line. Fit it to that context instead of answering the last turn. If I opened the thread, it's a review remark about the code; if a colleague did, it answers them. Either way self-contained and led with the `❊` glyph:
 
 ```bash
 "$S/edit-comment.sh" <node_id> "❊ $FINAL"
@@ -137,7 +137,7 @@ Route each comment by its author: my own → Fix, a reviewer's → Respond.
 
 Auto-fold, no confirmation; the deleted comments were mine and pending. Never delete a reply carrying a `claude:reply id=<X>` marker; that un-answers comment X and loops the watcher. If you must delete it, first copy the `claude:reply id=<X>` marker onto the reply you keep.
 
-Status glyphs (monochrome, so they read as a quiet marker, not decoration):
+Status glyphs (write them plain at the start of a line; `post-comment.sh` and `edit-comment.sh` color them):
 
 | Glyph | Meaning |
 | ----- | ------- |
@@ -216,11 +216,11 @@ Every glyph is posted (Step 3, Fix), so a `○` parks itself and never retrigger
 
 The watcher stops itself in three cases; on any of them, report it and **don't** relaunch:
 
-- **Idle timeout** (exit 2, after 30 min quiet): tell me here in the session that the watch paused and I can restart it with `/review-pr`. Nothing is posted to the PR. The idle clock resets each time work is found, so it only fires on a real quiet stretch.
+- **Idle timeout** (exit 2, after 30 min quiet): tell me here in the session that the watch paused and I can restart it with `/pair-review`. Nothing is posted to the PR. The idle clock resets each time work is found, so it only fires on a real quiet stretch.
 - **PR closed or merged** (exit 3).
 - I stop it with `TaskStop`, or tell you to.
 
-Re-running `/review-pr` by hand spawns a second watcher, so stop the old one first. The watcher never submits a review or resolves a thread.
+Re-running `/pair-review` by hand spawns a second watcher, so stop the old one first. The watcher never submits a review or resolves a thread.
 
 ## Notes
 
