@@ -46,110 +46,138 @@ A comment you never tag is left alone. A follow-up you add to a thread you alrea
 
 You spot something odd and tag your pending comment with `/ask`. Claude answers below a horizontal rule, led by `❊`, and your words stay exactly as you wrote them. Everything stays **Pending** until you submit.
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-before-dark.png">
   <img src="assets/review-ask-before-light.png" width="720" alt="Your pending comment asks whether the price can go negative and tags /ask">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-after-dark.png">
   <img src="assets/review-ask-after-light.png" width="720" alt="Your comment kept verbatim, then a rule, then Claude's answer: apply_discount(100, 120) returns -20.0">
 </picture>
+</dd></dl>
 
 Keep going with a normal reply in the thread:
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-followup-dark.png">
   <img src="assets/review-ask-followup-light.png" width="720" alt="A separate pending reply: does the checkout form already block that?">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
 Claude folds the follow-up into the same comment and answers it. Nothing is replaced or summarized: the whole back-and-forth stays, you → Claude → you → Claude.
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-iter2-dark.png">
   <img src="assets/review-ask-iter2-light.png" width="720" alt="One comment holding the full transcript, each turn split by a rule">
 </picture>
+</dd></dl>
 
 When you're done, reply `/reply` (`/r`):
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-reply-before-dark.png">
   <img src="assets/review-ask-reply-before-light.png" width="720" alt="A final pending reply tagged /reply">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
 Claude collapses the transcript into one clean review comment, still marked `❊` so the author knows Claude drafted it, and still **Pending**.
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/review-ask-reply-after-dark.png">
   <img src="assets/review-ask-reply-after-light.png" width="720" alt="One clean pending comment: a discount above 100% makes the price negative, could we cap it?">
 </picture>
+</dd></dl>
 
 ### Answer a review of your PR
 
 A reviewer asks for a change. Reply with `/implement` (`/i`) and a hint of how:
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-implement-before-dark.png">
   <img src="assets/own-implement-before-light.png" width="720" alt="Sam asks for dates in the reader's format; you reply /i use the user's locale">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
 Claude changes the code, commits, pushes, and rewrites your reply into the answer the reviewer reads, citing the commit.
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-implement-after-dark.png">
   <img src="assets/own-implement-after-light.png" width="720" alt="The commit is pushed and your reply now reads: Done in a1b2c3d, dates follow the user's locale">
 </picture>
+</dd></dl>
 
 In a thread you already tagged, just keep talking. Claude infers whether you asked a question or want a change:
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-followup-before-dark.png">
   <img src="assets/own-followup-before-light.png" width="720" alt="Under the done reply you add: what about users without a locale set?">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-followup-after-dark.png">
   <img src="assets/own-followup-after-light.png" width="720" alt="The follow-up is rewritten: also handled users without a locale, in b4c5d6e">
 </picture>
+</dd></dl>
 
 To answer without changing code, use `/reply` (`/r`) with your reason in shorthand:
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-reply-before-dark.png">
   <img src="assets/own-reply-before-light.png" width="720" alt="Sam asks about caching the total; you reply /r orders have like 3 items, not worth it">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-reply-after-dark.png">
   <img src="assets/own-reply-after-light.png" width="720" alt="Your shorthand becomes a full answer: orders hold only a handful of items">
 </picture>
+</dd></dl>
 
 ### Notes on your own PR
 
 Your own comments need no tag. Before asking for review, leave notes on your diff:
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-notes-before-dark.png">
   <img src="assets/own-notes-before-light.png" width="720" alt="Four notes to yourself on lines 8 to 11">
 </picture>
+</dd></dl>
 
-<sub><i>run</i> <code>/pair-review</code> ↓</sub>
+<dl><dd><sub><i>run</i> <code>/pair-review</code> ↓</sub></dd></dl>
 
 Each note gets a reply with a status glyph: ❊ answered, ● fixed with a commit, ◐ partly done with the reason, ○ a question back to you. Answer a ○ in the thread and the watcher picks it up.
 
+<dl><dd>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/own-notes-after-dark.png">
   <img src="assets/own-notes-after-light.png" width="720" alt="Four replies: answered, fixed, partly done, needs your input">
 </picture>
+</dd></dl>
