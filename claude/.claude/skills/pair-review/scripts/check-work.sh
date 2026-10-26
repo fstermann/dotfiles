@@ -32,8 +32,8 @@ if [ "$FLOW" = "reviewing" ]; then
           ) ] }')
 else
   reviewer=$("$S/fetch-reviewer-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.directive != null) ]')
-  # Pending comments count only in a thread I tagged (thread_engaged); fetch drops answered ones.
-  mine=$("$S/fetch-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.source!="pending" or .thread_engaged==true) ]')
+  # My comments count only when tagged or in a thread I tagged; fetch drops answered ones.
+  mine=$("$S/fetch-comments.sh" "$O" "$R" "$N" "$ME" | jq '[ .[] | select(.directive != null or .thread_engaged == true) ]')
   work=$(jq -n --argjson r "$reviewer" --argjson m "$mine" '{flow:"own", reviewer:$r, mine:$m}')
 fi
 

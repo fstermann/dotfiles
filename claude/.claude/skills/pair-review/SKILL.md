@@ -1,6 +1,6 @@
 ---
 name: pair-review
-description: Invoke via the /pair-review command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, fix the code for my own comments (auto-push) and respond to reviewers' comments via inline directives. On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
+description: Invoke via the /pair-review command. Review a PR with me, then keep addressing my follow-ups automatically via a background watcher until the PR closes. Two flows, auto-detected by who authored the PR. On my own PR, act on my own comments and respond to reviewers' comments via inline directives (auto-push). On someone else's PR, write a pending review and sharpen or answer pending comments in-thread. I submit every review and resolve every thread myself.
 ---
 
 Review a PR with me. Resolve the ref, pick the flow from who authored the PR, then act on comments.
@@ -18,7 +18,7 @@ S="$HOME/.claude/skills/pair-review/scripts"
 Returns `{owner,repo,num,me,author,flow,url,headRef,currentBranch,dirty}`.
 
 - `flow:"reviewing"` (author != me) → **Reviewing flow** (Step 3, Reviewing).
-- `flow:"own"` (author == me) → **Own-PR flow** (Step 3, Own PR): fix my own comments, respond to reviewers' comments, decided per comment by who wrote it.
+- `flow:"own"` (author == me) → **Own-PR flow** (Step 3, Own PR): act on my own tagged comments, respond to reviewers' comments, decided per comment by who wrote it.
 - `dirty:true` with unrelated changes → stop; don't mix them into feedback commits.
 - `currentBranch != headRef` and you'll edit code → `gh pr checkout <num>`.
 
@@ -58,11 +58,11 @@ I write these anywhere in a comment, after a space or line break, to tell you wh
 
 | Directive | Short | Flow | Action |
 | --------- | ----- | ---- | ------ |
-| `/ask [ctx]` | `/a` | Reviewing | Answer: verify a claim, suggest, or research → a new transcript turn |
+| `/ask [ctx]` | `/a` | both | Answer: verify a claim, suggest, or research (Reviewing: a new transcript turn; Own PR: a reply under my note) |
 | `/implement [ctx]` | `/i` | Own PR | Change the code, then write my brief reply |
-| `/reply [ctx]` | `/r` | both | Produce the final reply (Reviewing: collapse the transcript; Own PR: compose the reply to the reviewer) |
+| `/reply [ctx]` | `/r` | both | Produce the final reply (Reviewing: collapse the transcript; Own PR: compose the reply to the reviewer, or rewrite my own note into its final form) |
 
-`/ask` and `/implement` ask for work; `/reply` produces the final reply. A comment I never tagged is left alone, but a follow-up I add to a thread I already tagged is picked up next run: Reviewing folds it in as the next transcript turn and answers it; Own PR infers intent (see Respond).
+`/ask` and `/implement` ask for work; `/reply` produces the final reply. A comment I never tagged is left alone, on any PR, but a follow-up I add to a thread I already tagged is picked up next run: Reviewing folds it in as the next transcript turn and answers it; Own PR infers intent (see Fix and Respond).
 
 ---
 
@@ -118,7 +118,7 @@ Append your answer as a new fenced turn at the end of the transcript, per the fe
 
 After finalize the comment is submit-ready.
 
-### Own PR (fix my own comments, respond to reviewers')
+### Own PR (act on my own comments, respond to reviewers')
 
 ```bash
 "$S/fetch-comments.sh" <owner> <repo> <num> <me>            # my own comments      → Fix
@@ -127,7 +127,14 @@ After finalize the comment is submit-ready.
 
 Route each comment by its author: my own → Fix, a reviewer's → Respond.
 
-#### Fix: my own comments
+#### Fix: my own comments, directive-driven
+
+Act only on rows with a `directive`, or with `thread_engaged:true` (an untagged follow-up in a thread I already tagged). Leave every other comment of mine untouched; it's a note to myself or to reviewers.
+
+- `directive:"implement"` → change the code; reply ●, ◐, or ○.
+- `directive:"ask"` → answer from the code, no change; reply ❊, or ○ if it needs my decision.
+- `directive:"reply"` → no code change; rewrite my note into the final comment for reviewers, led with `❊`, and stamp its own `id` so the next run skips it: `"$S/edit-comment.sh" <node_id> "❊ <final>" <id>`. Inline comments only; on a conversation (`issue`) comment, post the reply instead.
+- untagged follow-up in a tagged thread → infer intent from my text: a change → the `implement` case; a question → the `ask` case.
 
 **Fold my follow-ups first.** When a thread holds several of my comments (an opener plus a follow-up, which may itself carry a directive), it's one request: act on the latest, reply once, and delete the other unanswered ones so no sibling re-triggers the watcher:
 
@@ -146,7 +153,7 @@ Status glyphs (write them plain at the start of a line; `post-comment.sh` and `e
 | ◐ | Partial or not straightforward, explain why |
 | ○ | Needs my input first |
 
-`●◐○` track code state; `❊` is Claude's voice (same glyph marks a `/reply` finalize, below). Read the code, then pick: clear+actionable → minimal edit (surgical, match style) → ●; question answerable from code → ❊; real caveat → do what's safe, explain → ◐; needs my decision → ○. One or two sentences each. One commit per addressed comment:
+`●◐○` track code state; `❊` is Claude's voice (same glyph marks a `/reply` finalize). Read the code, then pick within the directive: clear+actionable → minimal edit (surgical, match style) → ●; question answerable from code → ❊; real caveat → do what's safe, explain → ◐; needs my decision → ○. One or two sentences each. One commit per code change:
 
 ```
 fix(review): <short summary>
@@ -208,7 +215,7 @@ After the run, keep catching my follow-ups on their own. Launch the watcher once
 It polls every 60s with `check-work.sh` (deterministic, no judgment) and exits the moment there's work, which re-invokes this session. On that wake:
 
 1. The task output carries the actionable rows and its `flow`. Run only that Step 3 branch, on those rows only.
-2. Auto-push is allowed on `/implement` and on Fix.
+2. Auto-push is allowed on `/implement`, including a follow-up inferred as a change.
 3. Run the Step 4 summary (links included).
 4. Relaunch the watcher (exactly one at a time) and stop.
 

@@ -23,7 +23,7 @@ Stops on: 30 min idle (paused, nothing posted; restart with `/pair-review`), the
 ## Two flows, auto-detected by who authored the PR
 
 **Your PR.** Each comment is handled by who wrote it:
-- Your own comments → Claude fixes the code (one commit each) and replies with a status glyph: ❊ answered, ● fixed, ◐ partly done, ○ needs your input. The posting scripts color the glyphs.
+- Your own comments → Claude acts on the directive you tagged (below), fixing code with one commit each, and replies with a status glyph: ❊ answered, ● fixed, ◐ partly done, ○ needs your input. The posting scripts color the glyphs.
 - Reviewers' comments → Claude acts on the directive you left (below) and rewrites your directive into the clean reply the reviewer sees.
 
 **Someone else's PR.** Claude drafts a pending review where warranted, then sharpens and answers your pending comments in place. Everything stays pending; you read it and submit.
@@ -34,11 +34,11 @@ Write one anywhere in a comment, after a space or on its own line, to tell Claud
 
 | Directive | Short | Where | Does |
 | --------- | ----- | ----- | ---- |
-| `/ask` | `/a` | reviewing a PR | verify a claim, suggest, or research; the answer is added under your comment |
-| `/implement` | `/i` | your PR | apply the reviewer's feedback in code |
-| `/reply` | `/r` | either | finalize: collapse the exchange into the clean reply |
+| `/ask` | `/a` | either | verify a claim, suggest, or research; the answer is added under your comment |
+| `/implement` | `/i` | your PR | change the code: a reviewer's feedback or your own note |
+| `/reply` | `/r` | either | finalize: collapse the exchange or your note into the clean reply |
 
-A comment you never tag is left alone. A follow-up you add to a thread you already tagged is picked up on the next run: reviewing, it's folded into the transcript and answered; on your PR, Claude infers whether it's a clarification (answers) or a change (implements).
+A comment you never tag is left alone, on any PR. A follow-up you add to a thread you already tagged is picked up on the next run: reviewing, it's folded into the transcript and answered; on your PR, Claude infers whether it's a clarification (answers) or a change (implements).
 
 ## Examples
 
@@ -162,7 +162,7 @@ To answer without changing code, use `/reply` (`/r`) with your reason in shortha
 
 ### Notes on your own PR
 
-Your own comments need no tag. Before asking for review, leave notes on your diff:
+Before asking for review, leave notes on your diff and tag the ones Claude should act on: `/i` to change code, `/a` to answer a question. Untagged notes are left alone.
 
 <dl><dd>
 <picture>
