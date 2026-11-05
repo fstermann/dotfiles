@@ -14,8 +14,8 @@
 #   directive: /ask, /implement, or /reply parsed from the body, else null.
 #   reply_to: parent comment id this pending row folds into (thread order, see below),
 #     else null. Only meaningful for source:pending.
-#   thread_engaged: some comment in this thread carries a directive, so an untagged
-#     follow-up here still counts as work. Only meaningful for source:pending.
+#   thread_engaged: some comment of mine in this thread carries a directive, so an
+#     untagged follow-up here still counts as work. Absent for source:issue.
 set -euo pipefail
 O=$1 R=$2 N=$3 ME=$4
 MARKER='claude:reply'
@@ -43,8 +43,9 @@ pend=$(echo "$threads" | jq --arg me "$ME" '
     | .id as $tid
     | ( [ .comments.nodes[] | select(.state=="PENDING" and .author.login==$me) ] ) as $mine
     | ($mine[0].databaseId) as $parent
-    # Engaged = any of my comments here carries a directive; lets an untagged follow-up count.
-    | ( [ $mine[].body ] | any(test("(^|\\s)/(ask|implement|reply|a|i|r)(?![\\w/-])")) ) as $engaged
+    # Engaged = any of my comments here, pending or published, carries a directive;
+    # lets an untagged follow-up count.
+    | ( [ .comments.nodes[] | select(.author.login==$me) | .body ] | any(test("(^|\\s)/(ask|implement|reply|a|i|r)(?![\\w/-])")) ) as $engaged
     | ($mine | to_entries[])
     | { id:.value.databaseId, node_id:.value.id, path:.value.path,
         line:(.value.line // .value.originalLine), body:.value.body,
@@ -66,6 +67,8 @@ jq -n --arg me "$ME" --arg marker "$MARKER" \
   ($pub[0]) as $pub | ($iss[0]) as $iss | ($pend[0]) as $pend
   | ($pub + $iss + $pend) as $all
   | ([ $all[] | select(.body|contains($marker)) | (.body|capture("id=(?<n>[0-9]+)")|.n|tonumber)? ]) as $answered
+  # REST replies all point in_reply_to_id at the thread root, so the root id names the thread.
+  | ([ $pub[] | select(.user.login==$me and (.body|dir)!=null) | (.in_reply_to_id // .id) ]) as $engaged_roots
   # Replies are kept, not just top-level comments: a follow-up I post inside a thread I already
   # answered reopens it, and would otherwise be invisible. My own marker-replies carry the marker
   # (dropped below) and every already-answered id is in $answered, so neither is re-surfaced.
@@ -74,7 +77,8 @@ jq -n --arg me "$ME" --arg marker "$MARKER" \
                    and (.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, node_id:.node_id, source:"review", path, line:(.line // .original_line), body,
              diff_hunk, url:.html_url, thread_id:null, review_id:null,
-             has_fence:(.body|fence), directive:(.body|dir)}) )
+             has_fence:(.body|fence), directive:(.body|dir),
+             thread_engaged:((.in_reply_to_id // .id) | IN($engaged_roots[]))}) )
   + ( $pend
       | map(select((.body|contains($marker)|not) and (.id | IN($answered[]) | not)))
       | map({id, node_id, source:"pending", path, line, body, diff_hunk, url, thread_id, review_id,
