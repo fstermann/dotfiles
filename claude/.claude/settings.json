@@ -62,5 +62,10 @@
   "outputStyle": "BLUF",
   "effortLevel": "medium",
   "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  }
 }
