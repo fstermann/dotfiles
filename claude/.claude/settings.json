@@ -4,6 +4,9 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "env": {
+    "ENABLE_PROMPT_CACHING_1H": "1"
+  },
   "model": "claude-opus-5-5[1m]",
   "hooks": {
     "PreToolUse": [
