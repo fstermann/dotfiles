@@ -15,3 +15,5 @@ Prose, in everything you write (chat, docs, ADRs, PRs, commits): terse, point fi
 - Cut filler ("in order to"→"to") and stacked hedges ("could potentially"→"may").
 - Sentence-case headings, straight quotes, no bold-label-colon lines.
 - Active voice with a named actor. Use a precise verb or a number instead of an adverb.
+
+Utilize subagents where fitting to minimize token usage and context size, and set the model per subagent: Haiku for search and mechanical edits, Sonnet for ordinary coding, Opus only for hard reasoning. Brief each agent with the files and line ranges it needs and the exact output to return. Don't resume an agent idle for over an hour, its cache has expired and the resume re-sends its whole context; start a fresh one with a short brief.
