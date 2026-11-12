@@ -64,6 +64,8 @@ One-time or occasional; it reads a lot of text, so say what it will do before st
    python3 ~/.claude/skills/self-improve/mine-transcripts.py --since 2026-01-01 > /tmp/self-improve-hits.json
    ```
 
+   The default `--root` is `~/.claude/projects`. Run once more with `--root <dir>/projects` for each other Claude config dir, such as the one `$CLAUDE_CONFIG_DIR` names.
+
    Flags: `--since ISO_DATE`, `--project SUBSTRING`, `--limit N` (default 400), `--root PATH`. Returns matched user prompts with the preceding assistant message and a `signal_counts` summary.
 
 2. Read `signal_counts` first. It tells you which failure mode dominates. Then read `silent_signals`: tool calls the user **rejected** or **interrupted**, each with the call in flight. These need no complaint to exist, so they catch what the user worked around instead of voicing. Read the `call` field, not the words; one veto usually produces both a `rejected` and an `interrupt` record, so count distinct calls.

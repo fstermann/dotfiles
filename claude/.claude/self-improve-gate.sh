@@ -37,7 +37,7 @@ cat <<'JSON'
   "reason": "Self-improvement checkpoint — reviewing this session for config-worthy learnings.",
   "hookSpecificOutput": {
     "hookEventName": "Stop",
-    "additionalContext": "This session passed the self-improvement turn threshold (fires at most once per session). Use the self-improve skill in session mode now: review THIS conversation for durable learnings worth writing into CLAUDE.md, a skill, a hook, settings, or memory. If nothing durable came up, say exactly that in one line and stop — do not manufacture findings. Never apply an edit without the user approving it first."
+    "additionalContext": "This session passed the self-improvement turn threshold (fires at most once per session). Use the self-improve skill in session mode now: review THIS conversation for durable learnings worth writing into CLAUDE.md, a skill, a hook, settings, or memory. If nothing durable came up, say exactly that in one line and stop. Do not manufacture findings. Never apply an edit without the user approving it first."
   }
 }
 JSON
