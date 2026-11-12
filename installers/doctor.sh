@@ -8,7 +8,8 @@
 set -e
 
 DOTFILES_DIR="$HOME/.dotfiles"
-STOW_PACKAGES=(zsh git fzf oh-my-posh macos claude codex)
+# shellcheck source=lib/packages.sh
+source "$DOTFILES_DIR/installers/lib/packages.sh"
 
 # Ensure tools installed outside system paths are discoverable
 export PATH="$HOME/.fzf/bin:$HOME/.local/bin:$PATH"
