@@ -1,3 +1,9 @@
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+sandbox_mode = "workspace-write"
+
+model = "gpt-6.1-sol"
+model_reasoning_effort = "medium"
 # Pure-inspired Codex CLI status line.
 
 [tui]
@@ -11,3 +17,9 @@ status_line = [
   "current-dir",
 ]
 status_line_use_colors = true
+
+[tui.model_availability_nux]
+"gpt-6.1-sol" = 4
+
+[features]
+default_mode_request_user_input = true
