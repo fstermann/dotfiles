@@ -1,6 +1,6 @@
 ---
 name: janitor
-description: Scan a repo for dead code, inconsistencies, stale config and duplication, then fix the findings the user picks. Invoke via /janitor, optionally with a path to limit the scan.
+description: "Scan a repo for dead code, inconsistencies, stale config and duplication, then fix the findings the user picks. Invoke by name (janitor), optionally with a path to limit the scan."
 disable-model-invocation: true
 ---
 
@@ -17,7 +17,7 @@ Scope is the path in the arguments, else the repo root. Skip vendored, generated
 
 ## Step 1: Scan
 
-Start from the repo's own rules: CLAUDE.md, README, manifests, CI and lint config. A convention the repo states wins over one you infer. Then read, grep and run checks in whatever order the leads suggest.
+Start from the repo's own rules: AGENTS.md, CLAUDE.md, README, manifests, CI and lint config. A convention the repo states wins over one you infer. Then read, grep and run checks in whatever order the leads suggest.
 
 Run linters, analyzers and the repo's own check scripts that are already installed. Examples: `knip`, `tsc --noEmit`, eslint, `vulture`, `ruff check`, `shellcheck`, `staticcheck`, `go vet`. Treat tool output as leads. Dynamic imports, reflection, entry points and config-driven loading cause false positives, so confirm each lead by reading the code.
 
@@ -45,14 +45,9 @@ Drop anything below medium. Drop style nits a formatter would settle.
 
 ## Step 3: Let the user pick
 
-Present findings with `AskUserQuestion`, one question per category, `multiSelect: true`, so the user checks what to fix.
+Present grouped findings and let the user choose which to fix. Use the host's structured question tool when available. If it supports multi-select, offer one question per category; otherwise number the findings and ask in chat for the selected numbers. Do not interpret a single-choice answer as approval for the whole category.
 
-- Header: the category name.
-- Option label: short claim plus location, under 5 words where possible.
-- Option description: evidence, confidence, and the planned fix.
-- High-confidence findings first within a category.
-
-The tool allows at most 4 questions per call and 4 options per question. When a category has more than 4 findings, split it into several questions ("Dead code 1/3", "Dead code 2/3") and make multiple calls. Before the first call, print one line with the total count per category.
+Each choice includes the location, evidence, confidence, and planned fix. Put high-confidence findings first. Split questions to fit the host's limits. Before asking, print the total count per category. Wait for the user's selections before fixing anything.
 
 Skip a category with no findings. If nothing survives, say so and stop.
 

@@ -21,6 +21,8 @@ The repo lives at `~/.dotfiles/`. Each top-level directory is a *stow package* w
 │   └── .config/fzf/    → symlinked as ~/.config/fzf/
 ├── oh-my-posh/
 │   └── .config/zsh/oh-my-posh/
+├── agents/
+│   └── .agents/        → shared instructions and portable skills
 ├── claude/
 │   └── .claude/        → symlinked as ~/.claude/
 ├── macos/
@@ -112,8 +114,9 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 | `git` | `.gitconfig`, `.config/git/`. Config and helper scripts (`git pr`, `git remerge`) |
 | `fzf` | `.config/fzf/`. fzf config, Monokai color scheme, preview script |
 | `oh-my-posh` | `.config/zsh/oh-my-posh/`. Pure prompt theme and fallback prompt |
+| `agents` | `.agents/`. Shared global instructions and portable skills |
 | `claude` | `.claude/`. Claude editor settings and statusline script |
-| `codex` | `.codex/pure.config.toml`. Pure-inspired Codex CLI status line profile |
+| `codex` | Codex profile, shared OMP statusline adapter, and session-binding hook |
 | `macos` | `.config/macos/`. Terminal.app Monokai Pro theme |
 
 ---
@@ -142,7 +145,7 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 
 ```sh
 # Stow all packages (idempotent — safe to re-run)
-stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos claude codex
+stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos agents claude codex
 
 # Stow a single package
 stow --no-folding -d ~/.dotfiles -t $HOME zsh
@@ -151,16 +154,38 @@ stow --no-folding -d ~/.dotfiles -t $HOME zsh
 stow -d ~/.dotfiles -t $HOME -D zsh
 
 # Simulate without making changes
-stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos claude codex
+stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos agents claude codex
 ```
 
 The Zsh configuration selects the Pure-inspired profile for every Codex CLI
-session. You can also select it explicitly, or override it with another profile:
+session. Interactive sessions run inside a private tmux server with the same
+two-row Oh My Posh statusline as Claude. Edit
+`oh-my-posh/.config/zsh/oh-my-posh/pure.claude.toml` to style both tools.
+The adapter needs tmux, Python 3.11+, and Oh My Posh; installers include them.
+Non-interactive commands and redirected I/O pass through to Codex. If tmux or
+OMP is unavailable, interactive launches fall back to the normal Codex footer.
+
+The session hook records the exact transcript path for this launch. The adapter
+reads model, context, reasoning effort, and quota metadata. Unknown context
+shows `--`; unavailable or expired quota windows are hidden. Codex does not
+supply Claude's session cost, output style, or cache-expiry timer, so those
+fields appear only when supplied. No quota API calls or update checks run.
+The wrapper overrides the terminal title and hides Codex's native statusline
+for that invocation. Keyboard input still goes directly to Codex.
+
+The hook is installed under the default `~/.codex` directory. If you use a
+custom `CODEX_HOME`, copy or merge its `hooks.json` entry there as well.
+On first use, review the `Bind shared OMP statusline` hook if Codex prompts.
+The adapted upstream modules and MIT attribution live in
+`codex/.codex/statusline/UPSTREAM.md`.
+
+You can select the profile explicitly, override it, or bypass the wrapper:
 
 ```sh
 codex
 codex --profile pure
 codex --profile work
+command codex   # Stock Codex without the OMP wrapper
 ```
 
 ---
@@ -176,3 +201,21 @@ curl -fsSL https://raw.githubusercontent.com/fstermann/dotfiles/main/migrate.sh 
 ```
 
 This will back up the old bare repo, clone the restructured repo, and use `stow --adopt` to replace existing dotfiles with symlinks without losing any local changes.
+
+## Instructions and skills for coding agents
+
+Edit shared global rules in `agents/.agents/AGENTS.md`. Claude imports them from its global `CLAUDE.md`; Codex's global `AGENTS.md` links to them. Claude-specific model guidance stays in `claude/.claude/CLAUDE.md`. This repo's own instructions live in root `AGENTS.md`, imported by root `CLAUDE.md`.
+
+Define portable skills once under `agents/.agents/skills/`. Stow exposes them at `~/.agents/skills/` for Codex. The links under `claude/.claude/skills/` expose those same folders to Claude, including alternate Claude config directories. Add a corresponding relative folder link there when adding a portable skill, then run `dotfiles restow`.
+
+`backcast`, `deepen`, `grill-me`, `janitor`, and `unslop` are shared. Their questions use the host's available interface. Skills marked `disable-model-invocation: true` also carry Codex's explicit-only policy in `agents/openai.yaml`.
+
+`pair-review` remains Claude-only. Each tool has its own `self-improve`: Claude's keeps its completion hook and Claude transcript reader; Codex's lives in `codex/.agents/skills/self-improve/` and reads local Codex rollout transcripts. Both propose shared-rule changes in `agents/.agents/AGENTS.md`. Invoke skills with `/name` in Claude or `$name` in Codex.
+
+Keep settings, hooks, permissions, and model choices in the tool's own package. `codex/.codex/pure.config.toml` is a separate profile; this setup does not replace your active `~/.codex/config.toml`.
+
+Verify agent links and the Codex transcript reader without changing your home directory:
+
+```sh
+python3 -m unittest discover -s tests
+```

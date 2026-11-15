@@ -10,24 +10,32 @@ dotfiles() {
 
 # Apply the dotfiles-managed Codex UI profile by default. An explicit profile
 # still wins, e.g. `codex --profile work`.
+_codex_with_statusline() {
+  if [[ -f "$HOME/.codex/statusline/entry.py" ]] && command -v python3 &>/dev/null; then
+    command python3 "$HOME/.codex/statusline/entry.py" "$@"
+  else
+    command codex "$@"
+  fi
+}
+
 codex() {
   local arg
   for arg in "$@"; do
     case "$arg" in
-      -p|--profile|--profile=*|-p?*) command codex "$@"; return ;;
+      -p|--profile|--profile=*|-p?*) _codex_with_statusline "$@"; return ;;
     esac
   done
 
   # Codex rejects --profile for administrative commands that do not start or
   # interact with a runtime session.
   case "${1:-}" in
-    agents|login|logout|plugin|mcp-server|app-server|remote-control|app|completion|update|doctor|features|help|apply|migrate-rollouts|cloud|exec-server)
-      command codex "$@"
+    agents|login|logout|plugin|mcp|queue|delete|archive|unarchive|migrate-nfs-db|mcp-server|app-server|remote-control|app|completion|update|doctor|features|help|apply|migrate-rollouts|cloud|exec-server)
+      _codex_with_statusline "$@"
       return
       ;;
   esac
 
-  command codex --profile pure "$@"
+  _codex_with_statusline --profile pure "$@"
 }
 
 # Pick a Claude config dir by folder from CLAUDE_CONFIG_DIR_MAP (see README).

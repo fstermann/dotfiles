@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: Turn conversation findings into durable Claude configuration: CLAUDE.md rules, skills, hooks, settings, or memory. Runs in session mode (review the current conversation, usually triggered automatically by the Stop-hook checkpoint) or history mode (one-time sweep of past transcripts across all projects). Trigger on "self-improve", "what did you learn", "update your instructions", "analyse my past conversations", or the self-improvement checkpoint hook.
+description: "Turn conversation findings into durable Claude configuration: CLAUDE.md rules, skills, hooks, settings, or memory. Runs in session mode (review the current conversation, usually triggered automatically by the Stop-hook checkpoint) or history mode (one-time sweep of past transcripts across all projects). Trigger on \"self-improve\", \"what did you learn\", \"update your instructions\", \"analyse my past conversations\", or the self-improvement checkpoint hook."
 ---
 
 Convert what a conversation taught into config that changes future behaviour. You propose, the user decides. Nothing is written before they approve each edit.
@@ -33,9 +33,9 @@ Does not qualify:
 
 | Finding | Destination |
 |---|---|
-| Behavioural rule, applies everywhere | `~/.dotfiles/claude/.claude/CLAUDE.md` |
-| Behavioural rule, one repo only | that repo's `CLAUDE.md` |
-| Multi-step procedure worth invoking by name | new/edited skill under `~/.dotfiles/claude/.claude/skills/` |
+| Behavioural rule, applies everywhere | `~/.dotfiles/agents/.agents/AGENTS.md` for shared rules; `~/.dotfiles/claude/.claude/CLAUDE.md` for Claude-only rules |
+| Behavioural rule, one repo only | that repo's canonical instruction file (`AGENTS.md` when `CLAUDE.md` imports it) |
+| Multi-step procedure worth invoking by name | portable skill under `~/.dotfiles/agents/.agents/skills/`; Claude-only skill under `~/.dotfiles/claude/.claude/skills/` |
 | Must run deterministically on an event | hook in `~/.dotfiles/claude/.claude/settings.json` |
 | Permission, env var, tool config | `settings.json` |
 | A fact about the user or project, not a rule | memory dir (see the memory instructions) |

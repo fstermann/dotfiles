@@ -1,6 +1,6 @@
 ---
 name: deepen
-description: Rewrite a task prompt into a deeper version, framed by how a top professional in the field would approach it. Invoke via /deepen <task or prompt>.
+description: "Rewrite a task prompt into a deeper version, framed by how a top professional in the field would approach it. Invoke by name with a task or prompt."
 disable-model-invocation: true
 ---
 
@@ -13,4 +13,4 @@ The task is in the arguments. I want a deeper version of this task, not a bigger
 
 Then rewrite my prompt to ask for exactly that.
 
-Finally, ask with `AskUserQuestion` whether to run the rewritten prompt now.
+Finally, ask whether to run the rewritten prompt now. Use the host's structured question tool when available, otherwise chat. Wait for the answer before running it.

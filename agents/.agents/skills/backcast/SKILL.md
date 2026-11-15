@@ -1,6 +1,6 @@
 ---
 name: backcast
-description: Use when the user wants a plan to get from today's codebase to a substantially different end-state, especially when that destination is fuzzy or stated as a solution rather than an outcome. Covers refactors, migrations, re-architectures, rewrites, and large multi-step features. Trigger on "help me plan/scope this", "how should I approach", "what's the roadmap for", or a named solution ("migrate to X", "rebuild as Y") whose underlying goal is unstated. Skip single decisions, one-step changes, and plans that are already concrete.
+description: "Use when the user wants a plan to get from today's codebase to a substantially different end-state, especially when that destination is fuzzy or stated as a solution rather than an outcome. Covers refactors, migrations, re-architectures, rewrites, and large multi-step features. Trigger on \"help me plan/scope this\", \"how should I approach\", \"what's the roadmap for\", or a named solution (\"migrate to X\", \"rebuild as Y\") whose underlying goal is unstated. Skip single decisions, one-step changes, and plans that are already concrete."
 ---
 
 Plan backward from the end-state, not forward from today's code. Forward planning drifts into local-optimum incrementalism: each step looks fine alone, the destination is never reckoned with, and the plan inherits the current code's shape. Fix the target first, then derive only the steps that reach it.
@@ -10,7 +10,7 @@ Three phases, **strictly in order**: define the goal → pin the end-state → b
 Throughout:
 
 - **Read before asking.** Determine from code, tests, configs, and deps anything you can; don't ask what the code can tell you.
-- **Ask via `AskUserQuestion`** with concrete options; free-form only when options won't fit. Batch related questions within a phase; **never batch across phases.**
+- **Ask via the host's structured question tool when available, otherwise chat** with concrete options; free-form only when options won't fit. Batch related questions within a phase; **never batch across phases.**
 - **Every question must earn its place:** ask only when the answer (a) isn't determinable from code *and* (b) changes the plan in a way you can't sensibly default. If you could pick a reasonable default and let the user correct it (UI surface, naming, cosmetics), put it in the end-state draft instead.
 
 ## Phase 1: Goal, not solution
