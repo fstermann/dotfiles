@@ -172,6 +172,13 @@ supply Claude's session cost, output style, or cache-expiry timer, so those
 fields appear only when supplied. No quota API calls or update checks run.
 The wrapper overrides the terminal title and hides Codex's native statusline
 for that invocation. Keyboard input still goes directly to Codex.
+The child supervisor stops Codex and tmux if the launcher dies. Unchanged OMP
+output refreshes every ten seconds; metadata, width, and clock-minute changes
+trigger a render on the next poll.
+
+VS Code uses process names for terminal labels by default. Set
+`"terminal.integrated.tabs.title": "${sequence}"` in its user settings to show
+the wrapper's `Codex` title. Other VS Code tabs then show their shell-supplied titles.
 
 The hook is installed under the default `~/.codex` directory. If you use a
 custom `CODEX_HOME`, copy or merge its `hooks.json` entry there as well.

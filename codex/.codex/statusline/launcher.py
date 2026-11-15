@@ -123,18 +123,44 @@ def child(directory):
         CODEX_STATUSLINE_STATE=str(root),
         CODEX_STATUSLINE_LAUNCH=config["launch_id"],
     )
+    orphaned = False
     try:
         proc = subprocess.Popen(config["argv"], env=env)
         # Codex owns terminal input. A late Ctrl-C after it restores canonical
         # mode must not kill this supervisor before it records the exit code.
         signal.signal(signal.SIGINT, signal.SIG_IGN)
-        code = proc.wait()
+        while True:
+            try:
+                os.kill(config["launcher_pid"], 0)
+            except ProcessLookupError:
+                orphaned = True
+                proc.terminate()
+                try:
+                    code = proc.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                    code = proc.wait()
+                break
+            code = proc.poll()
+            if code is not None:
+                break
+            time.sleep(2)
         if code < 0:
             code = 128 - code
     except OSError as error:
         print(f"codex-statusline: cannot start official Codex: {error}", file=sys.stderr)
         code = 127
     atomic_json(root / "exit.json", {"code": code})
+    if orphaned:
+        # Survive tmux's hangup long enough to remove this launch's state.
+        signal.signal(signal.SIGHUP, signal.SIG_IGN)
+        try:
+            subprocess.run(
+                ["tmux", "-S", str(root / "tmux.sock"), "kill-server"],
+                capture_output=True, timeout=2,
+            )
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
     return code
 
 
@@ -195,7 +221,8 @@ def launch(args):
         'set -g status-format "#{status-left}"\n'
         'set -g status-left ""\n'
         "set -g allow-rename off\n"
-        "set -g set-titles off\n"
+        "set -g set-titles on\n"
+        "set -g set-titles-string Codex\n"
         "set -g mouse on\n"
         # Every key belongs to Codex: no prefix (Ctrl-B), no wait after Esc.
         "set -g prefix None\n"
@@ -223,11 +250,13 @@ def launch(args):
 
     def monitor():
         from .data import LogReader, merge_quotas, newest_quotas, parse_title, sessions_dir
-        from .render import render_rows
+        from .render import payload, render_rows
 
         reader = LogReader()
         sessions, readers, others, scan_at = sessions_dir(), {}, {}, 0.0
         last_line = last_second = None
+        last_render = last_state = None
+        rendered_at = 0.0
         width = 80
         while not stop.is_set():
             try:
@@ -261,17 +290,23 @@ def launch(args):
                     for key in ("tokens", "usage", "effort"):
                         state[key] = snapshot.get(key)
                 state["quotas"] = merge_quotas(state["quotas"], others)
-                line, second = render_rows(state, int(width or 80))
-                if line != last_line:
-                    call("set-option", "-t", "codex", "status-left", line)
-                    last_line = line
-                if second != last_second:
-                    call("set-option", "-t", "codex", "@line2", second)
-                    last_second = second
+                render_key = (payload(state), int(width or 80), int(time.time() // 60))
+                if render_key != last_render or time.monotonic() - rendered_at >= 10:
+                    line, second = render_rows(state, int(width or 80))
+                    if line != last_line:
+                        call("set-option", "-t", "codex", "status-left", line)
+                        last_line = line
+                    if second != last_second:
+                        call("set-option", "-t", "codex", "@line2", second)
+                        last_second = second
+                    last_render, rendered_at = render_key, time.monotonic()
                 # Save metadata-only current view for doctor/tests; never pane text.
-                atomic_json(root / "view.json", state)
+                if state != last_state:
+                    atomic_json(root / "view.json", state)
+                    last_state = state
             except Exception as error:
                 atomic_json(root / "error.json", {"error": repr(error)[:500]})
+                last_render = None
                 last_line = None
                 # Invalidate both rows so a previous thread's context cannot linger.
                 try:

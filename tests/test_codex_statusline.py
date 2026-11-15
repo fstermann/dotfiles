@@ -2,8 +2,11 @@ import importlib
 import json
 import os
 from pathlib import Path
+import pty
 import re
+import select
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -192,3 +195,180 @@ class CodexSessionBindingTest(unittest.TestCase):
             self.assertEqual(bindings[session]["transcript_path"], event["transcript_path"])
             self.assertEqual(bindings[session]["launch_id"], launch)
             self.assertEqual(bindings[session]["cwd"], event["cwd"])
+
+
+@unittest.skipUnless(shutil.which("tmux"), "tmux is not installed")
+class CodexLauncherIntegrationTest(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.directory = Path(self.temporary.name)
+        self.pid = self.fd = self.root = self.info = None
+        self.status = None
+        self.output = bytearray()
+        self.control = self.directory / "control.json"
+        self.renders = self.directory / "renders"
+        fake = self.directory / "codex"
+        fake.write_text(f"#!{sys.executable}\n" + '''
+import json, os, pathlib, sys
+if "--version" in sys.argv:
+    print("codex-cli 0.169.0")
+    sys.exit(0)
+control = pathlib.Path(os.environ["TEST_CONTROL"])
+temporary = control.with_suffix(".tmp")
+temporary.write_text(json.dumps({"pid": os.getpid(), "supervisor": os.getppid(),
+                               "root": os.environ["CODEX_STATUSLINE_STATE"]}))
+temporary.replace(control)
+def title(context):
+    print(f"\\x1b]0;GPT-Test | Context {context}% used | aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\\x07",
+          end="", flush=True)
+title(0)
+for line in sys.stdin:
+    if line.strip() == "q":
+        sys.exit(7)
+    if line.strip() == "context":
+        title(1)
+''')
+        fake.chmod(0o700)
+        renderer = self.directory / "oh-my-posh"
+        renderer.write_text(f"#!{sys.executable}\n" + '''
+import os
+with open(os.environ["TEST_RENDERS"], "a") as stream:
+    stream.write("render\\n")
+print("first\\nsecond")
+''')
+        renderer.chmod(0o700)
+        env = dict(os.environ, CODEX_STATUSLINE_CODEX=str(fake),
+                   CODEX_HOME=str(self.directory / "home"), TEST_CONTROL=str(self.control),
+                   TEST_RENDERS=str(self.renders), TERM="xterm-256color",
+                   PATH=str(self.directory) + os.pathsep + os.environ["PATH"],
+                   PYTHONDONTWRITEBYTECODE="1")
+        self.pid, self.fd = pty.fork()
+        if self.pid == 0:
+            os.execve(sys.executable,
+                      [sys.executable, str(REPO / "codex/.codex/statusline/entry.py")], env)
+        self.addCleanup(self.cleanup_launcher)
+        self.wait_for(self.control.exists)
+        self.info = json.loads(self.control.read_text())
+        self.root = Path(self.info["root"])
+        result = subprocess.run(
+            ["tmux", "-S", str(self.root / "tmux.sock"), "display-message", "-p", "#{pid}"],
+            capture_output=True, text=True, check=True, timeout=2,
+        )
+        self.info["server"] = int(result.stdout)
+        self.wait_for(lambda: (self.root / "view.json").exists())
+
+    def alive(self, pid):
+        try:
+            os.kill(pid, 0)
+            return True
+        except ProcessLookupError:
+            return False
+
+    def drain(self):
+        if self.fd is None:
+            return
+        try:
+            while select.select([self.fd], [], [], 0)[0]:
+                data = os.read(self.fd, 65536)
+                if not data:
+                    break
+                self.output.extend(data)
+        except OSError:
+            pass
+
+    def exited(self):
+        if self.status is None:
+            pid, status = os.waitpid(self.pid, os.WNOHANG)
+            if pid:
+                self.status = status
+        return self.status is not None
+
+    def wait_for(self, predicate, timeout=10):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            self.drain()
+            if predicate():
+                return
+            time.sleep(0.05)
+        self.fail("Timed out waiting for launcher: " + self.output.decode(errors="replace")[-1000:])
+
+    def cleanup_launcher(self):
+        if self.root is not None:
+            subprocess.run(["tmux", "-S", str(self.root / "tmux.sock"), "kill-server"],
+                           capture_output=True, timeout=2)
+        if self.pid is not None and self.status is None:
+            if self.alive(self.pid):
+                os.kill(self.pid, signal.SIGTERM)
+            deadline = time.monotonic() + 4
+            while not self.exited() and time.monotonic() < deadline:
+                self.drain()
+                time.sleep(0.05)
+            if self.status is None:
+                os.kill(self.pid, signal.SIGKILL)
+                os.waitpid(self.pid, 0)
+        if self.info is not None:
+            for key in ("pid", "supervisor", "server"):
+                pid = self.info.get(key)
+                if pid is not None and self.alive(pid):
+                    os.kill(pid, signal.SIGKILL)
+        if self.fd is not None:
+            os.close(self.fd)
+        if self.root is not None:
+            shutil.rmtree(self.root, ignore_errors=True)
+        self.temporary.cleanup()
+
+    def assert_cleaned_up(self):
+        self.wait_for(self.exited)
+        self.wait_for(lambda: not self.root.exists()
+                      and not any(self.alive(self.info[key])
+                                  for key in ("pid", "supervisor", "server")))
+
+    def test_normal_exit_preserves_code_and_sets_terminal_title(self):
+        self.wait_for(lambda: re.search(br"\x1b\][02];Codex(?:\x07|\x1b\\)", self.output))
+        os.write(self.fd, b"q\n")
+        self.assert_cleaned_up()
+        self.assertEqual(os.waitstatus_to_exitcode(self.status), 7)
+
+    def test_ctrl_c_cleans_up(self):
+        os.write(self.fd, b"\x03")
+        self.assert_cleaned_up()
+        self.assertEqual(os.waitstatus_to_exitcode(self.status), 130)
+
+    def test_terminal_close_cleans_up(self):
+        os.close(self.fd)
+        self.fd = None
+        self.assert_cleaned_up()
+
+    def test_sigterm_cleans_up(self):
+        os.kill(self.pid, signal.SIGTERM)
+        self.assert_cleaned_up()
+
+    def test_sigkill_cleans_up(self):
+        os.kill(self.pid, signal.SIGKILL)
+        self.assert_cleaned_up()
+        self.assertEqual(os.waitstatus_to_exitcode(self.status), -signal.SIGKILL)
+
+    def test_idle_render_is_cached_and_context_change_renders(self):
+        initial = self.renders.read_text().count("\n")
+        view_stamp = (self.root / "view.json").stat().st_mtime_ns
+        minute = int(time.time() // 60)
+        deadline = time.monotonic() + 4.5
+        while time.monotonic() < deadline:
+            self.drain()
+            time.sleep(0.05)
+        allowed = int(int(time.time() // 60) != minute)
+        self.assertLessEqual(self.renders.read_text().count("\n") - initial, allowed)
+        self.assertEqual((self.root / "view.json").stat().st_mtime_ns, view_stamp)
+        before_change = self.renders.read_text().count("\n")
+        os.write(self.fd, b"context\n")
+        self.wait_for(lambda: json.loads((self.root / "view.json").read_text())["context_used"] == 1)
+        self.assertGreater(self.renders.read_text().count("\n"), before_change)
+        for _ in range(2):
+            before_refresh = self.renders.read_text().count("\n")
+            minute = int(time.time() // 60)
+            self.wait_for(lambda: self.renders.read_text().count("\n") > before_refresh,
+                          timeout=12)
+            if int(time.time() // 60) == minute:
+                break
+        else:
+            self.fail("Periodic refresh did not occur within one clock minute")
