@@ -1,5 +1,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     brew list zsh &>/dev/null || brew install zsh
+    command -v tmux &>/dev/null || brew install tmux
+    brew list python &>/dev/null || brew install python
 
     brew list zsh-syntax-highlighting &>/dev/null || brew install zsh-syntax-highlighting
     # brew install zsh-autocomplete
@@ -8,6 +10,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     brew list fzf-tab &>/dev/null || brew install fzf-tab
 else
     command -v zsh &>/dev/null || sudo apt-get install -y zsh
+    command -v tmux &>/dev/null || sudo apt-get install -y tmux
+    command -v python3 &>/dev/null || sudo apt-get install -y python3
 
     mkdir -p ~/.config/zsh/plugins
     # git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ~/.config/zsh/plugins/zsh-autocomplete

@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     ca-certificates \
     stow \
+    tmux \
+    python3 \
     zsh \
     bat \
     ripgrep \

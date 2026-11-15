@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "SessionStart": [{
+      "hooks": [{
+        "type": "command",
+        "command": "python3 ~/.codex/statusline/entry.py hook",
+        "timeout": 2,
+        "statusMessage": "Bind shared OMP statusline"
+      }]
+    }]
+  }
+}

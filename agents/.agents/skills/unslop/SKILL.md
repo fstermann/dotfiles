@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Cut AI tells from a piece of writing. Invoke via /unslop.
+description: "Cut AI tells from a piece of writing. Invoke by name (unslop)."
 disable-model-invocation: true
 ---
 

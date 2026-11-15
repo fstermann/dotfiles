@@ -59,6 +59,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 _check_symlink "$HOME/.claude/settings.json"
 _check_symlink "$HOME/.codex/pure.config.toml"
+_check_symlink "$HOME/.codex/statusline/entry.py"
+_check_symlink "$HOME/.codex/hooks.json"
+_check_symlink "$HOME/.agents/AGENTS.md"
+_check_symlink "$HOME/.codex/AGENTS.md"
 
 # ── Tools on PATH ────────────────────────────────────────────────────────────
 section "Tools"
@@ -89,6 +93,8 @@ else
 fi
 _bat_checked=1  # skip the generic check below
 _check_command rg "ripgrep"
+_check_command tmux
+_check_command python3
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   _check_command brew "Homebrew"
@@ -118,6 +124,9 @@ _check_file "$HOME/.zprofile"
 _check_file "$HOME/.config/fzf/fzf.zsh"
 _check_file "$HOME/.config/zsh/oh-my-posh/oh-my-posh.zsh"
 _check_file "$HOME/.codex/pure.config.toml"
+_check_file "$HOME/.agents/skills/backcast/SKILL.md"
+_check_file "$HOME/.claude/skills/backcast/SKILL.md"
+_check_file "$HOME/.agents/skills/self-improve/SKILL.md"
 
 # ── Local stubs ──────────────────────────────────────────────────────────────
 section "Local config"

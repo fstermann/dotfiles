@@ -12,6 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Test agent configuration
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y stow
+          python3 -m unittest discover -s tests
+
       - name: Build and test install
         run: docker build -t dotfiles-test .
 
