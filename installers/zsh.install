@@ -2,6 +2,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     brew list zsh &>/dev/null || brew install zsh
     command -v tmux &>/dev/null || brew install tmux
     brew list python &>/dev/null || brew install python
+    brew list terminal-notifier &>/dev/null || brew install terminal-notifier
 
     brew list zsh-syntax-highlighting &>/dev/null || brew install zsh-syntax-highlighting
     # brew install zsh-autocomplete
