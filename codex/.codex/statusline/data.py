@@ -25,28 +25,36 @@ _MAX_READ_BYTES = 1024 * 1024
 
 
 def parse_title(title: str) -> dict[str, Any]:
-    """Parse Codex's native ``[model, context-used, thread-id]`` title.
+    """Parse Codex's native ``[model, context-used, thread-id, thread-name]`` title.
 
     The emitted thread ID is a UUID shortened to its first 29 characters and
     ``...``.  A full UUID is also accepted for environments that render it
     without truncation.  A two-field ``model | session`` title is a valid
-    context-less variant; its context is returned as ``None``.  Malformed or
+    context-less variant; its context is returned as ``None``. An optional
+    thread name follows the ID and may itself contain ``|``. Malformed or
     ambiguous titles raise ``ValueError`` rather than guessing.
     """
     if not isinstance(title, str):
         raise TypeError("title must be a string")
-    parts = [part.strip() for part in title.split("|")]
-    if len(parts) not in (2, 3) or not parts[0]:
+    parts = [part.strip() for part in title.split("|", 2)]
+    if len(parts) < 2 or not parts[0]:
         raise ValueError("not a supported Codex status title")
 
+    second = re.sub(r" [\u2800-\u28ff]$", "", parts[1])
+    has_context = not (_SESSION_HINT.fullmatch(second) or _FULL_SESSION.fullmatch(second))
+    if has_context and len(parts) < 3:
+        raise ValueError("title has no thread ID")
+    session, _, thread_name = parts[2 if has_context else 1].partition("|")
+    if not has_context and len(parts) == 3:
+        thread_name = parts[2]
     session_hint = re.sub(
-        r" [\u2800-\u28ff]$", "", parts[-1]
+        r" [\u2800-\u28ff]$", "", session.strip()
     )  # native thread-title progress spinner
     if not (_SESSION_HINT.fullmatch(session_hint) or _FULL_SESSION.fullmatch(session_hint)):
-        raise ValueError("title does not end in a recognizable thread ID")
+        raise ValueError("title has no recognizable thread ID")
 
     context_used: float | None = None
-    if len(parts) == 3:
+    if has_context:
         match = _CONTEXT.fullmatch(parts[1])
         if match:
             parsed_context = float(match.group(1))
@@ -59,6 +67,7 @@ def parse_title(title: str) -> dict[str, Any]:
         "model": parts[0],
         "context_used": context_used,
         "session_hint": session_hint,
+        "thread_name": thread_name.strip() or None,
     }
 
 

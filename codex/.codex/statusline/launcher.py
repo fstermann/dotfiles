@@ -16,7 +16,7 @@ from pathlib import Path
 from .hook import atomic_json
 
 ENTRY = Path(__file__).resolve().parent / "entry.py"
-TITLE = 'tui.terminal_title=["model","context-used","thread-id"]'
+TITLE = 'tui.terminal_title=["model","context-used","thread-id","thread-name"]'
 NONINTERACTIVE = {
     "agents",
     "plugin",
@@ -222,7 +222,8 @@ def launch(args):
         'set -g status-left ""\n'
         "set -g allow-rename off\n"
         "set -g set-titles on\n"
-        "set -g set-titles-string Codex\n"
+        "set -g @terminal_title Codex\n"
+        'set -g set-titles-string "#{@terminal_title}"\n'
         "set -g mouse on\n"
         # Every key belongs to Codex: no prefix (Ctrl-B), no wait after Esc.
         "set -g prefix None\n"
@@ -256,6 +257,7 @@ def launch(args):
         sessions, readers, others, scan_at = sessions_dir(), {}, {}, 0.0
         last_line = last_second = None
         last_render = last_state = None
+        last_title = "Codex"
         rendered_at = 0.0
         width = 80
         while not stop.is_set():
@@ -274,6 +276,12 @@ def launch(args):
                     return
                 title, _, width = p.stdout.rstrip("\n").partition("\n")
                 state = parse_title(title)
+                terminal_title = "Codex"
+                if state["thread_name"]:
+                    terminal_title += ": " + state["thread_name"]
+                if terminal_title != last_title:
+                    call("set-option", "-g", "@terminal_title", terminal_title)
+                    last_title = terminal_title
                 state["cwd"] = config["cwd"]
                 state["quotas"] = {}
                 if time.monotonic() - scan_at > 10:
@@ -314,6 +322,8 @@ def launch(args):
                 except Exception:
                     fallback = ("Codex", "")
                 try:
+                    call("set-option", "-g", "@terminal_title", "Codex")
+                    last_title = "Codex"
                     call("set-option", "-t", "codex", "status-left", fallback[0])
                     call("set-option", "-t", "codex", "@line2", fallback[1])
                     last_line = last_second = None

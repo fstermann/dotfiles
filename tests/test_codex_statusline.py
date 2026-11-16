@@ -131,6 +131,18 @@ class CodexSessionBindingTest(unittest.TestCase):
         self.assertIsNone(self.launcher.binding_for(bindings, hint, "launch-a"))
         self.assertIsNone(self.launcher.binding_for(bindings, "unrecognized", "launch-a"))
 
+    def test_conversation_name_is_optional_and_preserves_separators(self):
+        session = "12345678-1234-1234-1234-123456789012"
+        for context in ("", "Context 17% used | "):
+            for name in ("", "Fix terminal titles", "Compare A | B | C"):
+                with self.subTest(context=context, name=name):
+                    title = f"GPT | {context}{session}"
+                    if name:
+                        title += f" | {name}"
+                    state = self.data.parse_title(title)
+                    self.assertEqual(state["session_hint"], session)
+                    self.assertEqual(state["thread_name"], name or None)
+
     def test_noninteractive_commands_and_redirected_io_bypass_wrapper(self):
         with patch.dict(os.environ, {"TERM": "xterm-256color"}), \
                 patch.object(os, "isatty", return_value=True):
@@ -218,8 +230,9 @@ temporary = control.with_suffix(".tmp")
 temporary.write_text(json.dumps({"pid": os.getpid(), "supervisor": os.getppid(),
                                "root": os.environ["CODEX_STATUSLINE_STATE"]}))
 temporary.replace(control)
-def title(context):
-    print(f"\\x1b]0;GPT-Test | Context {context}% used | aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\\x07",
+def title(context, name=""):
+    suffix = f" | {name}" if name else ""
+    print(f"\\x1b]0;GPT-Test | Context {context}% used | aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa{suffix}\\x07",
           end="", flush=True)
 title(0)
 for line in sys.stdin:
@@ -227,6 +240,12 @@ for line in sys.stdin:
         sys.exit(7)
     if line.strip() == "context":
         title(1)
+    if line.startswith("name "):
+        title(0, line[5:].strip())
+    if line.strip() == "unnamed":
+        title(0)
+    if line.strip() == "invalid":
+        print("\\x1b]0;invalid\\x07", end="", flush=True)
 ''')
         fake.chmod(0o700)
         renderer = self.directory / "oh-my-posh"
@@ -328,6 +347,24 @@ print("first\\nsecond")
         os.write(self.fd, b"q\n")
         self.assert_cleaned_up()
         self.assertEqual(os.waitstatus_to_exitcode(self.status), 7)
+
+    def test_conversation_title_updates_and_clears(self):
+        def emitted(title):
+            return re.search(br"\x1b\][02];" + re.escape(title.encode())
+                             + br"(?:\x07|\x1b\\)", self.output)
+
+        for name in ("Fix terminal titles", "Compare A | B", "Literal #{pane_title} #[fg=red]"):
+            self.output.clear()
+            os.write(self.fd, f"name {name}\n".encode())
+            self.wait_for(lambda: emitted("Codex: " + name))
+        self.output.clear()
+        os.write(self.fd, b"unnamed\n")
+        self.wait_for(lambda: emitted("Codex"))
+        os.write(self.fd, b"name Another conversation\n")
+        self.wait_for(lambda: emitted("Codex: Another conversation"))
+        self.output.clear()
+        os.write(self.fd, b"invalid\n")
+        self.wait_for(lambda: emitted("Codex"))
 
     def test_ctrl_c_cleans_up(self):
         os.write(self.fd, b"\x03")
