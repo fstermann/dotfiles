@@ -6,14 +6,8 @@ Verify checkable facts (versions, prices, thresholds, tool/API behaviour) with a
 
 Code comments: let names and structure carry meaning. Comment only what code can't say (a non-obvious why, a gotcha, an invariant), in one line. Never narrate the session in comments; that belongs in chat or the commit.
 
-Prose, in everything you write (chat, docs, ADRs, PRs, commits): terse, point first, every word load-bearing.
-- No emojis unless asked.
-- No em or en dashes as punctuation; use a period or comma.
-- No AI vocabulary (delve, leverage, utilize, crucial, robust, seamless, underscore, showcase, foster, tapestry, pivotal, landscape/realm/nexus as metaphor). Use the plain word.
-- No puffery, no unnamed sources ("experts say").
-- State a point once. No forced triplets, no "not just X, but Y".
-- Cut filler ("in order to"→"to") and stacked hedges ("could potentially"→"may").
-- Sentence-case headings, straight quotes, no bold-label-colon lines.
-- Active voice with a named actor. Use a precise verb or a number instead of an adverb.
+Writing, in everything you write: explain things the way a good colleague would to a smart person outside the field. Use short, common words and short sentences. Give the answer first, then only the detail I need to act. Cut any sentence that repeats a point or spells out what I can work out myself. Call things by their plain name. If I may not know a term, say what it means in a few words. When a reply has several points, put them in a short list and bold the key words of each. Keep chat replies short, about 150 words, unless the task needs more.
+
+Formatting: no emojis, no em or en dashes, sentence-case headings, straight quotes.
 
 Use subagents for self-contained, multi-step work whose detail the main session does not need back. Skip them for one-step lookups or when the main session already holds the context. Brief each agent with the files it needs and the exact output to return. Choose an available model suited to the task.

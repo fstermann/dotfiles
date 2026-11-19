@@ -62,7 +62,6 @@
     "padding": 0,
     "refreshInterval": 30
   },
-  "outputStyle": "BLUF",
   "effortLevel": "medium",
   "theme": "dark",
   "skipAutoPermissionPrompt": true,
