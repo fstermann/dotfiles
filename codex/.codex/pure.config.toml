@@ -2,7 +2,7 @@ approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 sandbox_mode = "workspace-write"
 
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 model_context_window = 1000000
 model_reasoning_effort = "medium"
 # Pure-inspired Codex CLI status line.
