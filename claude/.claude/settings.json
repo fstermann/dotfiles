@@ -47,10 +47,6 @@
           {
             "type": "command",
             "command": "~/.claude/notify.sh \"Task completed in $(basename $PWD)\""
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/self-improve-gate.sh"
           }
         ]
       }
