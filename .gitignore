@@ -8,3 +8,6 @@ __pycache__/
 # Lux Edit and UI Review directories
 .visual-edit/
 .ui-review/
+
+# slip violation log: quotes private transcripts, never commit
+agents/.agents/skills/slip/violations.md

@@ -8,7 +8,7 @@ import unittest
 
 
 REPO = Path(__file__).resolve().parents[1]
-SHARED = ("backcast", "deepen", "grill-me", "janitor", "unslop")
+SHARED = ("backcast", "deepen", "grill-me", "janitor", "slip", "unslop")
 
 
 class AgentLinksTest(unittest.TestCase):
@@ -28,7 +28,6 @@ class AgentLinksTest(unittest.TestCase):
                 self.assertEqual((alternate / "skills" / name / "SKILL.md").resolve(), source)
             self.assertEqual((home / ".codex/AGENTS.md").resolve(),
                              REPO / "agents/.agents/AGENTS.md")
-            self.assertTrue((home / ".agents/skills/self-improve/SKILL.md").is_file())
             self.assertTrue((home / ".claude/skills/pair-review/SKILL.md").is_file())
             self.assertFalse((home / ".agents/skills/pair-review").exists())
 
@@ -57,7 +56,7 @@ class AgentLinksTest(unittest.TestCase):
 
 class CodexTranscriptTest(unittest.TestCase):
     def test_reader_filters_wrappers_and_preserves_context(self):
-        script = REPO / "codex/.agents/skills/self-improve/mine-transcripts.py"
+        script = REPO / "agents/.agents/skills/slip/mine-codex.py"
         spec = importlib.util.spec_from_file_location("miner", script)
         miner = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(miner)
