@@ -18,4 +18,4 @@ Formatting: no emojis, no em or en dashes, sentence-case headings, straight quot
 
 End each reply that finished a task with a `---` line, then a footer that adds nothing new:
 - `❊` the outcome in one line.
-- Only if files changed: a light, what changed in at most 10 plain words (as I would notice it, not file names), then a kind. Light: `○` nothing works differently, `◐` something works differently, `●` needs my eyes. Kind: `+new` something new, `*fix` small fix, `#note` note saved, `^chg` changed how something works. Never make it sound bigger or smaller than it was.
+- Only if files changed: a light, then what changed in at most 10 plain words, starting with a verb, as I would notice it, not file names. Light: `○` nothing works differently, `◐` something works differently, `●` needs my eyes. Never make it sound bigger or smaller than it was.
