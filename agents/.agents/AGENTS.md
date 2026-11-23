@@ -16,6 +16,17 @@ In everything you write, explain things the way a good colleague would to a smar
 
 Formatting: no emojis, no em or en dashes, sentence-case headings, straight quotes.
 
-End each reply that finished a task with a `---` line, then a footer that adds nothing new:
-- `❊` the outcome in one line.
-- Only if files changed: a light, then what changed in at most 10 plain words, starting with a verb, as I would notice it, not file names. Light: `○` nothing works differently, `◐` something works differently, `●` needs my eyes. Never make it sound bigger or smaller than it was.
+End each reply that finished a task with a footer that adds nothing new, in exactly this shape, blank lines included:
+
+```
+────────────────────────────────────────
+
+`❊` <outcome>
+
+`<light>` <change>
+```
+
+- **Outcome:** what was done, in one line. Bold only its two or three key words, as on a slide.
+- **Change:** only if files changed. At most 10 plain words, starting with a verb, as I would notice it, not file names. Never make it sound bigger or smaller than it was.
+- **Light:** `○` nothing works differently, `◐` something works differently, `●` needs my eyes.
+- Keep every glyph in backticks.
