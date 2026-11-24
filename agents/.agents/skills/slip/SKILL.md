@@ -59,7 +59,7 @@ Say what it will read before starting; it reads a lot.
    python3 ~/.agents/skills/slip/mine-codex.py --since <date> > <scratch>/codex-hits.json
    ```
 
-   Run the Claude miner once per Claude config dir (`~/.claude`, plus the one `$CLAUDE_CONFIG_DIR` names). Read `signal_counts`, then `silent_signals`: calls the user rejected or interrupted. One veto often yields both records; count distinct calls. The regex over-matches heavily; drop sessions under `/private/tmp` and plain changes of mind.
+   Run the Claude miner once per Claude config dir (`~/.claude`, plus the one `$CLAUDE_CONFIG_DIR` names). Run the Codex miner again with `--root <codex-home>/archived_sessions` if that directory exists. Both take `--project SUBSTRING` and `--limit N` (default 400, newest first; compare `truncated_to` with `total_hits`). Read `signal_counts`, then, for Claude only, `silent_signals`: calls the user rejected or interrupted. The Codex miner does not infer rejections or interruptions. One veto often yields both records; count distinct calls. The regex over-matches heavily; drop sessions under `/private/tmp` and plain changes of mind.
 2. For each real hit, check the rule existed at that date (`git -C ~/.dotfiles log -S`). Append unlogged violations to the log.
 3. Group open entries by rule, then by cause. Rank by count of distinct sessions.
 4. For the top groups, draft the smallest fix that matches the cause:
