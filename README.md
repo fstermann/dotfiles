@@ -216,9 +216,9 @@ Edit shared global rules in `agents/.agents/AGENTS.md`. Claude imports them from
 
 Define portable skills once under `agents/.agents/skills/`. Stow exposes them at `~/.agents/skills/` for Codex. The links under `claude/.claude/skills/` expose those same folders to Claude, including alternate Claude config directories. Add a corresponding relative folder link there when adding a portable skill, then run `dotfiles restow`.
 
-`backcast`, `deepen`, `grill-me`, `janitor`, and `unslop` are shared. Their questions use the host's available interface. Skills marked `disable-model-invocation: true` also carry Codex's explicit-only policy in `agents/openai.yaml`.
+`backcast`, `deepen`, `grill-me`, `janitor`, `slip`, and `unslop` are shared. Their questions use the host's available interface. Skills marked `disable-model-invocation: true` also carry Codex's explicit-only policy in `agents/openai.yaml`.
 
-`pair-review` remains Claude-only. Each tool has its own `self-improve`: Claude's keeps its completion hook and Claude transcript reader; Codex's lives in `codex/.agents/skills/self-improve/` and reads local Codex rollout transcripts. Both propose shared-rule changes in `agents/.agents/AGENTS.md`. Invoke skills with `/name` in Claude or `$name` in Codex.
+`pair-review` remains Claude-only. `slip` logs instruction violations to its gitignored `violations.md` and carries one transcript reader per tool. Invoke skills with `/name` in Claude or `$name` in Codex.
 
 Keep settings, hooks, permissions, and model choices in the tool's own package. `codex/.codex/pure.config.toml` is a separate profile; this setup does not replace your active `~/.codex/config.toml`.
 

@@ -126,7 +126,7 @@ _check_file "$HOME/.config/zsh/oh-my-posh/oh-my-posh.zsh"
 _check_file "$HOME/.codex/pure.config.toml"
 _check_file "$HOME/.agents/skills/backcast/SKILL.md"
 _check_file "$HOME/.claude/skills/backcast/SKILL.md"
-_check_file "$HOME/.agents/skills/self-improve/SKILL.md"
+_check_file "$HOME/.agents/skills/slip/SKILL.md"
 
 # ── Local stubs ──────────────────────────────────────────────────────────────
 section "Local config"
