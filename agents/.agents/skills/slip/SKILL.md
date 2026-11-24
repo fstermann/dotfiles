@@ -72,7 +72,10 @@ Say what it will read before starting; it reads a lot.
 5. Test before and after: when an entry's repro stands alone, run it in the project directory, once on current config and once with the drafted fix:
 
    ```bash
-   claude -p "<repro>" --output-format stream-json --verbose --no-session-persistence \
+   cat > <scratch>/repro.txt <<'EOF'
+   <repro>
+   EOF
+   claude -p "$(cat <scratch>/repro.txt)" --output-format stream-json --verbose --no-session-persistence \
      --settings '{"hooks":{"PreToolUse":[{"matcher":"*","hooks":[{"type":"command","command":"echo Replay: recorded, not run >&2; exit 2"}]}]}}'
    ```
 
