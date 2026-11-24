@@ -78,10 +78,10 @@ Say what it will read before starting; it reads a lot.
    <repro>
    EOF
    claude -p "$(cat <scratch>/repro.txt)" --output-format stream-json --verbose --no-session-persistence \
-     --settings '{"hooks":{"PreToolUse":[{"matcher":"*","hooks":[{"type":"command","command":"echo Replay: recorded, not run >&2; exit 2"}]}]}}'
+     --settings '{"disableAllHooks":false,"hooks":{"PreToolUse":[{"matcher":"*","hooks":[{"type":"command","command":"echo Replay: recorded, not run >&2; exit 2"}]}]}}'
    ```
 
-   The hook blocks every tool call, so nothing runs, while each attempted call still shows as a `tool_use` in the output. Permission modes are no substitute: allowlisted commands still run, and plan mode changes the behaviour under test. Judge the first attempted call and the reply; later steps react to the block. Pass if the slip shows up before and not after. Run each side three times; one run proves little. If the repro needs earlier session state, say it can't be replayed and rely on new log entries instead.
+   The hook blocks every tool call while each attempted call still shows as a `tool_use` in the output. A managed `allowManagedHooksOnly` drops it silently, so check that the first tool result is `Replay: recorded, not run`; if any tool actually ran, stop replaying and tell the user. Permission modes are no substitute: allowlisted commands still run, and plan mode changes the behaviour under test. Judge the first attempted call and the reply; later steps react to the block. Pass if the slip shows up before and not after. Run each side three times; one run proves little. If the repro needs earlier session state, say it can't be replayed and rely on new log entries instead.
 6. Propose each fix with the session count, one quote, and the test result.
 7. After an approved fix lands, set those entries' `Status:` to `fixed <commit>`. Rejected ones become `wontfix`.
 8. Set `Last review:` to today, even if the review found nothing.
