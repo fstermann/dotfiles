@@ -1,0 +1,39 @@
+tap "domt4/autoupdate", trusted: { command: "autoupdate" }
+tap "fstermann/tap", trusted: { cask: "bouncer" }
+tap "openai/tools", trusted: { formulae: ["tart", "softnet"] }
+# Formula installed by installers/oh-my-posh.install; listed so its trust survives `brew bundle cleanup`
+tap "jandedobbeleer/oh-my-posh", trusted: true
+
+# Apps
+cask "google-chrome"
+cask "visual-studio-code"
+cask "1password"
+cask "obsidian"
+cask "itsycal"
+cask "pika"
+cask "the-unarchiver"
+cask "fstermann/tap/bouncer"
+cask "coteditor"
+
+# Used by brew.macos to make CotEditor the default editor
+brew "duti"
+brew "python-yq"
+
+# Dev CLI (repo-only tools go in that repo's own Brewfile)
+brew "gh"
+brew "node"
+brew "pnpm"
+brew "uv"
+brew "pre-commit"
+
+# AI
+cask "claude"
+cask "claude-code"
+cask "codex"
+cask "chatgpt"
+brew "ollama"
+
+# Docker and VMs
+brew "docker"
+cask "docker-desktop"
+brew "openai/tools/tart"

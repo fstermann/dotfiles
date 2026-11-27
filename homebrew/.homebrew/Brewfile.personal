@@ -1,0 +1,16 @@
+# Music
+cask "ableton-live-suite"
+cask "rekordbox"
+cask "splice"
+cask "youlean-loudness-meter"
+brew "ffmpeg"
+
+# Chat
+cask "whatsapp"
+cask "discord"
+
+# Media
+cask "obs"
+cask "audacity"
+cask "gimp"
+cask "vlc"

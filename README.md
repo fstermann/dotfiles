@@ -118,6 +118,7 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 | `claude` | `.claude/`. Claude editor settings and statusline script |
 | `codex` | Codex profile, shared OMP statusline adapter, and session-binding hook |
 | `macos` | `.config/macos/`. Terminal.app Monokai Pro theme |
+| `homebrew` | `.homebrew/`. Brewfiles and `brew.env` settings |
 
 ---
 
@@ -145,7 +146,7 @@ Re-links all packages with `stow --restow`. Run it after adding new files to a p
 
 ```sh
 # Stow all packages (idempotent — safe to re-run)
-stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos agents claude codex
+stow --no-folding -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos homebrew agents claude codex
 
 # Stow a single package
 stow --no-folding -d ~/.dotfiles -t $HOME zsh
@@ -154,7 +155,7 @@ stow --no-folding -d ~/.dotfiles -t $HOME zsh
 stow -d ~/.dotfiles -t $HOME -D zsh
 
 # Simulate without making changes
-stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos agents claude codex
+stow --no-folding --simulate -v -d ~/.dotfiles -t $HOME zsh git fzf oh-my-posh macos homebrew agents claude codex
 ```
 
 The Zsh configuration selects the Pure-inspired profile for every Codex CLI

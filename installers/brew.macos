@@ -1,11 +1,11 @@
-brew install --cask google-chrome
-brew install --cask visual-studio-code
-brew install --cask 1password
+brew bundle --global
+# Personal machines only:
+# brew bundle --file ~/.homebrew/Brewfile.personal
 
-brew install --cask coteditor
+brew autoupdate start --upgrade --cleanup
+
 # To set CotEditor as the default for all kinds of files
 # https://alexpeattie.com/blog/associate-source-code-files-with-editor-in-macos-using-duti/
-brew install duti python-yq
 curl "https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml" \
   | yq -r "to_entries | (map(.value.extensions) | flatten) - [null] | unique | .[]" \
   | xargs -L 1 -I "{}" duti -s com.coteditor.CotEditor {} all
