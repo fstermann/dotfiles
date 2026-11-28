@@ -1,6 +1,6 @@
-brew bundle --global
+brew bundle --global -v
 # Personal machines only:
-# brew bundle --file ~/.homebrew/Brewfile.personal
+# brew bundle --file ~/.homebrew/Brewfile.personal -v
 
 brew autoupdate start --upgrade --cleanup
 
